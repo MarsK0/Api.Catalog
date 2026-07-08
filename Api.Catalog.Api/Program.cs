@@ -1,0 +1,213 @@
+using Api.Catalog.Api.Authorization;
+using Api.Catalog.Api.Configurations;
+using Api.Catalog.Api.Contexts;
+using Api.Catalog.Api.Middlewares;
+using Api.Catalog.Application;
+using Api.Catalog.Application.Contracts;
+using Api.Catalog.Application.Contracts.Contexts;
+using Api.Catalog.Domain.Entities;
+using Api.Catalog.Domain.Models;
+using Api.Catalog.Infrastructure;
+using Api.Catalog.Infrastructure.Persistence.PostgreSQL;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using Serilog;
+using System.Text;
+
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
+
+    Log.Logger = new LoggerConfiguration()
+        .ReadFrom.Configuration(builder.Configuration)
+        .Enrich.FromLogContext()
+        .WriteTo.Console()
+        .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+        .CreateLogger();
+    builder.Host.UseSerilog();
+
+    builder.Services.AddControllers();
+    builder.Services.AddSwaggerGen(options =>
+    {
+        options.SwaggerDoc("v1", new()
+        {
+            Title = "Catalog API",
+            Version = "v1",
+            Description = "API do sistema de catálogo"
+        });
+
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "Informe o token JWT obtido no endpoint de autenticacao.",
+        });
+
+        options.AddSecurityRequirement(doc => new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecuritySchemeReference("Bearer", doc),
+                new List<string>()
+            }
+        });
+
+        options.OperationFilter<SwaggerTenantHeaderOperationFilter>();
+    });
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddScoped<ITenantContext, TenantContext>();
+    builder.Services
+        .AddInfrastructure(builder.Configuration)
+        .AddApplication();
+
+    builder.Services.AddCorsPolicies(builder.Configuration, builder.Environment);
+    builder.Services.AddRateLimiterPolicies();
+
+    var jwtKey = builder.Configuration["Jwt:Key"]
+        ?? throw new InvalidOperationException("Chave JWT não configurada");
+    if (jwtKey.Length < 32)
+        throw new InvalidOperationException("A chave JWT deve ter ao menos 32 caracteres");
+
+    builder.Services
+        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = true;
+            options.SaveToken = false;
+            options.MapInboundClaims = false;
+            options.IncludeErrorDetails = false;
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+                ValidateIssuer = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidateAudience = true,
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero,
+                RequireExpirationTime = true,
+                RequireSignedTokens = true
+            };
+
+            options.Events = new JwtBearerEvents
+            {
+                OnChallenge = context =>
+                {
+                    context.Response.Headers["WWW-Authenticate"] = "Bearer";
+                    return Task.CompletedTask;
+                }
+            };
+        });
+
+    builder.Services.AddMemoryCache();
+
+    builder.Services.AddAuthorization(options =>
+    {
+        foreach (var permission in AppPermissions.TenantPermissions.GetAll)
+        {
+            var policy = PermissionPolicies.TenantPolicy(permission);
+            options.AddPolicy(
+                policy,
+                p => p.RequireAuthenticatedUser().RequireClaim(TokenClaims.PermissionClaimName, permission)
+            );
+        }
+
+        foreach (var permission in AppPermissions.PlatformPermissions.GetAll)
+        {
+            var policy = PermissionPolicies.PlatformPolicy(permission);
+            options.AddPolicy(
+                policy,
+                p => p.RequireAuthenticatedUser().RequireClaim(TokenClaims.PermissionClaimName, permission)
+            );
+        }
+
+        foreach (var module in AppModules.All)
+        {
+            var policy = TenantModulesPolicies.Name(module);
+            options.AddPolicy(
+                policy,
+                m => m.RequireAuthenticatedUser().AddRequirements(new TenantModuleRequirement(module))
+            );
+        }
+    });
+
+    var app = builder.Build();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
+        {
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Catalog API v1");
+            options.RoutePrefix = "swagger";
+        });
+    }
+    ;
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await db.Database.MigrateAsync();
+
+        if (!await db.PlatformMembership.AnyAsync())
+        {
+            var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+            var ownerName = config["Owner:Name"] ?? throw new InvalidOperationException("MasterUser Name não definido.");
+            var ownerEmail = config["Owner:Email"] ?? throw new InvalidOperationException("MasterUser Email não definido.");
+            var ownerPassword = config["Owner:Password"] ?? throw new InvalidOperationException("MasterUser Password não definido.");
+
+            var personResult = Person.Create(ownerName, ownerEmail, null);
+            if (!personResult.IsSuccess)
+                throw new InvalidOperationException($"Falha ao criar Owner: {personResult.Failure.Message}");
+
+            var person = personResult.Value;
+            db.Persons.Add(person);
+
+            var passwordHashService = scope.ServiceProvider.GetRequiredService<IPasswordHashService>();
+
+            var accountResult = Account.Create(person.Id, passwordHashService.GenerateHash(ownerPassword));
+            if (!accountResult.IsSuccess)
+                throw new InvalidOperationException($"Falha ao criar Owner Account: {accountResult.Failure.Message}");
+
+            var account = accountResult.Value;
+            db.Accounts.Add(account);
+
+            var platformMembership =
+
+            await db.SaveChangesAsync(CancellationToken.None);
+        }
+    }
+
+    app.UseHttpsRedirection();
+
+    app.UseMiddleware<ErrorHandlerMiddleware>();
+    app.UseMiddleware<TenantResolverMiddleware>();
+
+    app.UseRouting();
+    app.UseCors(CorsPolicies.DefaultPolicy);
+
+    app.UseRateLimiter();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.MapControllers().RequireRateLimiting(RateLimitPolicies.General);
+
+    await app.RunAsync();
+
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "A aplicação encerrou inesperadamente");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

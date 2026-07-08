@@ -1,0 +1,15 @@
+﻿using Api.Catalog.Application.Contracts;
+using Api.Catalog.Application.Mappers;
+using Api.Catalog.Application.Models;
+using Api.Catalog.Domain;
+using MediatR;
+
+namespace Api.Catalog.Application.Features.Tenancy;
+
+internal sealed class GetTenantByIdFeature(
+    ITenantRepo tenantRepo
+) : IRequestHandler<GetTenantByIdQuery, AppResult<TenantResponse?>>
+{
+    public async Task<AppResult<TenantResponse?>> Handle(GetTenantByIdQuery query, CancellationToken ct)
+        => (await tenantRepo.GetByIdAsync(query.Id, ct))?.ToResponse();
+}
