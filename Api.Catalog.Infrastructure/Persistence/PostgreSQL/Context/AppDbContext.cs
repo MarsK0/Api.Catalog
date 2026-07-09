@@ -8,12 +8,17 @@ namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 
 public sealed class AppDbContext : DbContext
 {
+    private readonly TimeProvider _timeProvider;
     private readonly ITenantContext? _tenantContext;
 
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-    public AppDbContext(DbContextOptions<AppDbContext> options, ITenantContext tenantContext) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options, TimeProvider timeProvider) : base(options)
+    {
+        _timeProvider = timeProvider;
+    }
+    public AppDbContext(DbContextOptions<AppDbContext> options, TimeProvider timeProvider, ITenantContext tenantContext) : base(options)
     {
         _tenantContext = tenantContext;
+        _timeProvider = timeProvider;
     }
 
     #region Application
@@ -89,12 +94,26 @@ public sealed class AppDbContext : DbContext
     public override int SaveChanges()
     {
         ApplyTenantIdInNewEntities();
+        ApplyCreatedAndUpdatedAt();
         return base.SaveChanges();
     }
     public override Task<int> SaveChangesAsync(CancellationToken ct)
     {
         ApplyTenantIdInNewEntities();
+        ApplyCreatedAndUpdatedAt();
         return base.SaveChangesAsync();
+    }
+    private void ApplyCreatedAndUpdatedAt()
+    {
+        var now = _timeProvider.GetUtcNow();
+        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+        {
+            if (entry.State == EntityState.Added)
+                entry.Property(p => p.CreatedAt).CurrentValue = now;
+                
+            if (entry.State == EntityState.Modified)
+                entry.Property(p => p.UpdatedAt).CurrentValue = now;
+        }
     }
     private void ApplyTenantIdInNewEntities()
     {
