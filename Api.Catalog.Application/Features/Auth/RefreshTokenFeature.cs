@@ -7,6 +7,7 @@ using MediatR;
 namespace Api.Catalog.Application.Auth;
 
 internal sealed class RefreshTokenHandler(
+    TimeProvider timeProvider,
     ITokenService tokenService,
     IUnitOfWork unitOfWork,
     IRefreshTokenRepo refreshTokenRepo,
@@ -40,6 +41,6 @@ internal sealed class RefreshTokenHandler(
 
         token.MarkAsUsed();
 
-        return await LoginHandler.Login(tokenService, unitOfWork, refreshTokenRepo, account, token.RememberMe, ct);
+        return await LoginHandler.Login(timeProvider, tokenService, unitOfWork, refreshTokenRepo, account, token.RememberMe, ct);
     }
 }
