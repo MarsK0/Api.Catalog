@@ -21,7 +21,6 @@ internal sealed class TenantModuleRequirement(string module) : IAuthorizationReq
 }
 internal sealed class TenantModulesAuthorizationHandler(
     ITenantRepo tenantRepo,
-    ITenantContext tenantContext,
     IHttpContextAccessor httpContextAccessor
 ) : AuthorizationHandler<TenantModuleRequirement>
 {
@@ -32,7 +31,6 @@ internal sealed class TenantModulesAuthorizationHandler(
     {
         var cancellationToken = httpContextAccessor.HttpContext?.RequestAborted ?? CancellationToken.None;
 
-        var tenantId = tenantContext.TenantId;
         var unlockedModules = await tenantRepo.GetModulesAsync(cancellationToken);
         if (unlockedModules.Contains(requirement.Module))
             context.Succeed(requirement);

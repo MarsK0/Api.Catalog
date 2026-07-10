@@ -1,30 +1,26 @@
-﻿using Api.Catalog.Application.Contracts.Contexts;
+﻿using Api.Catalog.Api.Constants;
+using Api.Catalog.Application.Contracts.Contexts;
 
 namespace Api.Catalog.Api.Contexts;
 
-public sealed class TenantContext : ITenantContext
+public sealed class TenantContext(IHttpContextAccessor accessor) : ITenantContext
 {
-    // Chave usada no Middleware: context.Items["tenant_id"]
-    public const string TenantItemKey = "tenant_id";
-    private readonly IHttpContextAccessor _accessor;
+    private readonly bool _isPlatformContext = accessor.HttpContext!.Items[ConstantValues.TenantContextItemKey]?.ToString() == ConstantValues.PlatformContextIdentifier;
 
-    public TenantContext(IHttpContextAccessor accessor, IConfiguration config)
-    {
-        _accessor = accessor;
-    }
-    public bool HasHttpContext => _accessor.HttpContext is not null;
+    public bool IsPlatformContext => _isPlatformContext;
+    public bool HasHttpContext => accessor.HttpContext is not null;
     public Guid TenantId
     {
         get
         {
-            if (!HasHttpContext)
+            if (!HasHttpContext || IsPlatformContext)
                 return Guid.Empty;
 
-            var tenantItem = _accessor.HttpContext!.Items[TenantItemKey];
-            if (tenantItem is Guid tenantId)
+            var _tenantItem = accessor.HttpContext!.Items[ConstantValues.TenantContextItemKey];
+            if (_tenantItem is Guid tenantId)
                 return tenantId;
 
-            if (tenantItem is not null && Guid.TryParse(tenantItem.ToString(), out var parsedTenantId))
+            if (_tenantItem is not null && Guid.TryParse(_tenantItem.ToString(), out var parsedTenantId))
                 return parsedTenantId;
 
             throw new InvalidOperationException("Tenant ID não foi resolvido para a requisição.");
