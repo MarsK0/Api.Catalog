@@ -3,15 +3,15 @@
 public class PriceList : TenantScopedEntity
 {
     public string Name { get; set; } = null!;
-    public DateTime? ValidFrom { get; set; }
-    public DateTime? ValidUntil { get; set; }
+    public DateTimeOffset? ValidFrom { get; set; }
+    public DateTimeOffset? ValidUntil { get; set; }
 
     private PriceList() { }
 
     public static AppResult<PriceList> Create(
         string Name,
-        DateTime? ValidFrom,
-        DateTime? ValidUntil
+        DateTimeOffset? ValidFrom,
+        DateTimeOffset? ValidUntil
     )
     {
         return new PriceList
