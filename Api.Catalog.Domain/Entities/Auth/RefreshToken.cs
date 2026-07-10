@@ -26,15 +26,7 @@ public class RefreshToken : BaseEntity
         RememberMe = rememberMe;
     }
 
-    public void MarkAsUsed()
-    {
-        IsUsed = true;
-        MarkAsUpdated();
-    }
-    public void Revoke()
-    {
-        Revoked = true;
-        MarkAsUpdated();
-    }
+    public void MarkAsUsed() => IsUsed = true;
+    public void Revoke() => Revoked = true;
     public bool IsValid => !IsUsed && !Revoked && Expires > DateTimeOffset.UtcNow;
 }
