@@ -6,8 +6,8 @@ public abstract class BaseEntity
 {
     public Guid Id { get; protected set; } = Guid.NewGuid();
     public EStatus Status { get; protected set; } = EStatus.Enabled;
-    public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; protected set; }
+    public DateTimeOffset CreatedAt { get; protected set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset? UpdatedAt { get; protected set; }
 
     protected void Enable()
     {
@@ -21,5 +21,5 @@ public abstract class BaseEntity
     }
 
     protected void MarkAsUpdated()
-        => UpdatedAt = DateTime.UtcNow;
+        => UpdatedAt = DateTimeOffset.UtcNow;
 }
