@@ -5,7 +5,7 @@ namespace Api.Catalog.Domain.Entities;
 
 public class Budget : TenantScopedEntity
 {
-    public DateTime ValidUntil { get; private set; }
+    public DateTimeOffset ValidUntil { get; private set; }
     public string UserEmail { get; private set; } = null!;
 
     private readonly List<BudgetItem> _items = new();
@@ -19,7 +19,7 @@ public class Budget : TenantScopedEntity
     private Budget() { }
 
     public static AppResult<Budget> Create(
-        DateTime validUntil,
+        DateTimeOffset validUntil,
         string userEmail,
         Guid? userId
     )
