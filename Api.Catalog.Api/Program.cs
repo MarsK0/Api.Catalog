@@ -12,6 +12,7 @@ using Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using Serilog;
 using System.Text;
 
@@ -29,6 +30,7 @@ try
 
     builder.Services.AddControllers();
 
+    builder.Services.AddOpenApi();
 
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<ITenantContext, TenantContext>();
@@ -108,6 +110,12 @@ try
     });
 
     var app = builder.Build();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.MapOpenApi();
+        app.MapScalarApiReference();
+    }
 
     using (var scope = app.Services.CreateScope())
     {
