@@ -21,9 +21,9 @@ internal class PostgresTenantStore : ITenantStore
         return await _cache.GetOrCreateAsync(
             $"tenant:{slug}",
             async () => { 
-                return await _db.Tenants
+                return (await _db.Tenants
                     .AsNoTracking()
-                    .FirstOrDefaultAsync(t => t.Slug == slug)?
+                    .FirstOrDefaultAsync(t => t.Slug == slug))?
                     .Id;
             }
         );

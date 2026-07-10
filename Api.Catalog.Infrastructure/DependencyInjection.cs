@@ -31,7 +31,7 @@ public static class DependencyInjection
         #endregion
 
         #region Services
-        services.AddMemoryCache();
+        services.AddHybridCache();
         services.AddSingleton<ICacheService, AppCacheService>();
         services.AddScoped<ITenantStore, PostgresTenantStore>();
         services.AddScoped<ITokenService, TokenService>();
