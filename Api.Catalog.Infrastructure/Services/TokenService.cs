@@ -37,7 +37,7 @@ internal sealed class TokenService : ITokenService
         //foreach (var permission in permissions)
         //    claims.Add(new Claim(TokenClaims.PermissionClaimName, permission.ToString()));
 
-        var expires = DateTime.UtcNow.AddMinutes(int.Parse(jwtConfig["Expires"] ?? "15"));
+        var expires = DateTimeOffset.UtcNow.AddMinutes(int.Parse(jwtConfig["Expires"] ?? "15"));
 
         var token = new JwtSecurityToken(
             issuer: jwtConfig["Issuer"],
