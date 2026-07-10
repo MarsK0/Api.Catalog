@@ -4,10 +4,10 @@ using Api.Catalog.Application.Contracts.Contexts;
 
 namespace Api.Catalog.Api.Contexts;
 
-public sealed class TenantContext : ITenantContext
+public sealed class HttpTenantContext : ITenantContext
 {
     private readonly TenantHttpContextData _context;
-    public TenantContext(IHttpContextAccessor accessor)
+    public HttpTenantContext(IHttpContextAccessor accessor)
     {
         if (
             accessor.HttpContext?.Items.TryGetValue(ConstantValues.TenantContextItemKey, out var value) is true &&
