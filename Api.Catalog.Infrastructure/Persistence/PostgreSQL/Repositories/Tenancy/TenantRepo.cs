@@ -1,6 +1,7 @@
 ﻿using Api.Catalog.Application.Contracts;
 using Api.Catalog.Application.Contracts.Contexts;
 using Api.Catalog.Domain.Entities;
+using Api.Catalog.Infrastructure.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -9,7 +10,7 @@ namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 internal sealed class TenantRepo(
     AppDbContext db,
     ITenantContext tenantContext,
-    IMemoryCache cache
+    ICacheService cache
 ) : ITenantRepo
 {
     public async Task CreateAsync(Tenant tenant, CancellationToken ct)
@@ -31,7 +32,7 @@ internal sealed class TenantRepo(
         string cacheKey = $"tenant:{tenantId}:Modules";
         return await cache.GetOrCreateAsync(
             cacheKey,
-            async entry =>
+            async () =>
             {
                 return await db.TenantModules
                     .Select(s => s.ModuleCode)
