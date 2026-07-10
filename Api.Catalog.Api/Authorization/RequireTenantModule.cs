@@ -1,26 +1,18 @@
-﻿using Api.Catalog.Application.Contracts;
-using Api.Catalog.Application.Contracts.Contexts;
+﻿using Api.Catalog.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Catalog.Api.Authorization;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-internal sealed class RequireTenantModuleAttribute : AuthorizeAttribute
-{
-    public RequireTenantModuleAttribute(string module) : base(TenantModulesPolicies.Name(module)) { }
-}
+internal sealed class RequireTenantModuleAttribute(string module) : AuthorizeAttribute(TenantModulesPolicies.Name(module)) { }
 
 public static class TenantModulesPolicies
 {
-    public const string Prefix = "Module";
-    public static string Name(string module) => $"{Prefix}:{module}";
+    public static string Name(string module) => $"Module:{module}";
 }
-internal sealed class TenantModuleRequirement(string module) : IAuthorizationRequirement
-{
-    public string Module { get; } = module;
-}
+internal sealed record TenantModuleRequirement(string Module) : IAuthorizationRequirement;
 internal sealed class TenantModulesAuthorizationHandler(
-    ITenantRepo tenantRepo,
+    IModuleValidator moduleValidator,
     IHttpContextAccessor httpContextAccessor
 ) : AuthorizationHandler<TenantModuleRequirement>
 {
@@ -31,8 +23,8 @@ internal sealed class TenantModulesAuthorizationHandler(
     {
         var cancellationToken = httpContextAccessor.HttpContext?.RequestAborted ?? CancellationToken.None;
 
-        var unlockedModules = await tenantRepo.GetModulesAsync(cancellationToken);
-        if (unlockedModules.Contains(requirement.Module))
+        var moduleIsUnlocked = await moduleValidator.IsModuleUnlocked(requirement.Module, cancellationToken);
+        if (moduleIsUnlocked)
             context.Succeed(requirement);
     }
 }
