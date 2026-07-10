@@ -6,12 +6,12 @@ namespace Api.Catalog.Api.Contexts;
 
 public sealed class HttpTenantContext : ITenantContext
 {
-    private readonly TenantHttpContextData _context;
+    private readonly HttpTenantContextData _context;
     public HttpTenantContext(IHttpContextAccessor accessor)
     {
         if (
             accessor.HttpContext?.Items.TryGetValue(ConstantValues.TenantContextItemKey, out var value) is true &&
-            value is TenantHttpContextData context
+            value is HttpTenantContextData context
         )
         {
             _context = context;
@@ -19,7 +19,7 @@ public sealed class HttpTenantContext : ITenantContext
         else
         {
             // Empty context
-            _context = new TenantHttpContextData(null, false);
+            _context = new HttpTenantContextData(null, false);
         }
     }
     public Guid? TenantId => _context.TenantId;
