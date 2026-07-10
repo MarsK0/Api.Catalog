@@ -25,6 +25,8 @@ internal sealed class AppDbContextDesignTimeFactory : IDesignTimeDbContextFactor
             .UseNpgsql(connectionString)
             .Options;
 
-        return new AppDbContext(options);
+        var timeProvider = TimeProvider.System;
+
+        return new AppDbContext(options, timeProvider);
     }
 }
