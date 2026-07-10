@@ -105,8 +105,6 @@ try
             };
         });
 
-    builder.Services.AddMemoryCache();
-
     builder.Services.AddAuthorization(options =>
     {
         foreach (var permission in AppPermissions.TenantPermissions.GetAll)

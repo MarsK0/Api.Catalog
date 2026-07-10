@@ -1,6 +1,6 @@
 ﻿using Api.Catalog.Application.Contracts;
 using Api.Catalog.Infrastructure.Contracts;
-using Api.Catalog.Infrastructure.Persistence;
+using Api.Catalog.Infrastructure.Persistence.Cache;
 using Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 using Api.Catalog.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +31,8 @@ public static class DependencyInjection
         #endregion
 
         #region Services
+        services.AddMemoryCache();
+        services.AddSingleton<ICacheService, AppCacheService>();
         services.AddScoped<ITenantStore, PostgresTenantStore>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddSingleton<IPasswordHashService, BCryptPasswordHashService>();
