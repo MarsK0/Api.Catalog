@@ -1,5 +1,4 @@
 ﻿using Api.Catalog.Api.Constants;
-using Api.Catalog.Api.Models;
 using Api.Catalog.Domain;
 using Api.Catalog.Infrastructure.Contracts;
 using System.Net;
@@ -31,9 +30,9 @@ public class TenantResolverMiddleware
 
         await ResolveTenantId(context, tenantStore)
             .FoldAsync(
-                onSuccess: async (resolved) =>
+                onSuccess: async (tenantId) =>
                 {
-                    context.Items[ConstantValues.TenantContextItemKey] = resolved;
+                    context.Items[ConstantValues.TenantContextItemKey] = tenantId;
                     await _next(context);
                 },
                 onFailure: async (failure) =>
@@ -46,7 +45,7 @@ public class TenantResolverMiddleware
     }
 
     // Busca ID do tenant ou slug como fallback no header. Se encontra slug, busca tenantId. Ambos os casos retorna tenantId ou falha.
-    private async Task<AppResult<TenantRequestContext>> ResolveTenantId(HttpContext context, ITenantStore tenantStore)
+    private async Task<AppResult<string>> ResolveTenantId(HttpContext context, ITenantStore tenantStore)
     {
         var headerValue = context.Request.Headers[ConstantValues.TenantHeaderName].FirstOrDefault();
 
@@ -60,19 +59,19 @@ public class TenantResolverMiddleware
             headerValue.Equals(ConstantValues.PlatformSlug, StringComparison.OrdinalIgnoreCase) ||
             headerValue.Equals(ConstantValues.PlatformContextIdentifier, StringComparison.OrdinalIgnoreCase)
         )
-            return new TenantRequestContext(null, true);
+            return ConstantValues.PlatformContextIdentifier;
 
 
         if (Guid.TryParse(headerValue, out var tenantId))
         {
             return await tenantStore.TenantExistsAsync(tenantId)
-                ? new TenantRequestContext(tenantId, false)
+                ? tenantId.ToString()
                 : AppFailure.InvalidRequest("Empresa não encontrada. Contate o suporte.");
         }
 
         var id = await tenantStore.GetTenantIdBySlugAsync(headerValue);
         if (id.HasValue)
-            return new TenantRequestContext(id, false);
+            return id.ToString()!;
 
         return AppFailure.InvalidRequest("Empresa não encontrada. contate o suporte.");
     }
