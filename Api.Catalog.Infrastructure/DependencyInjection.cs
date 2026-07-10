@@ -36,6 +36,10 @@ public static class DependencyInjection
         services.AddSingleton<IPasswordHashService, BCryptPasswordHashService>();
         #endregion
 
+        #region Providers
+        services.AddSingleton<TimeProvider>(TimeProvider.System);
+        #endregion
+
         return services;
     }
 }

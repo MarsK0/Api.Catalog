@@ -11,8 +11,17 @@ namespace Api.Catalog.Infrastructure.Services;
 internal sealed class TokenService : ITokenService
 {
     private readonly IConfiguration _config;
+    private readonly TimeProvider _timeProvider;
 
-    public TokenService(IConfiguration config) => _config = config;
+    public TokenService(
+        IConfiguration config,
+        TimeProvider timeProvider
+    )
+    {
+        _config = config;
+        _timeProvider = timeProvider;
+    }
+    
 
     public (string Token, DateTime Expires) GenerateToken(Person person)
     {
@@ -37,16 +46,16 @@ internal sealed class TokenService : ITokenService
         //foreach (var permission in permissions)
         //    claims.Add(new Claim(TokenClaims.PermissionClaimName, permission.ToString()));
 
-        var expires = DateTime.UtcNow.AddMinutes(int.Parse(jwtConfig["Expires"] ?? "15"));
+        var expires = _timeProvider.GetUtcNow().AddMinutes(int.Parse(jwtConfig["Expires"] ?? "15"));
 
         var token = new JwtSecurityToken(
             issuer: jwtConfig["Issuer"],
             audience: jwtConfig["Audience"],
             claims: claims,
-            expires: expires,
+            expires: expires.UtcDateTime,
             signingCredentials: credentials
         );
 
-        return (new JwtSecurityTokenHandler().WriteToken(token), expires);
+        return (new JwtSecurityTokenHandler().WriteToken(token), expires.UtcDateTime);
     }
 }
