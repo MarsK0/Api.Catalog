@@ -3,6 +3,6 @@
 public interface ITenantContext
 {
     Guid TenantId { get; }
-    bool HasContext { get; }
+    bool HasHttpContext { get; }
     bool IsPlatformContext { get; }
 }
