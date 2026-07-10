@@ -1,16 +1,15 @@
 ﻿using Api.Catalog.Infrastructure.Contracts;
-using Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Api.Catalog.Infrastructure.Persistence;
+namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 
 internal class PostgresTenantStore : ITenantStore
 {
-    private readonly IMemoryCache _cache;
+    private readonly ICacheService _cache;
     private readonly AppDbContext _db;
     public PostgresTenantStore(
-        IMemoryCache cache,
+        ICacheService cache,
         AppDbContext db
     )
     {
@@ -21,10 +20,7 @@ internal class PostgresTenantStore : ITenantStore
     {
         return await _cache.GetOrCreateAsync(
             $"tenant:{slug}",
-            async entry =>
-            {
-                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60);
-
+            async () => { 
                 return (await _db.Tenants
                     .AsNoTracking()
                     .FirstOrDefaultAsync(t => t.Slug == slug))?
@@ -37,10 +33,8 @@ internal class PostgresTenantStore : ITenantStore
     {
         return await _cache.GetOrCreateAsync(
             $"tenant_exists:{tenantId}",
-            async entry =>
+            async () =>
             {
-                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60);
-
                 return (await _db.Tenants
                     .AsNoTracking()
                     .FirstOrDefaultAsync(t => t.Id == tenantId)
