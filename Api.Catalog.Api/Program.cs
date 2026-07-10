@@ -12,7 +12,6 @@ using Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
 using Serilog;
 using System.Text;
 
@@ -29,35 +28,8 @@ try
     builder.Host.UseSerilog();
 
     builder.Services.AddControllers();
-    builder.Services.AddSwaggerGen(options =>
-    {
-        options.SwaggerDoc("v1", new()
-        {
-            Title = "Catalog API",
-            Version = "v1",
-            Description = "API do sistema de catálogo"
-        });
 
-        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-        {
-            Name = "Authorization",
-            Type = SecuritySchemeType.Http,
-            Scheme = "Bearer",
-            BearerFormat = "JWT",
-            In = ParameterLocation.Header,
-            Description = "Informe o token JWT obtido no endpoint de autenticacao.",
-        });
 
-        options.AddSecurityRequirement(doc => new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecuritySchemeReference("Bearer", doc),
-                new List<string>()
-            }
-        });
-
-        options.OperationFilter<SwaggerTenantHeaderOperationFilter>();
-    });
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<ITenantContext, TenantContext>();
     builder.Services
@@ -136,17 +108,6 @@ try
     });
 
     var app = builder.Build();
-
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI(options =>
-        {
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Catalog API v1");
-            options.RoutePrefix = "swagger";
-        });
-    }
-    ;
 
     using (var scope = app.Services.CreateScope())
     {
