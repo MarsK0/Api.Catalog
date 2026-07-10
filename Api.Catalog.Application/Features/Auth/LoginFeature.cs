@@ -10,6 +10,7 @@ using System.Text;
 namespace Api.Catalog.Application.Auth;
 
 internal sealed class LoginHandler(
+    TimeProvider timeProvider,
     IPasswordHashService passwordHashService,
     ITokenService tokenService,
     IUnitOfWork unitOfWork,
@@ -33,9 +34,10 @@ internal sealed class LoginHandler(
         if (account.Person.Status is EStatus.Disabled)
             return AppFailure.InvalidRequest("Credenciais iválidas.");
 
-        return await Login(tokenService, unitOfWork, refreshTokenRepo, account, command.RememberMe, ct);
+        return await Login(timeProvider, tokenService, unitOfWork, refreshTokenRepo, account, command.RememberMe, ct);
     }
     public static async Task<LoginResponse> Login(
+        TimeProvider timeProvider,
         ITokenService tokenService,
         IUnitOfWork unitOfWork,
         IRefreshTokenRepo refreshTokenRepo,
@@ -54,9 +56,10 @@ internal sealed class LoginHandler(
         );
 
         var (rtValue, rtHash) = GenerateRefreshToken();
+        var utcNow = timeProvider.GetUtcNow();
         var rtExpires = rememberMe
-            ? DateTime.UtcNow.AddDays(30)
-            : DateTime.UtcNow.AddHours(8);
+            ? utcNow.AddDays(30)
+            : utcNow.AddHours(8);
 
         var refreshToken = new RefreshToken(account.Person.Id, rtHash, Guid.NewGuid(), rtExpires, rememberMe);
         await refreshTokenRepo.AddAsync(refreshToken, ct);
