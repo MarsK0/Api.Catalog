@@ -2,7 +2,6 @@
 
 public interface ITenantContext
 {
-    Guid TenantId { get; }
-    bool HasHttpContext { get; }
+    Guid? TenantId { get; }
     bool IsPlatformContext { get; }
 }
