@@ -7,25 +7,16 @@ using System.Text.Json;
 
 namespace Api.Catalog.Api.Middlewares;
 
-public class TenantResolverMiddleware
+public class TenantResolverMiddleware(
+    RequestDelegate next,
+    ILogger<TenantResolverMiddleware> logger
+)
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<TenantResolverMiddleware> _logger;
-
-    public TenantResolverMiddleware(
-        RequestDelegate next,
-        ILogger<TenantResolverMiddleware> logger
-    )
-    {
-        _next = next;
-        _logger = logger;
-    }
-
     public async Task InvokeAsync(HttpContext context, ITenantStore tenantStore)
     {
         if (!context.Request.Path.StartsWithSegments("/api"))
         {
-            await _next(context);
+            await next(context);
             return;
         }
 
@@ -34,7 +25,7 @@ public class TenantResolverMiddleware
                 onSuccess: async (resolved) =>
                 {
                     context.Items[ConstantValues.TenantContextItemKey] = resolved;
-                    await _next(context);
+                    await next(context);
                 },
                 onFailure: async (failure) =>
                 {
@@ -46,13 +37,13 @@ public class TenantResolverMiddleware
     }
 
     // Busca ID do tenant ou slug como fallback no header. Se encontra slug, busca tenantId. Ambos os casos retorna tenantId ou falha.
-    private async Task<AppResult<TenantHttpContextData>> ResolveTenantId(HttpContext context, ITenantStore tenantStore)
+    private async Task<AppResult<HttpTenantContextData>> ResolveTenantId(HttpContext context, ITenantStore tenantStore)
     {
         var headerValue = context.Request.Headers[ConstantValues.TenantHeaderName].FirstOrDefault();
 
         if (string.IsNullOrWhiteSpace(headerValue))
         {
-            _logger.LogWarning("Header {Header} ausente na requisição", ConstantValues.TenantHeaderName);
+            logger.LogWarning("Header {Header} ausente na requisição", ConstantValues.TenantHeaderName);
             return AppFailure.InvalidRequest("Empresa não definida na requisição. Contate o suporte.");
         }
 
@@ -60,19 +51,19 @@ public class TenantResolverMiddleware
             headerValue.Equals(ConstantValues.PlatformSlug, StringComparison.OrdinalIgnoreCase) ||
             headerValue.Equals(ConstantValues.PlatformContextIdentifier, StringComparison.OrdinalIgnoreCase)
         )
-            return new TenantHttpContextData(null, true);
+            return new HttpTenantContextData(null, true);
 
 
         if (Guid.TryParse(headerValue, out var tenantId))
         {
             return await tenantStore.TenantExistsAsync(tenantId)
-                ? new TenantHttpContextData(tenantId, false)
+                ? new HttpTenantContextData(tenantId, false)
                 : AppFailure.InvalidRequest("Empresa não encontrada. Contate o suporte.");
         }
 
         var id = await tenantStore.GetTenantIdBySlugAsync(headerValue);
         if (id.HasValue)
-            return new TenantHttpContextData(id, false);
+            return new HttpTenantContextData(id, false);
 
         return AppFailure.InvalidRequest("Empresa não encontrada. contate o suporte.");
     }
