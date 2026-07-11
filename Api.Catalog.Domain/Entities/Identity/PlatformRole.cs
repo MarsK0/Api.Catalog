@@ -19,13 +19,12 @@ public sealed class PlatformRole : BaseEntity
     public static AppResult<PlatformRole> Create(RoleInfo roleInfo)
         => new PlatformRole(roleInfo);
 
-    public AppResult AssignPermissions(IEnumerable<PermissionInfo> permissions)
+    public AppResult AssignPermissions(HashSet<PermissionInfo> permissions)
     {
-        var uniquePermissions = permissions?.ToHashSet() ?? [];
-        if (uniquePermissions.Count == 0)
+        if (permissions.Count == 0)
             return AppFailure.DomainValidation("Ao menos uma permissão deve ser informada");
 
-        foreach (var permission in uniquePermissions)
+        foreach (var permission in permissions)
             if (!_roleInfo.Permissions.Contains(permission))
                 _roleInfo.AssignPermission(permission);
 
