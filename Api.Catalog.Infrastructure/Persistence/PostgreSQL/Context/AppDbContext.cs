@@ -9,12 +9,7 @@ namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 public sealed class AppDbContext : DbContext
 {
     private readonly TimeProvider _timeProvider;
-    private readonly ITenantContext? _tenantContext;
-
-    public AppDbContext(DbContextOptions<AppDbContext> options, TimeProvider timeProvider) : base(options)
-    {
-        _timeProvider = timeProvider;
-    }
+    private readonly ITenantContext _tenantContext;
     public AppDbContext(DbContextOptions<AppDbContext> options, TimeProvider timeProvider, ITenantContext tenantContext) : base(options)
     {
         _tenantContext = tenantContext;
@@ -87,7 +82,7 @@ public sealed class AppDbContext : DbContext
     {
         modelBuilder.Entity<TEntity>().HasQueryFilter(
             entity => (
-                entity.TenantId == _tenantContext!.TenantId
+                entity.TenantId == _tenantContext.TenantId
             )
         );
     }
@@ -119,6 +114,6 @@ public sealed class AppDbContext : DbContext
     {
         foreach (var entry in ChangeTracker.Entries<TenantScopedEntity>())
             if (entry.State == EntityState.Added && entry.Entity.TenantId == Guid.Empty)
-                entry.Entity.SetTenant(_tenantContext!.TenantId);
+                entry.Entity.SetTenant(_tenantContext.TenantId ?? throw new InvalidOperationException("Tenant obrigatório para a operação de definição de tenantId. Revisar contexto Tenant."));
     }
 }

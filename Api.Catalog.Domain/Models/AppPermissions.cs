@@ -4,6 +4,7 @@ namespace Api.Catalog.Domain.Models;
 
 public static class AppPermissions
 {
+    public static string[] GetAll => [..PlatformPermissions.GetAll, ..TenantPermissions.GetAll];
     public static class PlatformPermissions
     {
         private static readonly string[] _all;
@@ -19,11 +20,11 @@ public static class AppPermissions
         }
         public static class Tenants
         {
-            public const string Base = "TENANTS";
-            public const string Read = "TENANTS.READ";
-            public const string Create = "TENANTS.CREATE";
-            public const string Update = "TENANTS.UPDATE";
-            public const string Delete = "TENANTS.DELETE";
+            public const string Base   = "PLATFORM.TENANTS";
+            public const string Read   = "PLATFORM.TENANTS.READ";
+            public const string Create = "PLATFORM.TENANTS.CREATE";
+            public const string Update = "PLATFORM.TENANTS.UPDATE";
+            public const string Delete = "PLATFORM.TENANTS.DELETE";
         }
     }
     public static class TenantPermissions
@@ -41,11 +42,11 @@ public static class AppPermissions
         }
         public static class Roles
         {
-            public const string Base = "ROLES";
-            public const string Read = "ROLES.READ";
-            public const string Create = "ROLES.CREATE";
-            public const string Update = "ROLES.UPDATE";
-            public const string Delete = "ROLES.DELETE";
+            public const string Base   = "TENANT.ROLES";
+            public const string Read   = "TENANT.ROLES.READ";
+            public const string Create = "TENANT.ROLES.CREATE";
+            public const string Update = "TENANT.ROLES.UPDATE";
+            public const string Delete = "TENANT.ROLES.DELETE";
         }
     }
 }

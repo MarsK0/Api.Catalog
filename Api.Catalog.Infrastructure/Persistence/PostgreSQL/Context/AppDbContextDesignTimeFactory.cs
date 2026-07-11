@@ -27,6 +27,6 @@ internal sealed class AppDbContextDesignTimeFactory : IDesignTimeDbContextFactor
 
         var timeProvider = TimeProvider.System;
 
-        return new AppDbContext(options, timeProvider);
+        return new AppDbContext(options, timeProvider, new TenantEmptyContext());
     }
 }
