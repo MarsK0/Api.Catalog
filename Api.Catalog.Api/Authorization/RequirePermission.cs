@@ -1,4 +1,5 @@
-﻿using Api.Catalog.Infrastructure.Contracts;
+﻿using Api.Catalog.Domain.ValueObjects;
+using Api.Catalog.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Catalog.Api.Authorization;
@@ -7,9 +8,9 @@ namespace Api.Catalog.Api.Authorization;
 internal sealed class RequirePermissionAttribute(string permission) : AuthorizeAttribute(policy: permission) { }
 public static class PermissionPolicies
 {
-    public static string Name(string permission) => $"PERM:{permission}";
+    public static string Name(PermissionInfo permission) => $"PERM:{permission.Value}";
 }
-internal sealed record PermissionRequirement(string Permission) : IAuthorizationRequirement;
+internal sealed record PermissionRequirement(PermissionInfo Permission) : IAuthorizationRequirement;
 internal sealed class PermissionAuthorizationHandler(
     IPermissionValidator permissionValidator,
     IHttpContextAccessor httpContextAccessor
