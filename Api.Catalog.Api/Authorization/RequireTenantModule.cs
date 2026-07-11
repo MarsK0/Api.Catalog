@@ -8,7 +8,7 @@ internal sealed class RequireTenantModuleAttribute(string module) : AuthorizeAtt
 
 public static class TenantModulesPolicies
 {
-    public static string Name(string module) => $"Module:{module}";
+    public static string Name(string module) => $"MODULE:{module}";
 }
 internal sealed record TenantModuleRequirement(string Module) : IAuthorizationRequirement;
 internal sealed class TenantModulesAuthorizationHandler(
