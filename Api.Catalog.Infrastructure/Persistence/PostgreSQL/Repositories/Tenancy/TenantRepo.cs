@@ -32,12 +32,10 @@ internal sealed class TenantRepo(
         string cacheKey = $"tenant:{tenantId}:Modules";
         return await cache.GetOrCreateAsync(
             cacheKey,
-            async () =>
-            {
-                return await db.TenantModules
+            (cacheCt) => db.TenantModules
                     .Select(s => s.ModuleCode)
-                    .ToListAsync(ct);
-            }
+                    .ToListAsync(cacheCt),
+            ct
         ) ?? [];
     }
     private IQueryable<Tenant> GetQuery(bool includes = true, bool track = false)
