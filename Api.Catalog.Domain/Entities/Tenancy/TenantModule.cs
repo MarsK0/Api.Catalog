@@ -10,7 +10,7 @@ public class TenantModule : TenantScopedEntity
         string moduleCode
     )
     {
-        if (!AppModules.Exists(moduleCode))
+        if (!Modules.Exists(moduleCode))
             return AppFailure.DomainValidation("Módulo não existente, verifique o código informado e tente novamente.");
 
         return new TenantModule
