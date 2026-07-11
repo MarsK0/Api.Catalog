@@ -15,6 +15,9 @@ internal class PersonMap : BaseMap<Person>
         builder.Property(p => p.Email).HasColumnName("email").HasMaxLength(120);
         builder.Property(p => p.Phone).HasColumnName("phone").HasMaxLength(20);
 
+        builder.HasIndex(i => i.Email)
+            .IsUnique();
+
         builder.HasMany(p => p.TenantRoles)
             .WithMany()
             .UsingEntity<PersonTenantRole>(

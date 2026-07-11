@@ -18,6 +18,7 @@ public static class DependencyInjection
             options => options.UseNpgsql(configuration.GetConnectionString("CatalogDb"))
         );
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IDataSeeder, PostgresSeed>();
         #endregion
 
         #region Repositories
