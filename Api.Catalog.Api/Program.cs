@@ -90,7 +90,7 @@ try
             );
         }
 
-        foreach (var module in AppModules.All)
+        foreach (var module in Modules.All)
         {
             var policy = TenantModulesPolicies.Name(module);
             options.AddPolicy(
