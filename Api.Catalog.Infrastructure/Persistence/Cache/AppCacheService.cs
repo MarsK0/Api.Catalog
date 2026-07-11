@@ -3,28 +3,23 @@ using Microsoft.Extensions.Caching.Hybrid;
 
 namespace Api.Catalog.Infrastructure.Persistence.Cache;
 
-internal sealed class AppCacheService : ICacheService
+internal sealed class AppCacheService(
+    TimeProvider timeProvider,
+    HybridCache cache
+    ) : ICacheService
 {
-    private readonly TimeProvider _timeProvider;
-    private readonly HybridCache _cache;
-    public AppCacheService(
-        TimeProvider timeProvider,
-        HybridCache cache
-    )
+    public async Task<T> GetOrCreateAsync<T>(string key, Func<CancellationToken, Task<T>> factory, CancellationToken ct, CacheOptions? options = null)
     {
-        _timeProvider = timeProvider;
-        _cache = cache;
-    }
-    public async Task<T> GetOrCreateAsync<T>(string key, Func<Task<T>> factory, CacheOptions? options = null)
-    {
-        return await _cache.GetOrCreateAsync(
+        return await cache.GetOrCreateAsync(
             key,
-            _ => new ValueTask<T>(factory()),
-            MapOptions(options) 
+            cacheCt => new ValueTask<T>(factory(cacheCt)),
+            MapOptions(options),
+            null,
+            ct
         );
     }
 
-    public async Task RemoveAsync(string key) => await _cache.RemoveAsync(key);
+    public async Task RemoveAsync(string key, CancellationToken ct) => await cache.RemoveAsync(key, ct);
 
     private HybridCacheEntryOptions MapOptions(CacheOptions? options)
     {
@@ -40,7 +35,7 @@ internal sealed class AppCacheService : ICacheService
         return new HybridCacheEntryOptions
         {
             Expiration = options.AbsoluteExpiration.HasValue
-                ? options.AbsoluteExpiration.Value - _timeProvider.GetUtcNow()
+                ? options.AbsoluteExpiration.Value - timeProvider.GetUtcNow()
                 : options.RelativeExpiration
         };
     }

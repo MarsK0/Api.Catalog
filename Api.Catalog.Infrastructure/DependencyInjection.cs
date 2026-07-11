@@ -35,6 +35,8 @@ public static class DependencyInjection
         services.AddSingleton<ICacheService, AppCacheService>();
         services.AddScoped<ITenantStore, PostgresTenantStore>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IPermissionValidator, PermissionValidatorService>();
+        services.AddScoped<IModuleValidator, ModuleValidatorService>();
         services.AddSingleton<IPasswordHashService, BCryptPasswordHashService>();
         #endregion
 

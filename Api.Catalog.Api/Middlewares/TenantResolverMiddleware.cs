@@ -40,6 +40,7 @@ public class TenantResolverMiddleware(
     private async Task<AppResult<HttpTenantContextData>> ResolveTenantId(HttpContext context, ITenantStore tenantStore)
     {
         var headerValue = context.Request.Headers[ConstantValues.TenantHeaderName].FirstOrDefault();
+        var cancellationToken = context.RequestAborted;
 
         if (string.IsNullOrWhiteSpace(headerValue))
         {
@@ -56,12 +57,12 @@ public class TenantResolverMiddleware(
 
         if (Guid.TryParse(headerValue, out var tenantId))
         {
-            return await tenantStore.TenantExistsAsync(tenantId)
+            return await tenantStore.TenantExistsAsync(tenantId, cancellationToken)
                 ? new HttpTenantContextData(tenantId, false)
                 : AppFailure.InvalidRequest("Empresa não encontrada. Contate o suporte.");
         }
 
-        var id = await tenantStore.GetTenantIdBySlugAsync(headerValue);
+        var id = await tenantStore.GetTenantIdBySlugAsync(headerValue, cancellationToken);
         if (id.HasValue)
             return new HttpTenantContextData(id, false);
 
