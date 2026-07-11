@@ -7,7 +7,7 @@ namespace Api.Catalog.Api.Authorization;
 internal sealed class RequirePermissionAttribute(string permission) : AuthorizeAttribute(policy: permission) { }
 public static class PermissionPolicies
 {
-    public static string Name(string permission) => $"Perm:{permission}";
+    public static string Name(string permission) => $"PERM:{permission}";
 }
 internal sealed record PermissionRequirement(string Permission) : IAuthorizationRequirement;
 internal sealed class PermissionAuthorizationHandler(
