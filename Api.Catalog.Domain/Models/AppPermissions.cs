@@ -1,30 +1,45 @@
-﻿using System.Reflection;
+﻿using Api.Catalog.Domain.ValueObjects;
+using System.Reflection;
 
 namespace Api.Catalog.Domain.Models;
 
 public static class AppPermissions
 {
-    public static string[] GetAll => [..PlatformPermissions.GetAll, ..TenantPermissions.GetAll];
+    private static readonly HashSet<PermissionInfo> _all;
+    public static IReadOnlySet<PermissionInfo> GetAll => _all;
+    static AppPermissions()
+    {
+        _all = [.. typeof(AppPermissions)
+            .GetNestedTypes(BindingFlags.Public | BindingFlags.Static)
+            .SelectMany(s => s.GetNestedTypes(BindingFlags.Public | BindingFlags.Static))
+            .SelectMany(s => s.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+            .Where(w => w.IsStatic && !w.IsInitOnly && w.FieldType == typeof(PermissionInfo))
+            .Select(s => (PermissionInfo)s.GetValue(null)!)];
+    }
+    
     public static class PlatformPermissions
     {
-        private static readonly string[] _all;
-        public static string[] GetAll => _all;
-        static PlatformPermissions()
-        {
-            _all = typeof(PlatformPermissions)
-                .GetNestedTypes(BindingFlags.Public | BindingFlags.Static)
-                .SelectMany(s => s.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
-                .Where(w => w.IsLiteral && !w.IsInitOnly && w.FieldType == typeof(string))
-                .Select(s => (string)s.GetRawConstantValue()!)
-                .ToArray();
-        }
+        public const string Scope = "PLATFORM";
         public static class Tenants
         {
-            public const string Base   = "PLATFORM.TENANTS";
-            public const string Read   = "PLATFORM.TENANTS.READ";
-            public const string Create = "PLATFORM.TENANTS.CREATE";
-            public const string Update = "PLATFORM.TENANTS.UPDATE";
-            public const string Delete = "PLATFORM.TENANTS.DELETE";
+            public const string Resource = "TENANTS";
+
+            public static readonly PermissionInfo Manage = new(Scope, Resource, "MANAGE");
+            public static readonly PermissionInfo Read   = new(Scope, Resource, "READ");
+            public static readonly PermissionInfo Create = new(Scope, Resource, "CREATE");
+            public static readonly PermissionInfo Update = new(Scope, Resource, "UPDATE");
+            public static readonly PermissionInfo Delete = new(Scope, Resource, "DELETE");
+        }
+
+        public static class Roles
+        {
+            public const string Resource = "ROLES";
+
+            public static readonly PermissionInfo Manage = new(Scope, Resource, "MANAGE");
+            public static readonly PermissionInfo Read   = new(Scope, Resource, "READ");
+            public static readonly PermissionInfo Create = new(Scope, Resource, "CREATE");
+            public static readonly PermissionInfo Update = new(Scope, Resource, "UPDATE");
+            public static readonly PermissionInfo Delete = new(Scope, Resource, "DELETE");
         }
 
         public static class Roles
@@ -38,24 +53,15 @@ public static class AppPermissions
     }
     public static class TenantPermissions
     {
-        private static readonly string[] _all;
-        public static string[] GetAll => _all;
-        static TenantPermissions()
-        {
-            _all = typeof(TenantPermissions)
-                .GetNestedTypes(BindingFlags.Public | BindingFlags.Static)
-                .SelectMany(s => s.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
-                .Where(w => w.IsLiteral && !w.IsInitOnly && w.FieldType == typeof(string))
-                .Select(s => (string)s.GetRawConstantValue()!)
-                .ToArray();
-        }
+        public const string Scope = "TENANT";
         public static class Roles
         {
-            public const string Base   = "TENANT.ROLES";
-            public const string Read   = "TENANT.ROLES.READ";
-            public const string Create = "TENANT.ROLES.CREATE";
-            public const string Update = "TENANT.ROLES.UPDATE";
-            public const string Delete = "TENANT.ROLES.DELETE";
+            public const string Resource = "ROLES";
+            public static readonly PermissionInfo Manage = new(Scope, Resource, "MANAGE");
+            public static readonly PermissionInfo Read   = new(Scope, Resource, "READ");
+            public static readonly PermissionInfo Create = new(Scope, Resource, "CREATE");
+            public static readonly PermissionInfo Update = new(Scope, Resource, "UPDATE");
+            public static readonly PermissionInfo Delete = new(Scope, Resource, "DELETE");
         }
     }
 }
