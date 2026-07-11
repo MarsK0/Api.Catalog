@@ -31,7 +31,7 @@ public class AuthController(IMediator mediator) : CatalogBaseController
         if (!Request.Cookies.TryGetValue(RefreshCookieName, out var tokenValue) || string.IsNullOrWhiteSpace(tokenValue))
             return Unauthorized(new { Message = "Nenhuma sessão ativa encontrada." });
 
-        return await mediator.Send(new RefreshTokenCommand(tokenValue))
+        return await mediator.Send(new RefreshTokenCommand(tokenValue), ct)
             .FoldAsync(onSuccess: HandleLoginResponse, onFailure: HandleFailure);
     }
     [HttpPost("logout")]
