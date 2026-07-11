@@ -26,6 +26,15 @@ public static class AppPermissions
             public const string Update = "PLATFORM.TENANTS.UPDATE";
             public const string Delete = "PLATFORM.TENANTS.DELETE";
         }
+
+        public static class Roles
+        {
+            public const string Base   = "PLATFORM.ROLES";
+            public const string Read   = "PLATFORM.ROLES.READ";
+            public const string Create = "PLATFORM.ROLES.CREATE";
+            public const string Update = "PLATFORM.ROLES.UPDATE";
+            public const string Delete = "PLATFORM.ROLES.DELETE";
+        }
     }
     public static class TenantPermissions
     {
