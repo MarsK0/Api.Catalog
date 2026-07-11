@@ -2,7 +2,7 @@
 
 namespace Api.Catalog.Domain.Models;
 
-public static class AppRootRoles
+public static class RootRoles
 {
     public static readonly FrozenSet<string> Names =
     [

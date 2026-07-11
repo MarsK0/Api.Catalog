@@ -23,7 +23,7 @@ internal class PlatformRoleMap : BaseMap<PlatformRole>
                 .HasMaxLength(60)
                 .IsRequired();
 
-            ri.OwnsMany(ri => ri.Permissions, permission =>
+            ri.OwnsMany(m => m.Permissions, permission =>
             {
                 permission.ToTable("platform_role_permission");
                 permission.Property<Guid>("Id").ValueGeneratedOnAdd();
@@ -43,6 +43,10 @@ internal class PlatformRoleMap : BaseMap<PlatformRole>
                     .HasColumnName("action")
                     .HasMaxLength(30);
             });
+
+            ri.Navigation(n => n.Permissions)
+                .HasField("_permissions")
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
         });
         builder.Navigation(n => n.RoleInfo)
             .HasField("_roleInfo")

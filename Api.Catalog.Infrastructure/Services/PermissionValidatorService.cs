@@ -78,7 +78,7 @@ internal sealed class PermissionValidatorService(
             .SelectMany(p => p.TenantRoles.Select(pr => pr.Id))
             .ToListAsync(cacheCt);
     }
-    private Task<IReadOnlyList<PermissionInfo>?> PlatformRolePermissions(Guid roleId, CancellationToken cacheCt)
+    private Task<IReadOnlyCollection<PermissionInfo>?> PlatformRolePermissions(Guid roleId, CancellationToken cacheCt)
     {
         return db.PlatformRoles
             .AsNoTracking()
@@ -86,7 +86,7 @@ internal sealed class PermissionValidatorService(
             .Select(r => r.RoleInfo.Permissions)
             .FirstOrDefaultAsync(cacheCt);
     }
-    private Task<IReadOnlyList<PermissionInfo>?> TenantRolePermissions(Guid roleId, CancellationToken cacheCt)
+    private Task<IReadOnlyCollection<PermissionInfo>?> TenantRolePermissions(Guid roleId, CancellationToken cacheCt)
     {
         return db.TenantRoles
             .AsNoTracking()
