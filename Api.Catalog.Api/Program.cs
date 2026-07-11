@@ -33,7 +33,7 @@ try
     builder.Services.AddOpenApi();
 
     builder.Services.AddHttpContextAccessor();
-    builder.Services.AddScoped<ITenantContext, TenantContext>();
+    builder.Services.AddScoped<ITenantContext, HttpTenantContext>();
     builder.Services
         .AddInfrastructure(builder.Configuration)
         .AddApplication();
@@ -81,21 +81,12 @@ try
 
     builder.Services.AddAuthorization(options =>
     {
-        foreach (var permission in AppPermissions.TenantPermissions.GetAll)
+        foreach (var permission in AppPermissions.GetAll)
         {
-            var policy = PermissionPolicies.TenantPolicy(permission);
+            var policy = PermissionPolicies.Name(permission);
             options.AddPolicy(
                 policy,
-                p => p.RequireAuthenticatedUser().RequireClaim(TokenClaims.PermissionClaimName, permission)
-            );
-        }
-
-        foreach (var permission in AppPermissions.PlatformPermissions.GetAll)
-        {
-            var policy = PermissionPolicies.PlatformPolicy(permission);
-            options.AddPolicy(
-                policy,
-                p => p.RequireAuthenticatedUser().RequireClaim(TokenClaims.PermissionClaimName, permission)
+                p => p.RequireAuthenticatedUser().AddRequirements(new PermissionRequirement(permission))
             );
         }
 
@@ -155,7 +146,6 @@ try
     app.UseHttpsRedirection();
 
     app.UseMiddleware<ErrorHandlerMiddleware>();
-    app.UseMiddleware<TenantResolverMiddleware>();
 
     app.UseRouting();
     app.UseCors(CorsPolicies.DefaultPolicy);
@@ -163,6 +153,7 @@ try
     app.UseRateLimiter();
 
     app.UseAuthentication();
+    app.UseMiddleware<TenantResolverMiddleware>();
     app.UseAuthorization();
 
     app.MapControllers().RequireRateLimiting(RateLimitPolicies.General);
