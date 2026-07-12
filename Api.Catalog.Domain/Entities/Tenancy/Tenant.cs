@@ -67,30 +67,24 @@ public class Tenant : BaseEntity
     }
     public AppResult UnlockModules(IReadOnlyList<string> modules)
     {
-        var invalidModules = modules
-            .Where(m => !AppModules.Exists(m))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
-
-        if (invalidModules.Count > 0)
-            return AppFailure.DomainValidation($"Módulos inválidos: {string.Join(", ", invalidModules)}");
-
         var uniqueModules = modules
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
+        var modulesToUnlock = new List<TenantModule>();
         var modulesFailureMessages = new List<string>();
         foreach (var module in uniqueModules)
         {
             var tModuleResult = TenantModule.Create(module);
             if (tModuleResult.IsSuccess)
-                _modules.Add(tModuleResult.Value);
+                modulesToUnlock.Add(tModuleResult.Value);
             else
                 modulesFailureMessages.Add(tModuleResult.Failure.Message);
         }
         if (modulesFailureMessages.Count > 0)
             return AppFailure.DomainValidation(string.Join(" | ", modulesFailureMessages));
 
+        _modules.AddRange(modulesToUnlock);
         return AppResult.Success;
     }
     public AppResult RegisterUser(Guid personId)

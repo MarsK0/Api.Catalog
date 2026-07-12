@@ -21,9 +21,30 @@ internal class TenantRoleMap : TenantScopedMap<TenantRole>
                 .HasColumnName("description")
                 .HasMaxLength(60);
 
-            ri.Property(p => p.Permissions)
-                .HasColumnName("permissions")
-                .HasColumnType("text[]");
+            ri.OwnsMany(m => m.Permissions, permission =>
+            {
+                permission.ToTable("platform_role_permission");
+                permission.Property<Guid>("Id").ValueGeneratedOnAdd();
+                permission.HasKey("Id");
+
+                permission.WithOwner().HasForeignKey("platform_role_id");
+
+                permission.Property(p => p.Scope)
+                    .HasColumnName("scope")
+                    .HasMaxLength(10);
+
+                permission.Property(p => p.Resource)
+                    .HasColumnName("resource")
+                    .HasMaxLength(30);
+
+                permission.Property(p => p.Action)
+                    .HasColumnName("action")
+                    .HasMaxLength(30);
+            });
+
+            ri.Navigation(n => n.Permissions)
+                .HasField("_permissions")
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
         });
         builder.Navigation(n => n.RoleInfo)
             .HasField("_roleInfo")
