@@ -7,7 +7,7 @@ namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 internal class PostgresTenantStore(
     ICacheService cache,
     AppDbContext db
-    ) : ITenantStore
+) : ITenantStore
 {
     public async Task<Guid?> GetTenantIdBySlugAsync(string slug, CancellationToken ct)
     {

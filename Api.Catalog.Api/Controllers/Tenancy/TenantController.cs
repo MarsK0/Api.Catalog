@@ -1,4 +1,5 @@
 ﻿using Api.Catalog.Api.Authorization;
+using Api.Catalog.Api.Constants;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
 using Api.Catalog.Domain.Models;
@@ -9,11 +10,10 @@ namespace Api.Catalog.Api.Controllers.Tenancy;
 
 [ApiController]
 [Route("api/tenancy")]
-[RequirePermission(AppPermissions.PlatformPermissions.Tenants.Base)]
 public class TenantController(IMediator mediator) : CatalogBaseController
 {
     [HttpGet("tenant/{id:guid}")]
-    [RequirePermission(AppPermissions.PlatformPermissions.Tenants.Read)]
+    [RequirePermission(Permissions.PlatformPermissions.Tenants.Read)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
     {
         return await mediator.Send(new GetTenantByIdQuery(id), ct)
@@ -23,7 +23,7 @@ public class TenantController(IMediator mediator) : CatalogBaseController
             );
     }
     [HttpPost("tenant")]
-    [RequirePermission(AppPermissions.PlatformPermissions.Tenants.Create)]
+    [RequirePermission(Permissions.PlatformPermissions.Tenants.Create)]
     public async Task<IActionResult> Create([FromBody] CreateTenantCommand command, CancellationToken ct)
     {
         return await mediator.Send(command, ct)
