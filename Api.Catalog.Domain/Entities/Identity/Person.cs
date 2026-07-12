@@ -15,7 +15,7 @@ public class Person : BaseEntity
     public static AppResult<Person> Create(
         string name,
         string email,
-        string? phone
+        string? phone = null
     )
     {
         return new Person

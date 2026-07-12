@@ -96,7 +96,7 @@ public sealed class AppDbContext : DbContext
     {
         ApplyTenantIdInNewEntities();
         ApplyCreatedAndUpdatedAt();
-        return base.SaveChangesAsync();
+        return base.SaveChangesAsync(ct);
     }
     private void ApplyCreatedAndUpdatedAt()
     {
