@@ -22,6 +22,6 @@ internal sealed class RefreshTokenRepo(
     {
         return await db.RefreshTokens
             .Where(w => w.FamilyId == familyId)
-            .ToListAsync();
+            .ToListAsync(ct);
     }
 }

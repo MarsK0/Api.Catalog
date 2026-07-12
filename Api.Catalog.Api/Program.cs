@@ -8,6 +8,7 @@ using Api.Catalog.Application.Contracts.Contexts;
 using Api.Catalog.Domain.Entities;
 using Api.Catalog.Domain.Models;
 using Api.Catalog.Infrastructure;
+using Api.Catalog.Infrastructure.Contracts;
 using Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -110,37 +111,8 @@ try
 
     using (var scope = app.Services.CreateScope())
     {
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        await db.Database.MigrateAsync();
-
-        if (!await db.PlatformMembership.AnyAsync())
-        {
-            var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-
-            var ownerName = config["Owner:Name"] ?? throw new InvalidOperationException("MasterUser Name não definido.");
-            var ownerEmail = config["Owner:Email"] ?? throw new InvalidOperationException("MasterUser Email não definido.");
-            var ownerPassword = config["Owner:Password"] ?? throw new InvalidOperationException("MasterUser Password não definido.");
-
-            var personResult = Person.Create(ownerName, ownerEmail, null);
-            if (!personResult.IsSuccess)
-                throw new InvalidOperationException($"Falha ao criar Owner: {personResult.Failure.Message}");
-
-            var person = personResult.Value;
-            db.Persons.Add(person);
-
-            var passwordHashService = scope.ServiceProvider.GetRequiredService<IPasswordHashService>();
-
-            var accountResult = Account.Create(person.Id, passwordHashService.GenerateHash(ownerPassword));
-            if (!accountResult.IsSuccess)
-                throw new InvalidOperationException($"Falha ao criar Owner Account: {accountResult.Failure.Message}");
-
-            var account = accountResult.Value;
-            db.Accounts.Add(account);
-
-            var platformMembership =
-
-            await db.SaveChangesAsync(CancellationToken.None);
-        }
+        var seeder = scope.ServiceProvider.GetRequiredService<IDataSeeder>();
+        await seeder.SeedAsync(app.Lifetime.ApplicationStopping);
     }
 
     app.UseHttpsRedirection();
