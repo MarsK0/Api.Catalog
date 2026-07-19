@@ -1,6 +1,4 @@
-﻿using Api.Catalog.Domain.Models;
-
-namespace Api.Catalog.Domain.Entities;
+﻿namespace Api.Catalog.Domain.Entities;
 
 public class Tenant : BaseEntity
 {

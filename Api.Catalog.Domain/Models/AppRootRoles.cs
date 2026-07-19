@@ -16,6 +16,6 @@ public static class RootRoles
 
     public const string PlatformOwner = "PLATFORM_OWNER";
     public const string PlatformAdmin = "PLATFORM_ADMIN";
-    public const string TenantOwner   = "TENANT_OWNER";
-    public const string TenantAdmin   = "TENANT_ADMIN";
+    public const string TenantOwner = "TENANT_OWNER";
+    public const string TenantAdmin = "TENANT_ADMIN";
 }

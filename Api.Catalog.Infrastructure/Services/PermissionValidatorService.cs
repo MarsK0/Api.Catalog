@@ -31,7 +31,7 @@ internal sealed class PermissionValidatorService(
             (cacheCt) => PlatformUserRoles(db, cacheCt),
             ct
         );
-        foreach(var role in personRoles ?? [])
+        foreach (var role in personRoles ?? [])
         {
             var rolePermissions = await cache.GetOrCreateAsync(
                 $"",

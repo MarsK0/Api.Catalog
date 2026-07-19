@@ -21,7 +21,7 @@ internal sealed class TokenService : ITokenService
         _config = config;
         _timeProvider = timeProvider;
     }
-    
+
 
     public (string Token, DateTime Expires) GenerateToken(Person person)
     {

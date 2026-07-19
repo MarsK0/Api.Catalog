@@ -24,7 +24,7 @@ internal sealed class PermissionAuthorizationHandler(
         var cancellationToken = httpContextAccessor.HttpContext?.RequestAborted ?? CancellationToken.None;
 
         var hasPermission = await permissionValidator.HasPermission(requirement.Permission, cancellationToken);
-        if(hasPermission)
+        if (hasPermission)
             context.Succeed(requirement);
     }
 }

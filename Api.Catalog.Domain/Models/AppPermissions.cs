@@ -16,7 +16,7 @@ public static class AppPermissions
             .Where(w => w.IsStatic && !w.IsInitOnly && w.FieldType == typeof(PermissionInfo))
             .Select(s => (PermissionInfo)s.GetValue(null)!)];
     }
-    
+
     public static class PlatformPermissions
     {
         public const string Scope = "PLATFORM";
@@ -25,7 +25,7 @@ public static class AppPermissions
             public const string Resource = "TENANTS";
 
             public static readonly PermissionInfo Manage = new(Scope, Resource, "MANAGE");
-            public static readonly PermissionInfo Read   = new(Scope, Resource, "READ");
+            public static readonly PermissionInfo Read = new(Scope, Resource, "READ");
             public static readonly PermissionInfo Create = new(Scope, Resource, "CREATE");
             public static readonly PermissionInfo Update = new(Scope, Resource, "UPDATE");
             public static readonly PermissionInfo Delete = new(Scope, Resource, "DELETE");
@@ -36,7 +36,7 @@ public static class AppPermissions
             public const string Resource = "ROLES";
 
             public static readonly PermissionInfo Manage = new(Scope, Resource, "MANAGE");
-            public static readonly PermissionInfo Read   = new(Scope, Resource, "READ");
+            public static readonly PermissionInfo Read = new(Scope, Resource, "READ");
             public static readonly PermissionInfo Create = new(Scope, Resource, "CREATE");
             public static readonly PermissionInfo Update = new(Scope, Resource, "UPDATE");
             public static readonly PermissionInfo Delete = new(Scope, Resource, "DELETE");
@@ -49,7 +49,7 @@ public static class AppPermissions
         {
             public const string Resource = "ROLES";
             public static readonly PermissionInfo Manage = new(Scope, Resource, "MANAGE");
-            public static readonly PermissionInfo Read   = new(Scope, Resource, "READ");
+            public static readonly PermissionInfo Read = new(Scope, Resource, "READ");
             public static readonly PermissionInfo Create = new(Scope, Resource, "CREATE");
             public static readonly PermissionInfo Update = new(Scope, Resource, "UPDATE");
             public static readonly PermissionInfo Delete = new(Scope, Resource, "DELETE");

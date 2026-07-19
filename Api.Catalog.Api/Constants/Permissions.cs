@@ -10,7 +10,7 @@ public static class Permissions
             private const string Resource = "TENANTS";
 
             public const string Manage = $"{Scope}:{Resource}:MANAGE";
-            public const string Read   = $"{Scope}:{Resource}:READ";
+            public const string Read = $"{Scope}:{Resource}:READ";
             public const string Create = $"{Scope}:{Resource}:CREATE";
             public const string Update = $"{Scope}:{Resource}:UDPATE";
             public const string Delete = $"{Scope}:{Resource}:DELETE";
@@ -20,7 +20,7 @@ public static class Permissions
             private const string Resource = "ROLES";
 
             public const string Manage = $"{Scope}:{Resource}:MANAGE";
-            public const string Read   = $"{Scope}:{Resource}:READ";
+            public const string Read = $"{Scope}:{Resource}:READ";
             public const string Create = $"{Scope}:{Resource}:CREATE";
             public const string Update = $"{Scope}:{Resource}:UPDATE";
             public const string Delete = $"{Scope}:{Resource}:DELETE";

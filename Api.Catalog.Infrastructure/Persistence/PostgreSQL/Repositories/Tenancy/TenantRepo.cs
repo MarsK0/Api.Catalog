@@ -3,7 +3,6 @@ using Api.Catalog.Application.Contracts.Contexts;
 using Api.Catalog.Domain.Entities;
 using Api.Catalog.Infrastructure.Contracts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 

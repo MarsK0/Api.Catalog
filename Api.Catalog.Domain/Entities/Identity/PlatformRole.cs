@@ -1,5 +1,4 @@
-﻿using Api.Catalog.Domain.Models;
-using Api.Catalog.Domain.ValueObjects;
+﻿using Api.Catalog.Domain.ValueObjects;
 
 namespace Api.Catalog.Domain.Entities;
 
