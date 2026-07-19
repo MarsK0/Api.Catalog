@@ -2,7 +2,6 @@
 using Api.Catalog.Api.Constants;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
-using Api.Catalog.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

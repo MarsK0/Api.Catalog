@@ -1,7 +1,6 @@
 ﻿using Api.Catalog.Application.Contracts.Contexts;
 using Api.Catalog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Reflection;
 
 namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
@@ -105,7 +104,7 @@ public sealed class AppDbContext : DbContext
         {
             if (entry.State == EntityState.Added)
                 entry.Property(p => p.CreatedAt).CurrentValue = now;
-                
+
             if (entry.State == EntityState.Modified)
                 entry.Property(p => p.UpdatedAt).CurrentValue = now;
         }

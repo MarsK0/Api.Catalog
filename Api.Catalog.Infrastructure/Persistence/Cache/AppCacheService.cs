@@ -23,10 +23,10 @@ internal sealed class AppCacheService(
 
     private HybridCacheEntryOptions MapOptions(CacheOptions? options)
     {
-        if(
-            options is null || 
+        if (
+            options is null ||
             (
-                options.AbsoluteExpiration is null && 
+                options.AbsoluteExpiration is null &&
                 options.RelativeExpiration is null
             )
         )

@@ -1,6 +1,5 @@
 ﻿using Api.Catalog.Infrastructure.Contracts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 
@@ -13,7 +12,8 @@ internal class PostgresTenantStore(
     {
         return await cache.GetOrCreateAsync(
             $"TENANT_ID_BY_SLUG:{slug}",
-            async (cacheCt) => {
+            async (cacheCt) =>
+            {
                 return (await db.Tenants
                     .AsNoTracking()
                     .FirstOrDefaultAsync(f => f.Slug == slug, cacheCt))?
