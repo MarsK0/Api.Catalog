@@ -24,8 +24,7 @@ internal sealed class LoginHandler(
         if (account is null)
             return AppFailure.InvalidRequest("Credenciais inválidas.");
 
-        var hashedPassword = passwordHashService.GenerateHash(account.PasswordHash);
-        if (!passwordHashService.Matches(account.PasswordHash, hashedPassword))
+        if (!passwordHashService.Matches(command.Password, account.PasswordHash))
             return AppFailure.InvalidRequest("Credenciais iválidas.");
 
         if (account.Status is EStatus.Disabled)
