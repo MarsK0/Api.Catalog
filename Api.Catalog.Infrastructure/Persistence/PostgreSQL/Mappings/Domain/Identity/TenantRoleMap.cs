@@ -49,5 +49,6 @@ internal class TenantRoleMap : TenantScopedMap<TenantRole>
         builder.Navigation(n => n.RoleInfo)
             .HasField("_roleInfo")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder.Ignore(i => i.Permissions);
     }
 }
