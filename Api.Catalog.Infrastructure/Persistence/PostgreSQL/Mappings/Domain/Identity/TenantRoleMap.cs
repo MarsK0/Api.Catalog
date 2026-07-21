@@ -23,7 +23,7 @@ internal class TenantRoleMap : TenantScopedMap<TenantRole>
 
             ri.OwnsMany(m => m.Permissions, permission =>
             {
-                permission.ToTable("platform_role_permission");
+                permission.ToTable("tenant_role_permission");
                 permission.Property<Guid>("Id").ValueGeneratedOnAdd();
                 permission.HasKey("Id");
 
