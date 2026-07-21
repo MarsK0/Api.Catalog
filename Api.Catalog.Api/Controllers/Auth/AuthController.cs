@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
-namespace Api.Catalog.Api.Controllers;
+namespace Api.Catalog.Api.Controllers.Auth;
 
 [ApiController]
 [Route("api/auth")]
