@@ -1,6 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Api.Catalog.Domain;
+using Api.Catalog.Domain.Entities;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Api.Catalog.Domain.Entities;
+namespace Api.Catalog.Application.Entities;
 
 public class Account : BaseEntity
 {
