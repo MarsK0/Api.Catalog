@@ -31,8 +31,7 @@ internal sealed class AccountRepo(
         if (includes)
         {
             query = query
-                .Include("Person")
-                .Include("Tenant");
+                .Include(i => i.Person);
         }
         if (!track)
             query = query.AsNoTracking();
