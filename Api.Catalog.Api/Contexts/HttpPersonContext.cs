@@ -8,7 +8,7 @@ public class HttpPersonContext : IPersonContext
     public HttpPersonContext(IHttpContextAccessor accessor)
     {
         var id = accessor.HttpContext?.User?.FindFirst("sub")?.Value;
-        _personId = Guid.TryParse(id, out var userId) ? userId : null; 
+        _personId = Guid.TryParse(id, out var userId) ? userId : null;
     }
     public Guid? PersonId => _personId;
 }

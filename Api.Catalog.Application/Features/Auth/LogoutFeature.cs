@@ -6,7 +6,8 @@ namespace Api.Catalog.Application.Features;
 
 internal sealed class LogoutFeature(
     IUnitOfWork unitOfWork,
-    IRefreshTokenRepo refreshTokenRepo
+    IRefreshTokenRepo refreshTokenRepo,
+    ITokenService tokenService
 ) : IRequestHandler<LogoutCommand, Unit>
 {
     public async Task<Unit> Handle(LogoutCommand command, CancellationToken ct)
@@ -14,7 +15,7 @@ internal sealed class LogoutFeature(
         if (string.IsNullOrWhiteSpace(command.TokenValue))
             return Unit.Value;
 
-        var hash = LoginHandler.HashToken(command.TokenValue);
+        var hash = tokenService.HashToken(command.TokenValue);
         var token = await refreshTokenRepo.GetByHashAsync(hash, ct);
 
         if (token is not null)
