@@ -47,6 +47,7 @@ public class AuthController(IMediator mediator) : CatalogBaseController
             SameSite = SameSiteMode.Strict,
             Path = "/api/auth"
         });
+        await mediator.Send(new LogoutCommand(tokenValue), ct);
         return NoContent();
     }
     private IActionResult HandleLoginResponse(LoginResponse loginResponse)
