@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Api.Catalog.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260721200334_Initial")]
+    [Migration("20260721234051_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -26,7 +26,7 @@ namespace Api.Catalog.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.Account", b =>
+            modelBuilder.Entity("Api.Catalog.Application.Entities.Account", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -59,6 +59,90 @@ namespace Api.Catalog.Infrastructure.Migrations
                     b.HasIndex("PersonId");
 
                     b.ToTable("account", "catalog");
+                });
+
+            modelBuilder.Entity("Api.Catalog.Application.Entities.PlatformMembership", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("person_id");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("platform_membership", "catalog");
+                });
+
+            modelBuilder.Entity("Api.Catalog.Application.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset>("Expires")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires");
+
+                    b.Property<Guid>("FamilyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("family_id");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_used");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("person_id");
+
+                    b.Property<bool>("RememberMe")
+                        .HasColumnType("boolean")
+                        .HasColumnName("remember_me");
+
+                    b.Property<bool>("Revoked")
+                        .HasColumnType("boolean")
+                        .HasColumnName("revoked");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("token_hash");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.ToTable("refresh_token", "catalog");
                 });
 
             modelBuilder.Entity("Api.Catalog.Domain.Entities.Asset", b =>
@@ -467,33 +551,6 @@ namespace Api.Catalog.Infrastructure.Migrations
                     b.ToTable("person_tenant_roles", "catalog");
                 });
 
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.PlatformMembership", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("person_id");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("platform_membership", "catalog");
-                });
-
             modelBuilder.Entity("Api.Catalog.Domain.Entities.PlatformRole", b =>
                 {
                     b.Property<Guid>("Id")
@@ -652,63 +709,6 @@ namespace Api.Catalog.Infrastructure.Migrations
                     b.ToTable("price_rule_quantity", "catalog");
                 });
 
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.RefreshToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTimeOffset>("Expires")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("expires");
-
-                    b.Property<Guid>("FamilyId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("family_id");
-
-                    b.Property<bool>("IsUsed")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_used");
-
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("person_id");
-
-                    b.Property<bool>("RememberMe")
-                        .HasColumnType("boolean")
-                        .HasColumnName("remember_me");
-
-                    b.Property<bool>("Revoked")
-                        .HasColumnType("boolean")
-                        .HasColumnName("revoked");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
-
-                    b.Property<string>("TokenHash")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("token_hash");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PersonId");
-
-                    b.HasIndex("TokenHash")
-                        .IsUnique();
-
-                    b.ToTable("refresh_token", "catalog");
-                });
-
             modelBuilder.Entity("Api.Catalog.Domain.Entities.Tenant", b =>
                 {
                     b.Property<Guid>("Id")
@@ -846,7 +846,18 @@ namespace Api.Catalog.Infrastructure.Migrations
                     b.ToTable("tenant_role", "catalog");
                 });
 
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.Account", b =>
+            modelBuilder.Entity("Api.Catalog.Application.Entities.Account", b =>
+                {
+                    b.HasOne("Api.Catalog.Domain.Entities.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("Api.Catalog.Application.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Api.Catalog.Domain.Entities.Person", "Person")
                         .WithMany()
@@ -1099,17 +1110,6 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Tenant");
-                });
-
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.RefreshToken", b =>
-                {
-                    b.HasOne("Api.Catalog.Domain.Entities.Person", "Person")
-                        .WithMany()
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Person");
                 });
 
             modelBuilder.Entity("Api.Catalog.Domain.Entities.TenantMembership", b =>
