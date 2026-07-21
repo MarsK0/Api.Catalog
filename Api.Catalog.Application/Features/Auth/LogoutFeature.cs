@@ -1,5 +1,5 @@
 ﻿using Api.Catalog.Application.Contracts;
-using Api.Catalog.Application.Models.Commands.Auth;
+using Api.Catalog.Application.Models;
 using MediatR;
 
 namespace Api.Catalog.Application.Auth;

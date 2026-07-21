@@ -49,7 +49,7 @@ internal sealed class PostgresSeed(
             .FirstOrDefaultAsync(a => a.PersonId == owner.Id, ct);
         if (platformOwnerAccount is null)
         {
-            var platformOwnerPassword = config["Owner:Password"] ?? throw new InvalidOperationException("Senha Owner não definida.");
+            var platformOwnerPassword = config["PlatformOwner:Password"] ?? throw new InvalidOperationException("Senha Owner não definida.");
             var platformOwnerHashedPassword = passwordHasher.GenerateHash(platformOwnerPassword);
             var ownerAccountCreateResult = Account.Create(owner.Id, platformOwnerHashedPassword);
             if (!ownerAccountCreateResult.IsSuccess)
@@ -62,7 +62,7 @@ internal sealed class PostgresSeed(
     private async Task<PlatformRole> SeedPlatformOwnerRole(CancellationToken ct)
     {
         var platformOwnerRole = await db.PlatformRoles
-            .FirstOrDefaultAsync(r => r.Name == RootRoles.PlatformOwner, ct);
+            .FirstOrDefaultAsync(r => r.RoleInfo.Name == RootRoles.PlatformOwner, ct);
         if (platformOwnerRole is null)
         {
             var ownerRoleInfoCreateResult = RoleInfo.Create(RootRoles.PlatformOwner, "Absolute Unit :o");
@@ -80,7 +80,7 @@ internal sealed class PostgresSeed(
     }
     private static void SeedPlatformOwnerPermissions(PlatformRole role)
     {
-        var assignedPermissions = role.Permissions.ToHashSet();
+        var assignedPermissions = role.RoleInfo.Permissions.ToHashSet();
         var unassignedPermissions = new HashSet<PermissionInfo>();
         foreach (var permission in AppPermissions.GetAll)
             if (!assignedPermissions.Contains(permission))
