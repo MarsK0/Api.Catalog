@@ -5,9 +5,6 @@ namespace Api.Catalog.Domain.Entities;
 public sealed class PlatformRole : BaseEntity
 {
     private readonly RoleInfo _roleInfo = null!;
-    public string Name => _roleInfo.Name;
-    public string Description => _roleInfo.Description;
-    public IReadOnlyCollection<PermissionInfo> Permissions => _roleInfo.Permissions;
     public RoleInfo RoleInfo => _roleInfo;
     private PlatformRole() { }
     private PlatformRole(RoleInfo roleInfo)
