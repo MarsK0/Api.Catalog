@@ -30,6 +30,7 @@ try
     builder.Services.AddOpenApi();
 
     builder.Services.AddHttpContextAccessor();
+    builder.Services.AddScoped<IPersonContext, HttpPersonContext>();
     builder.Services.AddScoped<ITenantContext, HttpTenantContext>();
     builder.Services
         .AddInfrastructure(builder.Configuration)
