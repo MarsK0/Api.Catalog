@@ -16,7 +16,7 @@ internal sealed class RefreshTokenHandler(
 {
     public async Task<AppResult<LoginResponse>> Handle(RefreshTokenCommand command, CancellationToken ct)
     {
-        var hash = LoginHandler.HashToken(command.TokenValue);
+        var hash = tokenService.HashToken(command.TokenValue);
         var token = await refreshTokenRepo.GetByHashAsync(hash, ct);
 
         if (token is null)
