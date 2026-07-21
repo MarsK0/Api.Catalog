@@ -12,7 +12,7 @@ namespace Api.Catalog.Api.Controllers;
 [Route("api/auth")]
 public class AuthController(IMediator mediator) : CatalogBaseController
 {
-    private const string RefreshCookieName = "_prx_ctlg_rt";
+    private const string RefreshCookieName = "_ctlg_rt";
 
     [HttpPost("login")]
     [AllowAnonymous]
@@ -47,6 +47,7 @@ public class AuthController(IMediator mediator) : CatalogBaseController
             SameSite = SameSiteMode.Strict,
             Path = "/api/auth"
         });
+        await mediator.Send(new LogoutCommand(tokenValue), ct);
         return NoContent();
     }
     private IActionResult HandleLoginResponse(LoginResponse loginResponse)
