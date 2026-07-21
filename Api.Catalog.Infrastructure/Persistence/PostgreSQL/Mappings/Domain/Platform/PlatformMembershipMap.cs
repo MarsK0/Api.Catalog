@@ -1,4 +1,4 @@
-﻿using Api.Catalog.Domain.Entities;
+﻿using Api.Catalog.Application.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -4,7 +4,7 @@ using Api.Catalog.Domain;
 using Api.Catalog.Domain.Enums;
 using MediatR;
 
-namespace Api.Catalog.Application.Auth;
+namespace Api.Catalog.Application.Features;
 
 internal sealed class RefreshTokenHandler(
     TimeProvider timeProvider,

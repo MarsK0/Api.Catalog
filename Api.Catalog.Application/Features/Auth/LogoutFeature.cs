@@ -2,7 +2,7 @@
 using Api.Catalog.Application.Models;
 using MediatR;
 
-namespace Api.Catalog.Application.Auth;
+namespace Api.Catalog.Application.Features;
 
 internal sealed class LogoutFeature(
     IUnitOfWork unitOfWork,

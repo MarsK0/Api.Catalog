@@ -1,4 +1,4 @@
-﻿using Api.Catalog.Domain.Entities;
+﻿using Api.Catalog.Application.Entities;
 
 namespace Api.Catalog.Application.Contracts;
 

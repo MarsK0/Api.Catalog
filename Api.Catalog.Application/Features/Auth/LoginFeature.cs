@@ -1,13 +1,13 @@
 ﻿using Api.Catalog.Application.Contracts;
+using Api.Catalog.Application.Entities;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
-using Api.Catalog.Domain.Entities;
 using Api.Catalog.Domain.Enums;
 using MediatR;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Api.Catalog.Application.Auth;
+namespace Api.Catalog.Application.Features;
 
 internal sealed class LoginHandler(
     TimeProvider timeProvider,
