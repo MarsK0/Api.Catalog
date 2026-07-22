@@ -16,6 +16,14 @@ internal class TenantMembershipMap : TenantScopedMap<TenantMembership>
         builder.HasIndex(p => new { p.PersonId, p.TenantId })
             .IsUnique();
 
+        builder.HasOne(m => m.Person)
+            .WithMany()
+            .HasForeignKey(fk => fk.PersonId)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.Navigation(n => n.Person)
+            .HasField("_person")
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+
         builder.HasOne(m => m.Tenant)
             .WithMany(t => t.Membership)
             .HasForeignKey(fk => fk.TenantId)

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Api.Catalog.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260722035257_Initial")]
+    [Migration("20260722203846_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1128,11 +1128,19 @@ namespace Api.Catalog.Infrastructure.Migrations
 
             modelBuilder.Entity("Api.Catalog.Domain.Entities.TenantMembership", b =>
                 {
+                    b.HasOne("Api.Catalog.Domain.Entities.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Api.Catalog.Domain.Entities.Tenant", "Tenant")
                         .WithMany("Membership")
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Person");
 
                     b.Navigation("Tenant");
                 });
