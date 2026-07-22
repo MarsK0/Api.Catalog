@@ -8,8 +8,7 @@ using System.Text.Json;
 namespace Api.Catalog.Api.Middlewares;
 
 public class TenantResolverMiddleware(
-    RequestDelegate next,
-    ILogger<TenantResolverMiddleware> logger
+    RequestDelegate next
 )
 {
     public async Task InvokeAsync(HttpContext context, ITenantStore tenantStore)
