@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Api.Catalog.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260721234051_Initial")]
+    [Migration("20260722035257_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -84,6 +84,9 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PersonId")
+                        .IsUnique();
 
                     b.ToTable("platform_membership", "catalog");
                 });
@@ -852,6 +855,17 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("Api.Catalog.Application.Entities.PlatformMembership", b =>
+                {
+                    b.HasOne("Api.Catalog.Domain.Entities.Person", "Person")
+                        .WithOne()
+                        .HasForeignKey("Api.Catalog.Application.Entities.PlatformMembership", "PersonId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Person");
