@@ -43,8 +43,9 @@ internal sealed class TenantRepo(
         if (includes)
         {
             query = query
-                .Include("Persons")
-                .Include("Modules");
+                .Include(i => i.Membership)
+                    .ThenInclude(i => i.Person)
+                .Include(i => i.Modules);
         }
         if (!track)
             query = query.AsNoTracking();

@@ -3,6 +3,8 @@
 public class TenantMembership : TenantScopedEntity
 {
     public Guid PersonId { get; private set; }
+    private Person _person = null!;
+    public Person Person => _person;
     private TenantMembership() { }
     public static AppResult<TenantMembership> Create(
         Guid personId
