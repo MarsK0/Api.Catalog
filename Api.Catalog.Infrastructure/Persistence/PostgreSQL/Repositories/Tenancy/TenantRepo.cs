@@ -22,7 +22,7 @@ internal sealed class TenantRepo(
     }
     public async Task<Tenant?> GetBySlugAsync(string slug, CancellationToken ct, bool includes = true, bool track = false)
     {
-        return await GetQuery(includes, track).FirstOrDefaultAsync(t => t.Slug.Equals(slug));
+        return await GetQuery(includes, track).FirstOrDefaultAsync(t => t.Slug.Equals(slug), ct);
     }
     public async Task<List<string>> GetModulesAsync(CancellationToken ct)
     {

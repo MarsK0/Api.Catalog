@@ -8,6 +8,7 @@ using MediatR;
 namespace Api.Catalog.Application.Handlers.Tenancy;
 
 internal sealed class CreateTenantHandler(
+    IUnitOfWork unitOfWork,
     ITenantRepo tenantRepo
 ) : IRequestHandler<CreateTenantCommand, AppResult<TenantResponse>>
 {
@@ -23,6 +24,7 @@ internal sealed class CreateTenantHandler(
 
         var tenant = tenantResult.Value;
         await tenantRepo.CreateAsync(tenant, ct);
+        await unitOfWork.SaveChangesAsync(ct);
         return tenant.ToResponse();
     }
 }
