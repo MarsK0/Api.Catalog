@@ -39,32 +39,51 @@ public class TenantResolverMiddleware(
     // Busca ID do tenant ou slug como fallback no header. Se encontra slug, busca tenantId. Ambos os casos retorna tenantId ou falha.
     private async Task<AppResult<HttpTenantContextData>> ResolveTenantId(HttpContext context, ITenantStore tenantStore)
     {
-        var headerValue = context.Request.Headers[ConstantValues.TenantHeaderName].FirstOrDefault();
         var cancellationToken = context.RequestAborted;
 
-        if (string.IsNullOrWhiteSpace(headerValue))
-        {
-            logger.LogWarning("Header {Header} ausente na requisição", ConstantValues.TenantHeaderName);
+        var tenantHeader = context.Request.Headers[ConstantValues.TenantHeaderName].FirstOrDefault();
+        var isPlatformContext =
+            bool.TryParse(context.Request.Headers[ConstantValues.PlatformHeaderName].FirstOrDefault(), out var value) && value;
+
+        tenantHeader = string.IsNullOrWhiteSpace(tenantHeader) ? null : tenantHeader;
+
+        //Nenhum header de contexto informado
+        if (!isPlatformContext && string.IsNullOrWhiteSpace(tenantHeader))
             return AppFailure.InvalidRequest("Empresa não definida na requisição. Contate o suporte.");
-        }
 
-        if (
-            headerValue.Equals(ConstantValues.PlatformSlug, StringComparison.OrdinalIgnoreCase) ||
-            headerValue.Equals(ConstantValues.PlatformContextIdentifier, StringComparison.OrdinalIgnoreCase)
-        )
-            return new HttpTenantContextData(null, true);
-
-
-        if (Guid.TryParse(headerValue, out var tenantId))
+        //Tenant informado como Guid
+        if (Guid.TryParse(tenantHeader, out Guid tenantId))
         {
-            return await tenantStore.TenantExistsAsync(tenantId, cancellationToken)
-                ? new HttpTenantContextData(tenantId, false)
-                : AppFailure.InvalidRequest("Empresa não encontrada. Contate o suporte.");
+            if (!(await tenantStore.TenantExistsAsync(tenantId, cancellationToken)))//Tenant não existe
+                return AppFailure.InvalidRequest("Empresa não encontrada. Contate o suporte.");
+
+            if (isPlatformContext)//Tenant informado no contexto da plataforma
+                return new HttpTenantContextData(tenantId, true);
+
+            //Tenant informado em contexto normal
+            return new HttpTenantContextData(tenantId, false);
         }
 
-        var id = await tenantStore.GetTenantIdBySlugAsync(headerValue, cancellationToken);
+        //Tenant não informado
+        if (tenantHeader is null)
+        {
+            //Em contexto normal
+            if (!isPlatformContext)
+                return AppFailure.InvalidRequest("Empresa não encontrada. Contate o suporte.");
+            //Em contexto plataforma
+            return new HttpTenantContextData(null, true);
+        }
+
+        //Tenant informado como slug
+        var id = await tenantStore.GetTenantIdBySlugAsync(tenantHeader, cancellationToken);
         if (id.HasValue)
+        {
+            //Em contexto de plataforma
+            if (isPlatformContext)
+                return new HttpTenantContextData(id, true);
+            //Em contexto normal
             return new HttpTenantContextData(id, false);
+        }
 
         return AppFailure.InvalidRequest("Empresa não encontrada. contate o suporte.");
     }
