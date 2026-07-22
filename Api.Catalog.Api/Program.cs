@@ -8,6 +8,7 @@ using Api.Catalog.Domain.Models;
 using Api.Catalog.Infrastructure;
 using Api.Catalog.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Serilog;
@@ -30,6 +31,7 @@ try
     builder.Services.AddOpenApi();
 
     builder.Services.AddHttpContextAccessor();
+    builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
     builder.Services.AddScoped<IPersonContext, HttpPersonContext>();
     builder.Services.AddScoped<ITenantContext, HttpTenantContext>();
     builder.Services
