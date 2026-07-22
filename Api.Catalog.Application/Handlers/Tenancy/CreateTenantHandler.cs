@@ -5,9 +5,9 @@ using Api.Catalog.Domain;
 using Api.Catalog.Domain.Entities;
 using MediatR;
 
-namespace Api.Catalog.Application.Features.Tenancy;
+namespace Api.Catalog.Application.Handlers.Tenancy;
 
-internal sealed class CreateTenantFeature(
+internal sealed class CreateTenantHandler(
     ITenantRepo tenantRepo
 ) : IRequestHandler<CreateTenantCommand, AppResult<TenantResponse>>
 {
