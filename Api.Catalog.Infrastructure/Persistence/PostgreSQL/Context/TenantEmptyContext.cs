@@ -6,4 +6,5 @@ internal sealed record TenantEmptyContext : ITenantContext
 {
     public Guid? TenantId => null;
     public bool IsPlatformContext => false;
+    public bool AllowCrossTenancy => false;
 }
