@@ -4,9 +4,9 @@ using Api.Catalog.Domain;
 using Api.Catalog.Domain.Enums;
 using MediatR;
 
-namespace Api.Catalog.Application.Auth;
+namespace Api.Catalog.Application.Handlers;
 
-internal sealed class RefreshTokenHandler(
+internal sealed class RefreshHandler(
     TimeProvider timeProvider,
     ITokenService tokenService,
     IUnitOfWork unitOfWork,
@@ -16,7 +16,7 @@ internal sealed class RefreshTokenHandler(
 {
     public async Task<AppResult<LoginResponse>> Handle(RefreshTokenCommand command, CancellationToken ct)
     {
-        var hash = LoginHandler.HashToken(command.TokenValue);
+        var hash = tokenService.HashToken(command.TokenValue);
         var token = await refreshTokenRepo.GetByHashAsync(hash, ct);
 
         if (token is null)
