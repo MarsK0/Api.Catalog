@@ -3,7 +3,6 @@ using Api.Catalog.Domain.ValueObjects;
 using Api.Catalog.Infrastructure.Contracts;
 using Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Api.Catalog.Infrastructure.Services;
 
@@ -11,8 +10,7 @@ internal sealed class PermissionValidatorService(
     IPersonContext personContext,
     ITenantContext tenantContext,
     ICacheService cache,
-    AppDbContext db,
-    ILogger<PermissionValidatorService> logger
+    AppDbContext db
 ) : IPermissionValidator
 {
     public async Task<bool> HasPermission(PermissionInfo permission, CancellationToken ct)

@@ -43,7 +43,7 @@ public class Person : BaseEntity
     }
     public void AssignPlatformRole(PlatformRole role)
     {
-        if(!_platformRoles.Any(a => a.RoleInfo.Name == role.RoleInfo.Name))
+        if (!_platformRoles.Any(a => a.RoleInfo.Name == role.RoleInfo.Name))
             _platformRoles.Add(role);
     }
     public void AssignTenantRole(TenantRole role)
