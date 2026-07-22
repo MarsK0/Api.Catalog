@@ -1,13 +1,11 @@
 ﻿using Api.Catalog.Application.Contracts;
+using Api.Catalog.Application.Entities;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
-using Api.Catalog.Domain.Entities;
 using Api.Catalog.Domain.Enums;
 using MediatR;
-using System.Security.Cryptography;
-using System.Text;
 
-namespace Api.Catalog.Application.Auth;
+namespace Api.Catalog.Application.Handlers;
 
 internal sealed class LoginHandler(
     TimeProvider timeProvider,
@@ -54,7 +52,7 @@ internal sealed class LoginHandler(
             account.Person.Email
         );
 
-        var (rtValue, rtHash) = GenerateRefreshToken();
+        var (rtValue, rtHash) = tokenService.GenerateRefreshToken();
         var utcNow = timeProvider.GetUtcNow();
         var rtExpires = rememberMe
             ? utcNow.AddDays(30)
@@ -66,15 +64,4 @@ internal sealed class LoginHandler(
 
         return new LoginResponse(loginResult, rtValue, rtExpires, rememberMe);
     }
-    internal static (string Value, string Hash) GenerateRefreshToken()
-    {
-        var bytes = RandomNumberGenerator.GetBytes(64);
-        var value = Convert.ToBase64String(bytes);
-        var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
-
-        return (value, hash);
-    }
-
-    internal static string HashToken(string value) =>
-        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
 }

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
-namespace Api.Catalog.Api.Controllers;
+namespace Api.Catalog.Api.Controllers.Auth;
 
 [ApiController]
 [Route("api/auth")]
@@ -29,7 +29,7 @@ public class AuthController(IMediator mediator) : CatalogBaseController
     public async Task<IActionResult> Refresh(CancellationToken ct)
     {
         if (!Request.Cookies.TryGetValue(RefreshCookieName, out var tokenValue) || string.IsNullOrWhiteSpace(tokenValue))
-            return Unauthorized(new { Message = "Nenhuma sessão ativa encontrada." });
+            return Unauthorized(new { Message = "Sessão inválida. Faça login novamente." });
 
         return await mediator.Send(new RefreshTokenCommand(tokenValue), ct)
             .FoldAsync(onSuccess: HandleLoginResponse, onFailure: HandleFailure);
