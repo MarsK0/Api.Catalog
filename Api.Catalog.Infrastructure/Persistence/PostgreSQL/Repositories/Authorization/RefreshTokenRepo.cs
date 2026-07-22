@@ -1,5 +1,5 @@
 ﻿using Api.Catalog.Application.Contracts;
-using Api.Catalog.Domain.Entities;
+using Api.Catalog.Application.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;

@@ -1,4 +1,7 @@
-﻿namespace Api.Catalog.Domain.Entities;
+﻿using Api.Catalog.Domain;
+using Api.Catalog.Domain.Entities;
+
+namespace Api.Catalog.Application.Entities;
 
 public class PlatformMembership : BaseEntity
 {
