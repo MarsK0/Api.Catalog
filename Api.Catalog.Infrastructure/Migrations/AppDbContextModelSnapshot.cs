@@ -82,6 +82,9 @@ namespace Api.Catalog.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PersonId")
+                        .IsUnique();
+
                     b.ToTable("platform_membership", "catalog");
                 });
 
@@ -849,6 +852,17 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("Api.Catalog.Application.Entities.PlatformMembership", b =>
+                {
+                    b.HasOne("Api.Catalog.Domain.Entities.Person", "Person")
+                        .WithOne()
+                        .HasForeignKey("Api.Catalog.Application.Entities.PlatformMembership", "PersonId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Person");

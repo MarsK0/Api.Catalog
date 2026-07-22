@@ -18,10 +18,12 @@ internal sealed class PostgresSeed(
     public async Task SeedAsync(CancellationToken ct)
     {
         await db.Database.MigrateAsync(ct);
-        var platformOwne = await SeedPlatformOwner(ct);
-        await SeedPlatformOwnerAccount(platformOwne, ct);
+        var platformOwner = await SeedPlatformOwner(ct);
+        await AssignMembership(platformOwner, ct);
+        await SeedPlatformOwnerAccount(platformOwner, ct);
         var platformOwnerRole = await SeedPlatformOwnerRole(ct);
         SeedPlatformOwnerPermissions(platformOwnerRole);
+        AssignOwnerRole(platformOwner, platformOwnerRole);
         await db.SaveChangesAsync(ct);
     }
 
@@ -43,6 +45,19 @@ internal sealed class PostgresSeed(
         }
 
         return platformOwner;
+    }
+    private async Task AssignMembership(Person owner, CancellationToken ct)
+    {
+        var membershipOwner = await db.PlatformMembership
+            .FirstOrDefaultAsync(p => p.Person.Id == owner.Id, ct);
+        if(membershipOwner is null)
+        {
+            var membershipResult = PlatformMembership.Create(owner.Id);
+            if (!membershipResult.IsSuccess)
+                throw new ApplicationException($"Um erro ocorreu ao criar a assinatura do owner na plataforma: {membershipResult.Failure.Message}");
+
+            db.PlatformMembership.Add(membershipResult.Value);
+        }
     }
     private async Task SeedPlatformOwnerAccount(Person owner, CancellationToken ct)
     {
@@ -90,4 +105,5 @@ internal sealed class PostgresSeed(
         if (unassignedPermissions.Count != 0)
             role.AssignPermissions(unassignedPermissions);
     }
+    private static void AssignOwnerRole(Person owner, PlatformRole role) => owner.AssignPlatformRole(role);
 }
