@@ -2,9 +2,9 @@
 using Api.Catalog.Application.Models;
 using MediatR;
 
-namespace Api.Catalog.Application.Features;
+namespace Api.Catalog.Application.Handlers;
 
-internal sealed class LogoutFeature(
+internal sealed class LogoutHandler(
     IUnitOfWork unitOfWork,
     IRefreshTokenRepo refreshTokenRepo,
     ITokenService tokenService
