@@ -1125,11 +1125,19 @@ namespace Api.Catalog.Infrastructure.Migrations
 
             modelBuilder.Entity("Api.Catalog.Domain.Entities.TenantMembership", b =>
                 {
+                    b.HasOne("Api.Catalog.Domain.Entities.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Api.Catalog.Domain.Entities.Tenant", "Tenant")
                         .WithMany("Membership")
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Person");
 
                     b.Navigation("Tenant");
                 });
