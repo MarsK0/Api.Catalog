@@ -1,0 +1,234 @@
+[33mcommit fa5e0192367f523e6845f6286600c21c04767436[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfix/tenancy_routines[m[33m)[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Tue Jul 21 23:57:19 2026 -0300
+
+    :beers: Corrige inconsistência políticas de permissoes, corrige preenchimento tenantcontext e personcontext, injeta serviço de validação de permissões
+
+[33mcommit ab9d7d71fedc11992521bed0d632751036824acc[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Tue Jul 21 23:57:10 2026 -0300
+
+    :beers: Corrige inconsistência políticas de permissoes, corrige preenchimento tenantcontext e personcontext, injeta serviço de validação de permissões
+
+[33mcommit 6566b4d934964d62ae20dda697674565779d0a97[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Merge: 617c79d fe25534
+Author: Marco <112590967+MarsK0@users.noreply.github.com>
+Date:   Tue Jul 21 21:36:23 2026 -0300
+
+    :twisted_rightwards_arrows: Merge pull request #14 from MarsK0/staging
+    
+    Merge Staging into Main
+
+[33mcommit fe2553467a798d621d90e2fd18677f09257bbe55[m[33m ([m[1;31morigin/staging[m[33m, [m[1;32mstaging[m[33m)[m
+Merge: 617c79d 834ba1b
+Author: Marco <112590967+MarsK0@users.noreply.github.com>
+Date:   Tue Jul 21 21:10:05 2026 -0300
+
+    :twisted_rightwards_arrows: Merge pull request #13 from MarsK0/refactor/auth_system
+    
+    Refactor/auth system
+
+[33mcommit 834ba1ba30f5f2124ce3dc9f30c5f4cc7070e4ef[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Tue Jul 21 21:08:38 2026 -0300
+
+    :truck: Altera nome de features para handlers
+
+[33mcommit 2d2b81222f7b35bab4d3901ad0fc23c750550d98[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Tue Jul 21 20:45:22 2026 -0300
+
+    :bricks: Transfere rotinas de token alocados no LoginFeature para o serviço de token
+
+[33mcommit bf35ac5eb52e7a84e9fd8b7923c7e3d42d114b70[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Tue Jul 21 20:26:39 2026 -0300
+
+    :truck: Move entidades Account, RefreshToken e PlatformMembership para camada de aplicação (desacoplamento do domínio)
+
+[33mcommit 617c79d342b195f13380582eeb428146b8bffe3e[m
+Merge: e652947 0c2e3b9
+Author: Marco <112590967+MarsK0@users.noreply.github.com>
+Date:   Tue Jul 21 19:32:22 2026 -0300
+
+    :twisted_rightwards_arrows: Merge pull request #12 from MarsK0/fix/fazer_rodar_ne
+    
+    Fix/fazer rodar ne
+
+[33mcommit 0c2e3b9c7911be1d48949dd9d41d0f5d1aa80538[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Tue Jul 21 19:04:13 2026 -0300
+
+    :bug: Realiza execução rotina de logout
+
+[33mcommit 28b986d6ac252f3809ccef6c5ca2536b3c72f7a6[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Tue Jul 21 18:45:38 2026 -0300
+
+    :bug: Adiciona extensão com suporte a funçoes de retorno Task
+
+[33mcommit 73ffaf7861d69bec74d3f06e5de45918e3ed007a[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Tue Jul 21 17:30:15 2026 -0300
+
+    :bug: Remove include tenant no GetQuery de Account
+
+[33mcommit 9fcb4008599f42a008c5a29226ab1e5d214db467[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Tue Jul 21 17:12:37 2026 -0300
+
+    :fire: remove propriedades de acesso direto às propriedades do ValueObject de Role info
+
+[33mcommit fc0afee92400ed37bd96315f22570e0cc935cdae[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Tue Jul 21 13:51:45 2026 -0300
+
+    :ambulance: Altera nome da tabela de permissoes de roles de tenant
+
+[33mcommit 0cf01b94c4f12a63b99bad2eb59c29d66df89aeb[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Tue Jul 21 13:32:42 2026 -0300
+
+    :ambulance: Ignore Permissions field on roles mappings
+
+[33mcommit e65294796df2d9745fe819faa294f0f44aebbc22[m
+Merge: 1566482 8057ef7
+Author: Marco <112590967+MarsK0@users.noreply.github.com>
+Date:   Tue Jul 21 13:01:42 2026 -0300
+
+    Merge pull request #11 from MarsK0/staging
+    
+    :twisted_rightwards_arrows: Merge Staging into Main
+
+[33mcommit 8057ef73af697d2f9782dc68895bd13380fc9292[m
+Merge: 1566482 25a0145
+Author: Marco <112590967+MarsK0@users.noreply.github.com>
+Date:   Tue Jul 21 12:57:55 2026 -0300
+
+    Merge pull request #10 from MarsK0/fix/person_context
+    
+    Implementação person context
+
+[33mcommit 25a014593f0e38d1d992ef1170edf8ff772a675d[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Tue Jul 21 12:55:45 2026 -0300
+
+    :poop: Implementação person context
+
+[33mcommit 15664821c892377f63af46c47edec76f369698a8[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Sun Jul 19 12:56:53 2026 -0300
+
+    :fire: Remove imports não utilizados
+
+[33mcommit dc0e1c6cca8841cf7a7563ec185dc5e61ceca4fc[m
+Merge: 45cf416 d4174d6
+Author: Marco <112590967+MarsK0@users.noreply.github.com>
+Date:   Sat Jul 11 22:16:36 2026 -0300
+
+    :twisted_rightwards_arrows: Merge pull request #9 from MarsK0/staging
+    
+    Staging
+
+[33mcommit d4174d65bd68d52539480c906bae6f4be07b48d2[m
+Merge: 886c423 21f4dfa
+Author: Marco <112590967+MarsK0@users.noreply.github.com>
+Date:   Sat Jul 11 22:14:42 2026 -0300
+
+    :twisted_rightwards_arrows: Merge pull request #8 from MarsK0/chore/seed_routines
+    
+    Chore/seed routines
+
+[33mcommit 21f4dfad9385da5d830c7c66aa5f76d38f42ef6e[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Sat Jul 11 20:50:39 2026 -0300
+
+    :seedling: Finish seed routines
+
+[33mcommit 6c9efccac2135758066ac09d881e1b334879944d[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Sat Jul 11 20:05:40 2026 -0300
+
+    :coffin: Duplicação classe de recurso Role no escopo plataforma
+
+[33mcommit 18b87b59ac89614821216981a9322704273b8707[m
+Merge: 662615b 886c423
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Sat Jul 11 19:20:43 2026 -0300
+
+    🔀 Merge branch 'staging' into chore/seed_routines
+
+[33mcommit 886c423d47d6a352edebdc72880fb817ca385ebe[m
+Merge: 1c6bc35 fdfa554
+Author: Marco <112590967+MarsK0@users.noreply.github.com>
+Date:   Sat Jul 11 19:17:31 2026 -0300
+
+    :twisted_rightwards_arrows: Merge pull request #7 from MarsK0/refactor/permissions_structure
+    
+    Refatoração estrutura de permissões
+
+[33mcommit fdfa554347267968fd9fa20bfa20521e21b04751[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Sat Jul 11 19:15:37 2026 -0300
+
+    :building_construction: Corrige mapeamento permissions
+
+[33mcommit 2833bf049af8b25417dfce50cab14ce65a3f685e[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Sat Jul 11 19:01:56 2026 -0300
+
+    :building_construction: Refatoração estrutura de permissões
+
+[33mcommit 662615b767fe7d1c6f9b4bba2e0010e6b27b8a6c[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Sat Jul 11 14:26:06 2026 -0300
+
+    :construction: Seed owner person e account
+
+[33mcommit 45cf416a8b67d8f1b67b6e0bb02ada9778166092[m
+Merge: 9bf4ebb 1c6bc35
+Author: Marco <112590967+MarsK0@users.noreply.github.com>
+Date:   Fri Jul 10 22:07:33 2026 -0300
+
+    :twisted_rightwards_arrows: Merge pull request #6 from MarsK0/staging
+    
+    Merge Staging into Main
+
+[33mcommit 1c6bc3542aac496f5432e71d8ef5aed7789967c6[m
+Merge: 9bf4ebb 9724d86
+Author: Marco <112590967+MarsK0@users.noreply.github.com>
+Date:   Fri Jul 10 22:05:38 2026 -0300
+
+    :twisted_rightwards_arrows: Merge pull request #5 from MarsK0/chore/tenant_context_auth
+    
+    Permission validator
+
+[33mcommit 9724d8623a7fabcf419410c27617bbf9e90dc0a2[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Fri Jul 10 22:01:36 2026 -0300
+
+    :passport_control: Permission validator
+
+[33mcommit 39e15e967bcef8b5698cd963ae076c3ce07ea16d[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Fri Jul 10 16:18:12 2026 -0300
+
+    :building_construction: Reestruturação de permissões de usuário e permissões de módulo. Implementação user context.
+
+[33mcommit d5f3ada53375d5da65fdd31100a16a6ca7d2436c[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Fri Jul 10 16:18:12 2026 -0300
+
+    :truck: Rename TenantContext to HttpTenantContext
+
+[33mcommit 9b0bfdac180ca6ba07f163732cb286ca4393492c[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Fri Jul 10 16:18:12 2026 -0300
+
+    :recycle: Refatoração contexto de tenant #3 agora vai
+
+[33mcommit 3b4557d91a6e372508dcee1ee2a1e5d5f7203cbd[m
+Author: Marco <marcosilhaag31@gmail.com>
+Date:   Fri Jul 10 16:18:12 2026 -0300
+
+    Revert ":recycle: refa

@@ -34,5 +34,8 @@ internal class PersonMap : BaseMap<Person>
                 pr => pr.HasOne<PlatformRole>().WithMany().HasForeignKey(fk => fk.PlatformRoleId),
                 pr => pr.HasOne<Person>().WithMany().HasForeignKey(fk => fk.PersonId)
             );
+        builder.Navigation(n => n.PlatformRoles)
+            .HasField("_platformRoles")
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }
