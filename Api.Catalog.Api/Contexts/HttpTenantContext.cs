@@ -14,24 +14,14 @@ namespace Api.Catalog.Api.Contexts;
 /// 
 /// Não mover IHttpContextAccessor para consumidores de ITenantContext.
 /// </summary>
-public sealed class HttpTenantContext : ITenantContext
+public sealed class HttpTenantContext(IHttpContextAccessor accessor) : ITenantContext
 {
-    private readonly HttpTenantContextData _context;
-    public HttpTenantContext(IHttpContextAccessor accessor)
-    {
-        if (
+    private HttpTenantContextData _context => (
             accessor.HttpContext?.Items.TryGetValue(ConstantValues.TenantContextItemKey, out var value) is true &&
             value is HttpTenantContextData context
         )
-        {
-            _context = context;
-        }
-        else
-        {
-            // Empty context
-            _context = new HttpTenantContextData(null, false);
-        }
-    }
+        ? context
+        : new HttpTenantContextData(null, false);
     public Guid? TenantId => _context.TenantId;
     public bool IsPlatformContext => _context.IsPlatformContext;
 }

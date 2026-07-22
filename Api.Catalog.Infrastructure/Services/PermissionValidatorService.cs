@@ -11,7 +11,6 @@ internal sealed class PermissionValidatorService(
     ITenantContext tenantContext,
     ICacheService cache,
     AppDbContext db
-
 ) : IPermissionValidator
 {
     public async Task<bool> HasPermission(PermissionInfo permission, CancellationToken ct)

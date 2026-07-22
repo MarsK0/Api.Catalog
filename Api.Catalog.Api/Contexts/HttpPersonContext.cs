@@ -2,13 +2,9 @@
 
 namespace Api.Catalog.Api.Contexts;
 
-public class HttpPersonContext : IPersonContext
+public class HttpPersonContext(IHttpContextAccessor accessor) : IPersonContext
 {
-    private readonly Guid? _personId;
-    public HttpPersonContext(IHttpContextAccessor accessor)
-    {
-        var id = accessor.HttpContext?.User?.FindFirst("sub")?.Value;
-        _personId = Guid.TryParse(id, out var userId) ? userId : null;
-    }
-    public Guid? PersonId => _personId;
+    public Guid? PersonId => Guid.TryParse(accessor.HttpContext?.User?.FindFirst("sub")?.Value, out var userId)
+        ? userId
+        : null;
 }
