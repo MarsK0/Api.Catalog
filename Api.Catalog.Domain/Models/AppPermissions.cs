@@ -10,10 +10,10 @@ public static class AppPermissions
     static AppPermissions()
     {
         _all = [.. typeof(AppPermissions)
-            .GetNestedTypes(BindingFlags.Public | BindingFlags.Static)
-            .SelectMany(s => s.GetNestedTypes(BindingFlags.Public | BindingFlags.Static))
-            .SelectMany(s => s.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
-            .Where(w => w.IsStatic && !w.IsInitOnly && w.FieldType == typeof(PermissionInfo))
+            .GetNestedTypes(BindingFlags.Public)
+            .SelectMany(s => s.GetNestedTypes(BindingFlags.Public))
+            .SelectMany(s => s.GetFields(BindingFlags.Public | BindingFlags.Static))
+            .Where(w => w.FieldType == typeof(PermissionInfo))
             .Select(s => (PermissionInfo)s.GetValue(null)!)];
     }
 

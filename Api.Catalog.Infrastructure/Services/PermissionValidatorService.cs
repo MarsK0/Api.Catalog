@@ -3,6 +3,7 @@ using Api.Catalog.Domain.ValueObjects;
 using Api.Catalog.Infrastructure.Contracts;
 using Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Api.Catalog.Infrastructure.Services;
 
@@ -10,8 +11,8 @@ internal sealed class PermissionValidatorService(
     IPersonContext personContext,
     ITenantContext tenantContext,
     ICacheService cache,
-    AppDbContext db
-
+    AppDbContext db,
+    ILogger<PermissionValidatorService> logger
 ) : IPermissionValidator
 {
     public async Task<bool> HasPermission(PermissionInfo permission, CancellationToken ct)
@@ -26,9 +27,10 @@ internal sealed class PermissionValidatorService(
     }
     private async Task<bool> ValidatePlatformPermission(PermissionInfo permission, CancellationToken ct)
     {
+        var personId = personContext.PersonId;
         var personRoles = await cache.GetOrCreateAsync(
-            $"PLATFORM_PERSON:{personContext.PersonId}:ROLES",
-            (cacheCt) => PlatformUserRoles(db, cacheCt),
+            $"PLATFORM_PERSON:{personId}:ROLES",
+            (cacheCt) => PlatformUserRoles(db, personId, cacheCt),
             ct
         );
         foreach (var role in personRoles ?? [])
@@ -45,9 +47,11 @@ internal sealed class PermissionValidatorService(
     }
     private async Task<bool> ValidateTenantPermission(PermissionInfo permission, CancellationToken ct)
     {
+        var tenantId = tenantContext.TenantId;
+        var personId = personContext.PersonId;
         var personRoles = await cache.GetOrCreateAsync(
-            $"TENANT:{tenantContext.TenantId}:PERSON:{personContext.PersonId}:ROLES",
-            (cacheCt) => TenantUserRoles(db, cacheCt),
+            $"TENANT:{tenantId}:PERSON:{personId}:ROLES",
+            (cacheCt) => TenantUserRoles(db, personId, cacheCt),
             ct
         );
         foreach (var role in personRoles ?? [])
@@ -62,19 +66,19 @@ internal sealed class PermissionValidatorService(
         }
         return false;
     }
-    private Task<List<Guid>> PlatformUserRoles(AppDbContext db, CancellationToken cacheCt)
+    private Task<List<Guid>> PlatformUserRoles(AppDbContext db, Guid? personId, CancellationToken cacheCt)
     {
         return db.Persons
             .AsNoTracking()
-            .Where(p => p.Id == personContext.PersonId)
+            .Where(p => p.Id == personId)
             .SelectMany(p => p.PlatformRoles.Select(pr => pr.Id))
             .ToListAsync(cacheCt);
     }
-    private Task<List<Guid>> TenantUserRoles(AppDbContext db, CancellationToken cacheCt)
+    private Task<List<Guid>> TenantUserRoles(AppDbContext db, Guid? personId, CancellationToken cacheCt)
     {
         return db.Persons
             .AsNoTracking()
-            .Where(p => p.Id == personContext.PersonId)
+            .Where(p => p.Id == personId)
             .SelectMany(p => p.TenantRoles.Select(pr => pr.Id))
             .ToListAsync(cacheCt);
     }
