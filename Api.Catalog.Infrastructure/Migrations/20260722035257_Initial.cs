@@ -33,22 +33,6 @@ namespace Api.Catalog.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "platform_membership",
-                schema: "catalog",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    person_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_platform_membership", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "platform_role",
                 schema: "catalog",
                 columns: table => new
@@ -104,6 +88,29 @@ namespace Api.Catalog.Infrastructure.Migrations
                         principalTable: "person",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "platform_membership",
+                schema: "catalog",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    person_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_platform_membership", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_platform_membership_person_person_id",
+                        column: x => x.person_id,
+                        principalSchema: "catalog",
+                        principalTable: "person",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -700,6 +707,13 @@ namespace Api.Catalog.Infrastructure.Migrations
                 schema: "catalog",
                 table: "person_tenant_roles",
                 column: "tenant_role_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_platform_membership_person_id",
+                schema: "catalog",
+                table: "platform_membership",
+                column: "person_id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_platform_role_permission_platform_role_id",
