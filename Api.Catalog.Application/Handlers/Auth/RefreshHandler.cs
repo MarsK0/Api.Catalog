@@ -4,9 +4,9 @@ using Api.Catalog.Domain;
 using Api.Catalog.Domain.Enums;
 using MediatR;
 
-namespace Api.Catalog.Application.Features;
+namespace Api.Catalog.Application.Handlers;
 
-internal sealed class RefreshTokenHandler(
+internal sealed class RefreshHandler(
     TimeProvider timeProvider,
     ITokenService tokenService,
     IUnitOfWork unitOfWork,
