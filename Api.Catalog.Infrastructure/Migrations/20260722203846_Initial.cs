@@ -354,6 +354,13 @@ namespace Api.Catalog.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_tenant_membership", x => x.id);
                     table.ForeignKey(
+                        name: "FK_tenant_membership_person_person_id",
+                        column: x => x.person_id,
+                        principalSchema: "catalog",
+                        principalTable: "person",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_tenant_membership_tenant_tenant_id",
                         column: x => x.tenant_id,
                         principalSchema: "catalog",
