@@ -1,4 +1,5 @@
 ﻿using Api.Catalog.Application.Contracts.Contexts;
+using Api.Catalog.Application.Entities;
 using Api.Catalog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;

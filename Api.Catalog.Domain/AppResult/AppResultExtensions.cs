@@ -20,12 +20,12 @@ public static class AppResultExtensions
     )
     {
         var result = await resultTask;
-        if(result.IsSuccess)
+        if (result.IsSuccess)
             await onSuccess(result.Value);
         else
             await onFailure(result.Failure);
     }
-    public static async Task<TResult> FoldAsync<TValue,TResult>(
+    public static async Task<TResult> FoldAsync<TValue, TResult>(
         this Task<AppResult<TValue>> resultTask,
         Func<TValue, Task<TResult>> onSuccess,
         Func<AppFailure, Task<TResult>> onFailure

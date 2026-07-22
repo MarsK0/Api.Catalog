@@ -4,9 +4,9 @@ using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
 using MediatR;
 
-namespace Api.Catalog.Application.Features.Tenancy;
+namespace Api.Catalog.Application.Handlers.Tenancy;
 
-internal sealed class GetTenantByIdFeature(
+internal sealed class GetTenantByIdHandler(
     ITenantRepo tenantRepo
 ) : IRequestHandler<GetTenantByIdQuery, AppResult<TenantResponse?>>
 {
