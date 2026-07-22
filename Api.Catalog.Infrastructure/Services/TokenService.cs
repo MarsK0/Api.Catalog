@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Api.Catalog.Infrastructure.Services;
@@ -21,8 +22,15 @@ internal sealed class TokenService : ITokenService
         _config = config;
         _timeProvider = timeProvider;
     }
+    public (string Value, string Hash) GenerateRefreshToken()
+    {
+        var bytes = RandomNumberGenerator.GetBytes(64);
+        var value = Convert.ToBase64String(bytes);
+        var hash = HashToken(value);
 
-
+        return (value, hash);
+    }
+    public string HashToken(string token) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
     public (string Token, DateTime Expires) GenerateToken(Person person)
     {
         var jwtConfig = _config.GetSection("Jwt") ?? throw new KeyNotFoundException("Sessão de cofiguração JWT não definida");

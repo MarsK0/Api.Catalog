@@ -1,4 +1,5 @@
 ﻿using Api.Catalog.Application.Contracts;
+using Api.Catalog.Application.Entities;
 using Api.Catalog.Domain.Entities;
 using Api.Catalog.Domain.Models;
 using Api.Catalog.Domain.ValueObjects;
