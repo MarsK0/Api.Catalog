@@ -82,7 +82,8 @@ public sealed class AppDbContext : DbContext
     {
         modelBuilder.Entity<TEntity>().HasQueryFilter(
             entity => (
-                entity.TenantId == _tenantContext.TenantId
+                entity.TenantId == _tenantContext.TenantId ||
+                _tenantContext.AllowCrossTenancy
             )
         );
     }
