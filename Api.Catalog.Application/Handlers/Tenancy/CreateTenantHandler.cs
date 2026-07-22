@@ -13,7 +13,7 @@ internal sealed class CreateTenantHandler(
 {
     public async Task<AppResult<TenantResponse>> Handle(CreateTenantCommand command, CancellationToken ct)
     {
-        var slugTenant = tenantRepo.GetBySlugAsync(command.Slug, ct);
+        var slugTenant = await tenantRepo.GetBySlugAsync(command.Slug, ct);
         if (slugTenant is not null)
             return AppFailure.ApplicationValidation($"Slug '{command.Slug}' já em uso.");
 
