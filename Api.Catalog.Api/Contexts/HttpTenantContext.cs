@@ -24,5 +24,5 @@ public sealed class HttpTenantContext(IHttpContextAccessor accessor) : ITenantCo
         : new HttpTenantContextData(null, false);
     public Guid? TenantId => _context.TenantId;
     public bool IsPlatformContext => _context.IsPlatformContext;
-    public bool AllowCrossTenancy => _context.IsPlatformContext && _context.TenantId is not null;
+    public bool AllowCrossTenancy => _context.IsPlatformContext && _context.TenantId is null;
 }
