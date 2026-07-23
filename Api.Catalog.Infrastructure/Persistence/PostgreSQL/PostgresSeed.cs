@@ -52,7 +52,7 @@ internal sealed class PostgresSeed(
     {
         var membershipOwner = await db.PlatformMembership
             .FirstOrDefaultAsync(p => p.Person.Id == owner.Id, ct);
-        if(membershipOwner is null)
+        if (membershipOwner is null)
         {
             var membershipResult = PlatformMembership.Create(owner.Id);
             if (!membershipResult.IsSuccess)
