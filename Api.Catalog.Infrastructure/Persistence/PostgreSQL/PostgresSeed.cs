@@ -31,6 +31,8 @@ internal sealed class PostgresSeed(
     {
         var platformOwnerEmail = config["PlatformOwner:Email"] ?? throw new InvalidOperationException("Email PlatformOwner não definido.");
         var platformOwner = await db.Persons
+            .Include(i => i.PlatformRoles)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(p => p.Email == platformOwnerEmail, ct);
 
         if (platformOwner is null)
