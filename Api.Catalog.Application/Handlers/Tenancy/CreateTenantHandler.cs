@@ -3,7 +3,7 @@ using Api.Catalog.Application.Mappers;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
 using Api.Catalog.Domain.Entities;
-using MediatR;
+using Mediator;
 
 namespace Api.Catalog.Application.Handlers.Tenancy;
 
@@ -12,7 +12,7 @@ internal sealed class CreateTenantHandler(
     ITenantRepo tenantRepo
 ) : IRequestHandler<CreateTenantCommand, AppResult<TenantResponse>>
 {
-    public async Task<AppResult<TenantResponse>> Handle(CreateTenantCommand command, CancellationToken ct)
+    public async ValueTask<AppResult<TenantResponse>> Handle(CreateTenantCommand command, CancellationToken ct)
     {
         var slugTenant = await tenantRepo.GetBySlugAsync(command.Slug, ct);
         if (slugTenant is not null)

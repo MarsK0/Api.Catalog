@@ -3,7 +3,7 @@ using Api.Catalog.Application.Entities;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
 using Api.Catalog.Domain.Enums;
-using MediatR;
+using Mediator;
 
 namespace Api.Catalog.Application.Handlers;
 
@@ -16,7 +16,7 @@ internal sealed class LoginHandler(
     IRefreshTokenRepo refreshTokenRepo
 ) : IRequestHandler<LoginCommand, AppResult<LoginResponse>>
 {
-    public async Task<AppResult<LoginResponse>> Handle(LoginCommand command, CancellationToken ct)
+    public async ValueTask<AppResult<LoginResponse>> Handle(LoginCommand command, CancellationToken ct)
     {
         var account = await accountRepo.FindByEmailAsync(command.Email, ct);
         if (account is null)
