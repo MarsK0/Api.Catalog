@@ -1,7 +1,7 @@
 ﻿using Api.Catalog.Api.Configurations;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
