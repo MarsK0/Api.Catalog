@@ -90,26 +90,12 @@ public sealed class AppDbContext : DbContext
     public override int SaveChanges()
     {
         ApplyTenantIdInNewEntities();
-        ApplyCreatedAndUpdatedAt();
         return base.SaveChanges();
     }
     public override Task<int> SaveChangesAsync(CancellationToken ct)
     {
         ApplyTenantIdInNewEntities();
-        ApplyCreatedAndUpdatedAt();
         return base.SaveChangesAsync(ct);
-    }
-    private void ApplyCreatedAndUpdatedAt()
-    {
-        var now = _timeProvider.GetUtcNow();
-        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
-        {
-            if (entry.State == EntityState.Added)
-                entry.Property(p => p.CreatedAt).CurrentValue = now;
-
-            if (entry.State == EntityState.Modified)
-                entry.Property(p => p.UpdatedAt).CurrentValue = now;
-        }
     }
     private void ApplyTenantIdInNewEntities()
     {

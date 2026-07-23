@@ -2,6 +2,6 @@
 
 public enum EPriceRuleType
 {
-    DIRECT = 0,
-    PRODUCT_QUANTITY = 1
+    Direct = 0,
+    ProductQuantity = 1
 }
