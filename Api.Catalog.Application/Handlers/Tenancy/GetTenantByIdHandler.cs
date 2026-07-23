@@ -11,5 +11,11 @@ internal sealed class GetTenantByIdHandler(
 ) : IRequestHandler<GetTenantByIdQuery, AppResult<TenantResponse?>>
 {
     public async Task<AppResult<TenantResponse?>> Handle(GetTenantByIdQuery query, CancellationToken ct)
-        => (await tenantRepo.GetByIdAsync(query.Id, ct))?.ToResponse();
+    {
+        var result = await tenantRepo.GetByIdAsync(query.Id, ct);
+        if (result is null)
+            return AppFailure.EntityNotFound("Nenhuma empresa encontrada para o ID informado.");
+
+        return result.ToResponse();
+    }
 }
