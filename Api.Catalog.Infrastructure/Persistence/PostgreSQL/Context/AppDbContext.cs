@@ -2,20 +2,14 @@
 using Api.Catalog.Application.Entities;
 using Api.Catalog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 
-public sealed class AppDbContext : DbContext
+public sealed class AppDbContext(
+    DbContextOptions<AppDbContext> options,
+    ITenantContext tenantContext
+) : DbContext(options)
 {
-    private readonly TimeProvider _timeProvider;
-    private readonly ITenantContext _tenantContext;
-    public AppDbContext(DbContextOptions<AppDbContext> options, TimeProvider timeProvider, ITenantContext tenantContext) : base(options)
-    {
-        _tenantContext = tenantContext;
-        _timeProvider = timeProvider;
-    }
-
     #region Application
     public DbSet<PlatformMembership> PlatformMembership { get; init; }
     public DbSet<Account> Accounts { get; init; }
@@ -57,50 +51,10 @@ public sealed class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("catalog");
-
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
-
-        // Percorre os tipos das entidades, valida se é do tipo TenantScopedEntity, cria genericamente
-        // o método ApplyTenantFilter e o invoca com modelBuilder como argumento
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-        {
-            if (typeof(TenantScopedEntity).IsAssignableFrom(entityType.ClrType))
-            {
-                var method = typeof(AppDbContext)
-                    .GetMethod(nameof(ApplyTenantFilter), BindingFlags.NonPublic | BindingFlags.Instance)!
-                    .MakeGenericMethod(entityType.ClrType);
-
-                method.Invoke(this, new object[] { modelBuilder });
-            }
-        }
-
         base.OnModelCreating(modelBuilder);
-    }
 
-    private void ApplyTenantFilter<TEntity>(ModelBuilder modelBuilder) where TEntity : TenantScopedEntity
-    {
-        modelBuilder.Entity<TEntity>().HasQueryFilter(
-            entity => (
-                entity.TenantId == _tenantContext.TenantId ||
-                _tenantContext.AllowCrossTenancy
-            )
-        );
-    }
-    public override int SaveChanges()
-    {
-        ApplyTenantIdInNewEntities();
-        return base.SaveChanges();
-    }
-    public override Task<int> SaveChangesAsync(CancellationToken ct)
-    {
-        ApplyTenantIdInNewEntities();
-        return base.SaveChangesAsync(ct);
-    }
-    private void ApplyTenantIdInNewEntities()
-    {
-        foreach (var entry in ChangeTracker.Entries<TenantScopedEntity>())
-            if (entry.State == EntityState.Added && entry.Entity.TenantId == Guid.Empty)
-                entry.Entity.SetTenant(_tenantContext.TenantId ?? throw new InvalidOperationException("Tenant obrigatório para a operação de definição de tenantId. Revisar contexto Tenant."));
+        modelBuilder.HasDefaultSchema("catalog");
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+        modelBuilder.ApplyDataRules(tenantContext);
     }
 }

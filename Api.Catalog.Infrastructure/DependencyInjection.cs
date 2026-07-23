@@ -2,6 +2,7 @@
 using Api.Catalog.Infrastructure.Contracts;
 using Api.Catalog.Infrastructure.Persistence.Cache;
 using Api.Catalog.Infrastructure.Persistence.PostgreSQL;
+using Api.Catalog.Infrastructure.Persistence.PostgreSQL.Interceptors;
 using Api.Catalog.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,10 +16,22 @@ public static class DependencyInjection
     {
         #region Database
         services.AddDbContext<AppDbContext>(
-            options => options.UseNpgsql(configuration.GetConnectionString("CatalogDb"))
+            (srvcs, options) =>
+            {
+                var tenantInterceptor = srvcs.GetRequiredService<TenantInterceptor>();
+                var trackingInterceptor = srvcs.GetRequiredService<TrackingInterceptor>();
+                options
+                    .UseNpgsql(configuration.GetConnectionString("CatalogDb"))
+                    .AddInterceptors(
+                        tenantInterceptor,
+                        trackingInterceptor
+                    );
+            }
         );
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IDataSeeder, PostgresSeed>();
+        services.AddScoped<TenantInterceptor>();
+        services.AddSingleton<TrackingInterceptor>();
         #endregion
 
         #region Repositories
