@@ -2,7 +2,7 @@
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
 using Api.Catalog.Domain.Enums;
-using MediatR;
+using Mediator;
 
 namespace Api.Catalog.Application.Handlers;
 
@@ -14,7 +14,7 @@ internal sealed class RefreshHandler(
     IAccountRepo accountRepo
 ) : IRequestHandler<RefreshTokenCommand, AppResult<LoginResponse>>
 {
-    public async Task<AppResult<LoginResponse>> Handle(RefreshTokenCommand command, CancellationToken ct)
+    public async ValueTask<AppResult<LoginResponse>> Handle(RefreshTokenCommand command, CancellationToken ct)
     {
         var hash = tokenService.HashToken(command.TokenValue);
         var token = await refreshTokenRepo.GetByHashAsync(hash, ct);

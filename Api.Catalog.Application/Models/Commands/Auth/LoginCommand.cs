@@ -1,5 +1,5 @@
 ﻿using Api.Catalog.Domain;
-using MediatR;
+using Mediator;
 
 namespace Api.Catalog.Application.Models;
 

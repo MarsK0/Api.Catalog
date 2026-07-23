@@ -2,7 +2,7 @@
 using Api.Catalog.Api.Constants;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Catalog.Api.Controllers.Tenancy;

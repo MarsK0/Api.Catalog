@@ -3,7 +3,7 @@
 public static class AppResultExtensions
 {
     public static async Task<TResult> FoldAsync<TValue, TResult>(
-        this Task<AppResult<TValue>> resultTask,
+        this ValueTask<AppResult<TValue>> resultTask,
         Func<TValue, TResult> onSuccess,
         Func<AppFailure, TResult> onFailure
     )
