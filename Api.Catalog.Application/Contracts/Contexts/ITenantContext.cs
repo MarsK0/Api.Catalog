@@ -4,4 +4,5 @@ public interface ITenantContext
 {
     Guid? TenantId { get; }
     bool IsPlatformContext { get; }
+    bool AllowCrossTenancy { get; }
 }
