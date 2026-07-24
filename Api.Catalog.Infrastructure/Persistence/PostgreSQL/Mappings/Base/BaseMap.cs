@@ -9,10 +9,6 @@ internal abstract class BaseMap<TEntity> : IEntityTypeConfiguration<TEntity> whe
     public virtual void Configure(EntityTypeBuilder<TEntity> builder)
     {
         builder.HasKey(k => k.Id);
-
         builder.Property(p => p.Id).HasColumnName("id").ValueGeneratedNever();
-        builder.Property(p => p.CreatedAt).HasColumnName("created_at");
-        builder.Property(p => p.UpdatedAt).HasColumnName("updated_at");
-        builder.Property(p => p.Status).HasColumnName("status");
     }
 }
