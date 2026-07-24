@@ -1,7 +1,7 @@
 ﻿namespace Api.Catalog.Domain.Enums;
 
-public enum EStatus
+public enum EPersonStatus
 {
     Enabled = 0,
-    Disabled = 1,
+    Disabled = 1
 }

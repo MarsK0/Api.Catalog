@@ -1,8 +1,9 @@
 ﻿using Api.Catalog.Application.Contracts;
+using Api.Catalog.Application.Enums;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
 using Api.Catalog.Domain.Enums;
-using MediatR;
+using Mediator;
 
 namespace Api.Catalog.Application.Handlers;
 
@@ -14,7 +15,7 @@ internal sealed class RefreshHandler(
     IAccountRepo accountRepo
 ) : IRequestHandler<RefreshTokenCommand, AppResult<LoginResponse>>
 {
-    public async Task<AppResult<LoginResponse>> Handle(RefreshTokenCommand command, CancellationToken ct)
+    public async ValueTask<AppResult<LoginResponse>> Handle(RefreshTokenCommand command, CancellationToken ct)
     {
         var hash = tokenService.HashToken(command.TokenValue);
         var token = await refreshTokenRepo.GetByHashAsync(hash, ct);
@@ -36,7 +37,7 @@ internal sealed class RefreshHandler(
             return AppFailure.AuthValidation("Sessão inválida. Faça login novamente.");
 
         var account = await accountRepo.FindByPersonIdAsync(token.PersonId, ct);
-        if (account is null || account.Status is EStatus.Disabled || account.Person.Status is EStatus.Disabled)
+        if (account is null || account.Status is EAccountStatus.Disabled || account.Person.Status is EPersonStatus.Disabled)
             return AppFailure.AuthValidation("Sessão inválida. Faça login novamente");
 
         token.MarkAsUsed();

@@ -1,9 +1,10 @@
 ﻿using Api.Catalog.Application.Contracts;
 using Api.Catalog.Application.Entities;
+using Api.Catalog.Application.Enums;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
 using Api.Catalog.Domain.Enums;
-using MediatR;
+using Mediator;
 
 namespace Api.Catalog.Application.Handlers;
 
@@ -16,7 +17,7 @@ internal sealed class LoginHandler(
     IRefreshTokenRepo refreshTokenRepo
 ) : IRequestHandler<LoginCommand, AppResult<LoginResponse>>
 {
-    public async Task<AppResult<LoginResponse>> Handle(LoginCommand command, CancellationToken ct)
+    public async ValueTask<AppResult<LoginResponse>> Handle(LoginCommand command, CancellationToken ct)
     {
         var account = await accountRepo.FindByEmailAsync(command.Email, ct);
         if (account is null)
@@ -25,10 +26,10 @@ internal sealed class LoginHandler(
         if (!passwordHashService.Matches(command.Password, account.PasswordHash))
             return AppFailure.InvalidRequest("Credenciais iválidas.");
 
-        if (account.Status is EStatus.Disabled)
+        if (account.Status is EAccountStatus.Disabled)
             return AppFailure.InvalidRequest("Credenciais iválidas.");
 
-        if (account.Person.Status is EStatus.Disabled)
+        if (account.Person.Status is EPersonStatus.Disabled)
             return AppFailure.InvalidRequest("Credenciais iválidas.");
 
         return await Login(timeProvider, tokenService, unitOfWork, refreshTokenRepo, account, command.RememberMe, ct);
