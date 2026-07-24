@@ -1,5 +1,6 @@
 ﻿using Api.Catalog.Application.Contracts;
 using Api.Catalog.Application.Entities;
+using Api.Catalog.Application.Enums;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
 using Api.Catalog.Domain.Enums;
@@ -25,10 +26,10 @@ internal sealed class LoginHandler(
         if (!passwordHashService.Matches(command.Password, account.PasswordHash))
             return AppFailure.InvalidRequest("Credenciais iválidas.");
 
-        if (account.Status is EStatus.Disabled)
+        if (account.Status is EAccountStatus.Disabled)
             return AppFailure.InvalidRequest("Credenciais iválidas.");
 
-        if (account.Person.Status is EStatus.Disabled)
+        if (account.Person.Status is EPersonStatus.Disabled)
             return AppFailure.InvalidRequest("Credenciais iválidas.");
 
         return await Login(timeProvider, tokenService, unitOfWork, refreshTokenRepo, account, command.RememberMe, ct);

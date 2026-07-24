@@ -1,10 +1,13 @@
-﻿namespace Api.Catalog.Domain.Entities;
+﻿using Api.Catalog.Domain.Enums;
+
+namespace Api.Catalog.Domain.Entities;
 
 public class Person : BaseEntity
 {
     public string Name { get; private set; } = null!;
     public string Email { get; private set; } = null!;
     public string? Phone { get; private set; }
+    public EPersonStatus Status { get; private set; }
     private readonly List<TenantRole> _tenantRoles = new();
     private readonly List<PlatformRole> _platformRoles = new();
     public IReadOnlyCollection<TenantRole> TenantRoles => _tenantRoles.AsReadOnly();
