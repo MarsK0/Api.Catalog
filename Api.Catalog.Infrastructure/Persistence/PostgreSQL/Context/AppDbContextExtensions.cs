@@ -24,7 +24,7 @@ internal static class AppDbContextExtensions
                 method.Invoke(null, [modelBuilder, tenantContext]);
             }
 
-            if (!entity.IsOwned())
+            if (!entity.IsOwned() && entity.ClrType != typeof(AuditLog))
             {
                 var builder = modelBuilder.Entity(entity.ClrType);
                 builder.Property<DateTimeOffset>(TrackingMetadata.CreatedAt).HasColumnName("created_at");

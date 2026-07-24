@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Api.Catalog.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260723054755_Initial")]
+    [Migration("20260724032151_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -855,6 +855,60 @@ namespace Api.Catalog.Infrastructure.Migrations
                     b.ToTable("tenant_role", "catalog");
                 });
 
+            modelBuilder.Entity("Api.Catalog.Infrastructure.Persistence.PostgreSQL.AuditLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("Action")
+                        .HasColumnType("integer")
+                        .HasColumnName("action");
+
+                    b.Property<string>("Changes")
+                        .HasColumnType("text")
+                        .HasColumnName("changes");
+
+                    b.Property<Guid?>("EntityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("entity_id");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("entity_name");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ocurred_at");
+
+                    b.Property<Guid?>("PersonId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<bool>("Success")
+                        .HasColumnType("boolean")
+                        .HasColumnName("success");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("TenantId", "OccurredAt");
+
+                    b.HasIndex("TenantId", "EntityName", "EntityId");
+
+                    b.ToTable("audit_log", "catalog");
+                });
+
             modelBuilder.Entity("Api.Catalog.Application.Entities.Account", b =>
                 {
                     b.HasOne("Api.Catalog.Domain.Entities.Person", "Person")
@@ -1236,6 +1290,23 @@ namespace Api.Catalog.Infrastructure.Migrations
 
                     b.Navigation("RoleInfo")
                         .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("Api.Catalog.Infrastructure.Persistence.PostgreSQL.AuditLog", b =>
+                {
+                    b.HasOne("Api.Catalog.Domain.Entities.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Api.Catalog.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Person");
 
                     b.Navigation("Tenant");
                 });
