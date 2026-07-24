@@ -10,6 +10,9 @@ public sealed class AppDbContext(
     ITenantContext tenantContext
 ) : DbContext(options)
 {
+    #region Infrastructure
+    internal DbSet<AuditLog> AuditLogs { get; init; }
+    #endregion
     #region Application
     public DbSet<PlatformMembership> PlatformMembership { get; init; }
     public DbSet<Account> Accounts { get; init; }

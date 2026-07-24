@@ -20,18 +20,25 @@ public static class DependencyInjection
             {
                 var tenantInterceptor = srvcs.GetRequiredService<TenantInterceptor>();
                 var trackingInterceptor = srvcs.GetRequiredService<TrackingInterceptor>();
+                var auditLogInterceptor = srvcs.GetRequiredService<AuditLogInterceptor>();
                 options
                     .UseNpgsql(configuration.GetConnectionString("CatalogDb"))
                     .AddInterceptors(
                         tenantInterceptor,
-                        trackingInterceptor
+                        trackingInterceptor,
+                        auditLogInterceptor
                     );
             }
+        );
+        services.AddDbContextFactory<AuditDbContext>(
+            options => options.UseNpgsql(configuration.GetConnectionString("CatalogDb")),
+            lifetime: ServiceLifetime.Scoped
         );
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IDataSeeder, PostgresSeed>();
         services.AddScoped<TenantInterceptor>();
         services.AddSingleton<TrackingInterceptor>();
+        services.AddScoped<AuditLogInterceptor>();
         #endregion
 
         #region Repositories
