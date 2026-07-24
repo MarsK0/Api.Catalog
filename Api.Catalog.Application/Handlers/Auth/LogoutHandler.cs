@@ -1,6 +1,6 @@
 ﻿using Api.Catalog.Application.Contracts;
 using Api.Catalog.Application.Models;
-using MediatR;
+using Mediator;
 
 namespace Api.Catalog.Application.Handlers;
 
@@ -10,7 +10,7 @@ internal sealed class LogoutHandler(
     ITokenService tokenService
 ) : IRequestHandler<LogoutCommand, Unit>
 {
-    public async Task<Unit> Handle(LogoutCommand command, CancellationToken ct)
+    public async ValueTask<Unit> Handle(LogoutCommand command, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(command.TokenValue))
             return Unit.Value;

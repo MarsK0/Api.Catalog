@@ -22,8 +22,9 @@ namespace Api.Catalog.Infrastructure.Migrations
                     name = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
                     email = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
                     phone = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
-                    status = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
@@ -39,8 +40,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     description = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
@@ -56,8 +57,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
                     slug = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
@@ -72,9 +73,10 @@ namespace Api.Catalog.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     person_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     password_hash = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
@@ -96,8 +98,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     person_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
@@ -125,8 +127,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                     remember_me = table.Column<bool>(type: "boolean", nullable: false),
                     is_used = table.Column<bool>(type: "boolean", nullable: false),
                     revoked = table.Column<bool>(type: "boolean", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
@@ -149,8 +151,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     person_id = table.Column<Guid>(type: "uuid", nullable: false),
                     platform_role_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
@@ -196,6 +198,41 @@ namespace Api.Catalog.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "audit_log",
+                schema: "catalog",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    entity_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    entity_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    action = table.Column<int>(type: "integer", nullable: false),
+                    changes = table.Column<string>(type: "text", nullable: true),
+                    success = table.Column<bool>(type: "boolean", nullable: false),
+                    ErrorMessage = table.Column<string>(type: "text", nullable: true),
+                    ocurred_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    tenant_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_audit_log", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_audit_log_person_user_id",
+                        column: x => x.user_id,
+                        principalSchema: "catalog",
+                        principalTable: "person",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_audit_log_tenant_tenant_id",
+                        column: x => x.tenant_id,
+                        principalSchema: "catalog",
+                        principalTable: "tenant",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "budget",
                 schema: "catalog",
                 columns: table => new
@@ -204,8 +241,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                     valid_until = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     user_email = table.Column<string>(type: "text", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -235,8 +272,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     description = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -269,8 +306,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                     extension = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     content_type = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     hash = table.Column<byte[]>(type: "bytea", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -295,8 +332,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                     name = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
                     valid_from = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     valid_until = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -320,8 +357,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     description = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
                     reference = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -344,8 +381,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     person_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -375,8 +412,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     module_code = table.Column<string>(type: "text", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -400,8 +437,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     description = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -431,8 +468,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                     price_rule_id = table.Column<Guid>(type: "uuid", nullable: false),
                     price_rule_type = table.Column<int>(type: "integer", nullable: false),
                     price = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -463,8 +500,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     media_id = table.Column<Guid>(type: "uuid", nullable: false),
                     file_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -493,8 +530,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false),
                     price_list_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -528,8 +565,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     min = table.Column<decimal>(type: "numeric", nullable: false),
                     max = table.Column<decimal>(type: "numeric", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false),
                     price_list_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -563,8 +600,8 @@ namespace Api.Catalog.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     person_id = table.Column<Guid>(type: "uuid", nullable: false),
                     tenant_role_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -634,6 +671,24 @@ namespace Api.Catalog.Infrastructure.Migrations
                 schema: "catalog",
                 table: "assets",
                 column: "tenant_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_audit_log_tenant_id_entity_name_entity_id",
+                schema: "catalog",
+                table: "audit_log",
+                columns: new[] { "tenant_id", "entity_name", "entity_id" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_audit_log_tenant_id_ocurred_at",
+                schema: "catalog",
+                table: "audit_log",
+                columns: new[] { "tenant_id", "ocurred_at" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_audit_log_user_id",
+                schema: "catalog",
+                table: "audit_log",
+                column: "user_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_budget_tenant_id",
@@ -824,6 +879,10 @@ namespace Api.Catalog.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "assets",
+                schema: "catalog");
+
+            migrationBuilder.DropTable(
+                name: "audit_log",
                 schema: "catalog");
 
             migrationBuilder.DropTable(
