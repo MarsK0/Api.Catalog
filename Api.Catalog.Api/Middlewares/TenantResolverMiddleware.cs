@@ -29,7 +29,10 @@ public class TenantResolverMiddleware(
                 onFailure: async (failure) =>
                 {
                     context.Response.ContentType = "application/json";
-                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    context.Response.StatusCode = 
+                        failure.Code == FailureCode.EntityNotFound 
+                            ? (int)HttpStatusCode.NotFound 
+                            : (int)HttpStatusCode.BadRequest;
                     await context.Response.WriteAsync(JsonSerializer.Serialize(new { failure.Message }));
                 }
             );
@@ -54,7 +57,7 @@ public class TenantResolverMiddleware(
         if (Guid.TryParse(tenantHeader, out Guid tenantId))
         {
             if (!(await tenantStore.TenantExistsAsync(tenantId, cancellationToken)))//Tenant não existe
-                return AppFailure.InvalidRequest("Empresa não encontrada. Contate o suporte.");
+                return AppFailure.EntityNotFound("Empresa não encontrada. Contate o suporte.");
 
             if (isPlatformContext)//Tenant informado no contexto da plataforma
                 return new HttpTenantContextData(tenantId, true);
@@ -68,7 +71,7 @@ public class TenantResolverMiddleware(
         {
             //Em contexto normal
             if (!isPlatformContext)
-                return AppFailure.InvalidRequest("Empresa não encontrada. Contate o suporte.");
+                return AppFailure.EntityNotFound("Empresa não encontrada. Contate o suporte.");
             //Em contexto plataforma
             return new HttpTenantContextData(null, true);
         }
@@ -84,6 +87,6 @@ public class TenantResolverMiddleware(
             return new HttpTenantContextData(id, false);
         }
 
-        return AppFailure.InvalidRequest("Empresa não encontrada. contate o suporte.");
+        return AppFailure.EntityNotFound("Empresa não encontrada. Contate o suporte.");
     }
 }
