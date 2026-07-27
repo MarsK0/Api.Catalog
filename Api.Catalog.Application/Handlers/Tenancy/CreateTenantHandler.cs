@@ -10,9 +10,9 @@ namespace Api.Catalog.Application.Handlers.Tenancy;
 internal sealed class CreateTenantHandler(
     IUnitOfWork unitOfWork,
     ITenantRepo tenantRepo
-) : IRequestHandler<CreateTenantCommand, AppResult<TenantResponse>>
+) : IRequestHandler<CreateTenantCommand, AppResult<TenantDto>>
 {
-    public async ValueTask<AppResult<TenantResponse>> Handle(CreateTenantCommand command, CancellationToken ct)
+    public async ValueTask<AppResult<TenantDto>> Handle(CreateTenantCommand command, CancellationToken ct)
     {
         var slugTenant = await tenantRepo.GetBySlugAsync(command.Slug, ct);
         if (slugTenant is not null)
@@ -25,6 +25,6 @@ internal sealed class CreateTenantHandler(
         var tenant = tenantResult.Value;
         await tenantRepo.CreateAsync(tenant, ct);
         await unitOfWork.SaveChangesAsync(ct);
-        return tenant.ToResponse();
+        return tenant.Dto();
     }
 }
