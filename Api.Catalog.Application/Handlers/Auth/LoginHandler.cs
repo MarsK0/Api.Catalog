@@ -1,6 +1,7 @@
 ﻿using Api.Catalog.Application.Contracts;
 using Api.Catalog.Application.Entities;
 using Api.Catalog.Application.Enums;
+using Api.Catalog.Application.Mappers;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
 using Api.Catalog.Domain.Enums;
@@ -15,9 +16,9 @@ internal sealed class LoginHandler(
     IUnitOfWork unitOfWork,
     IAccountRepo accountRepo,
     IRefreshTokenRepo refreshTokenRepo
-) : IRequestHandler<LoginCommand, AppResult<LoginResponse>>
+) : IRequestHandler<LoginCommand, AppResult<LoginResponseDto>>
 {
-    public async ValueTask<AppResult<LoginResponse>> Handle(LoginCommand command, CancellationToken ct)
+    public async ValueTask<AppResult<LoginResponseDto>> Handle(LoginCommand command, CancellationToken ct)
     {
         var account = await accountRepo.FindByEmailAsync(command.Email, ct);
         if (account is null)
@@ -34,7 +35,7 @@ internal sealed class LoginHandler(
 
         return await Login(timeProvider, tokenService, unitOfWork, refreshTokenRepo, account, command.RememberMe, ct);
     }
-    public static async Task<LoginResponse> Login(
+    public static async Task<LoginResponseDto> Login(
         TimeProvider timeProvider,
         ITokenService tokenService,
         IUnitOfWork unitOfWork,
@@ -50,7 +51,9 @@ internal sealed class LoginHandler(
             Expires,
             account.PersonId,
             account.Person.Name,
-            account.Person.Email
+            account.Person.Email,
+            account.Person.PlatformRoles.Select(s => s.RoleInfo).Dto(),
+            account.Person.TenantRoles.Select(s => s.RoleInfo).Dto()
         );
 
         var (rtValue, rtHash) = tokenService.GenerateRefreshToken();
@@ -63,6 +66,6 @@ internal sealed class LoginHandler(
         await refreshTokenRepo.AddAsync(refreshToken, ct);
         await unitOfWork.SaveChangesAsync(ct);
 
-        return new LoginResponse(loginResult, rtValue, rtExpires, rememberMe);
+        return new LoginResponseDto(loginResult, rtValue, rtExpires, rememberMe);
     }
 }
