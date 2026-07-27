@@ -50,7 +50,7 @@ public class AuthController(IMediator mediator) : CatalogBaseController
         await mediator.Send(new LogoutCommand(tokenValue), ct);
         return NoContent();
     }
-    private IActionResult HandleLoginResponse(LoginResponse loginResponse)
+    private IActionResult HandleLoginResponse(LoginResponseDto loginResponse)
     {
         var cookieOptions = new CookieOptions
         {
