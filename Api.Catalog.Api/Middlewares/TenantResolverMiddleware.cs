@@ -29,9 +29,9 @@ public class TenantResolverMiddleware(
                 onFailure: async (failure) =>
                 {
                     context.Response.ContentType = "application/json";
-                    context.Response.StatusCode = 
-                        failure.Code == FailureCode.EntityNotFound 
-                            ? (int)HttpStatusCode.NotFound 
+                    context.Response.StatusCode =
+                        failure.Code == FailureCode.EntityNotFound
+                            ? (int)HttpStatusCode.NotFound
                             : (int)HttpStatusCode.BadRequest;
                     await context.Response.WriteAsync(JsonSerializer.Serialize(new { failure.Message }));
                 }
