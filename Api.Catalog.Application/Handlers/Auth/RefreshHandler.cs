@@ -13,9 +13,9 @@ internal sealed class RefreshHandler(
     IUnitOfWork unitOfWork,
     IRefreshTokenRepo refreshTokenRepo,
     IAccountRepo accountRepo
-) : IRequestHandler<RefreshTokenCommand, AppResult<LoginResponse>>
+) : IRequestHandler<RefreshTokenCommand, AppResult<LoginResponseDto>>
 {
-    public async ValueTask<AppResult<LoginResponse>> Handle(RefreshTokenCommand command, CancellationToken ct)
+    public async ValueTask<AppResult<LoginResponseDto>> Handle(RefreshTokenCommand command, CancellationToken ct)
     {
         var hash = tokenService.HashToken(command.TokenValue);
         var token = await refreshTokenRepo.GetByHashAsync(hash, ct);

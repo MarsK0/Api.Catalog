@@ -5,7 +5,7 @@ namespace Api.Catalog.Application.Mappers;
 
 public static class TenantMapper
 {
-    public static TenantResponse ToResponse(this Tenant tenant)
+    public static TenantDto Dto(this Tenant tenant)
     {
         return new(
             tenant.Id,

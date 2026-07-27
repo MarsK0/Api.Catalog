@@ -31,7 +31,13 @@ internal sealed class AccountRepo(
         if (includes)
         {
             query = query
-                .Include(i => i.Person);
+                .Include(i => i.Person)
+                    .ThenInclude(i => i.PlatformRoles)
+                        .ThenInclude(i => i.RoleInfo.Permissions)
+                .Include(i => i.Person)
+                    .ThenInclude(i => i.TenantRoles)
+                        .ThenInclude(i => i.RoleInfo.Permissions)
+                .AsSplitQuery();
         }
         if (!track)
             query = query.AsNoTracking();
