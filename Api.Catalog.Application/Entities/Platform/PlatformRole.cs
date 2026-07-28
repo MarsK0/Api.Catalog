@@ -1,6 +1,8 @@
-﻿using Api.Catalog.Domain.ValueObjects;
+﻿using Api.Catalog.Domain;
+using Api.Catalog.Domain.Entities;
+using Api.Catalog.Domain.ValueObjects;
 
-namespace Api.Catalog.Domain.Entities;
+namespace Api.Catalog.Application.Entities;
 
 public sealed class PlatformRole : BaseEntity
 {

@@ -4,5 +4,5 @@ namespace Api.Catalog.Application.Contracts;
 
 public interface IPersonRepo
 {
-    Task CreateAsync(Person person, CancellationToken ct);
+    void Add(Person person);
 }

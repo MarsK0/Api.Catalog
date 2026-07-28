@@ -12,23 +12,16 @@ internal sealed class TenantRepo(
     ICacheService cache
 ) : ITenantRepo
 {
-    public async Task CreateAsync(Tenant tenant, CancellationToken ct)
-    {
-        await db.Tenants.AddAsync(tenant, ct);
-    }
-    public async Task<Tenant?> GetByIdAsync(Guid id, CancellationToken ct, bool includes = true, bool track = false)
-    {
-        return await GetQuery(includes, track).FirstOrDefaultAsync(t => t.Id == id, ct);
-    }
-    public async Task<Tenant?> GetBySlugAsync(string slug, CancellationToken ct, bool includes = true, bool track = false)
-    {
-        return await GetQuery(includes, track).FirstOrDefaultAsync(t => t.Slug.Equals(slug), ct);
-    }
+    public void Add(Tenant tenant) => db.Tenants.Add(tenant);
+    public Task<Tenant?> GetByIdAsync(Guid id, CancellationToken ct, bool includes = true, bool track = false)
+        => GetQuery(includes, track).FirstOrDefaultAsync(t => t.Id == id, ct);
+    public Task<Tenant?> GetBySlugAsync(string slug, CancellationToken ct, bool includes = true, bool track = false)
+        => GetQuery(includes, track).FirstOrDefaultAsync(t => t.Slug.Equals(slug), ct);
     public async Task<List<string>> GetModulesAsync(CancellationToken ct)
     {
         var tenantId = tenantContext.TenantId;
 
-        string cacheKey = $"tenant:{tenantId}:Modules";
+        string cacheKey = $"TENANT:{tenantId}:MODULES";
         return await cache.GetOrCreateAsync(
             cacheKey,
             (cacheCt) => db.TenantModules
@@ -41,12 +34,7 @@ internal sealed class TenantRepo(
     {
         var query = db.Tenants.AsQueryable();
         if (includes)
-        {
-            query = query
-                .Include(i => i.Membership)
-                    .ThenInclude(i => i.Person)
-                .Include(i => i.Modules);
-        }
+            query = query.Include(i => i.Modules);
         if (!track)
             query = query.AsNoTracking();
 
