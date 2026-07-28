@@ -36,7 +36,7 @@ internal sealed class PostgresSeed(
         {
             var platformOwnerEmail = config["PlatformOwner:Email"] ?? throw new InvalidOperationException("Email Owner não definido.");
             var platformOwnerPassword = config["PlatformOwner:Password"] ?? throw new InvalidOperationException("Senha Owner não definida.");
-            var platformOwnerHashedPassword = passwordHasher.GenerateHash(platformOwnerEmail);
+            var platformOwnerHashedPassword = passwordHasher.GenerateHash(platformOwnerPassword);
             var platformOwnerCreateResult = PlatformUser.Create(platformOwnerLogin, platformOwnerLogin, platformOwnerEmail, platformOwnerHashedPassword);
             if (!platformOwnerCreateResult.IsSuccess)
                 throw new ApplicationException($"Um erro ocorreu ao criar o usuário PlatformOwner: {platformOwnerCreateResult.Failure.Message}");
