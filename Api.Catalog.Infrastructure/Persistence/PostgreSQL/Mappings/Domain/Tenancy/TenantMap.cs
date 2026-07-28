@@ -14,9 +14,6 @@ internal class TenantMap : BaseMap<Tenant>
         builder.Property(p => p.Name).HasColumnName("name").HasMaxLength(60);
         builder.Property(p => p.Slug).HasColumnName("slug").HasMaxLength(30);
 
-        builder.Navigation(n => n.Membership)
-            .HasField("_membership")
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
         builder.Navigation(n => n.Modules)
             .HasField("_modules")
             .UsePropertyAccessMode(PropertyAccessMode.Field);

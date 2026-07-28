@@ -4,30 +4,32 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 
-internal class TenantRoleMap : TenantScopedMap<TenantRole>
+internal class RoleMap : BaseMap<Role>
 {
-    public override void Configure(EntityTypeBuilder<TenantRole> builder)
+    public override void Configure(EntityTypeBuilder<Role> builder)
     {
         base.Configure(builder);
-        builder.ToTable("tenant_role");
+        builder.ToTable("role");
 
         builder.OwnsOne(r => r.RoleInfo, ri =>
         {
             ri.Property(p => p.Name)
                 .HasColumnName("name")
-                .HasMaxLength(30);
+                .HasMaxLength(30)
+                .IsRequired();
 
             ri.Property(p => p.Description)
                 .HasColumnName("description")
-                .HasMaxLength(60);
+                .HasMaxLength(60)
+                .IsRequired();
 
             ri.OwnsMany(m => m.Permissions, permission =>
             {
-                permission.ToTable("tenant_role_permission");
+                permission.ToTable("role_permission");
                 permission.Property<Guid>("Id").ValueGeneratedOnAdd();
                 permission.HasKey("Id");
 
-                permission.WithOwner().HasForeignKey("platform_role_id");
+                permission.WithOwner().HasForeignKey("role_id");
 
                 permission.Property(p => p.Scope)
                     .HasColumnName("scope")

@@ -1,10 +1,10 @@
-﻿using Api.Catalog.Domain.Entities;
+﻿using Api.Catalog.Application.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 
-internal class PlatformRoleMap : BaseMap<PlatformRole>
+internal sealed class PlatformRoleMap : BaseMap<PlatformRole>
 {
     public override void Configure(EntityTypeBuilder<PlatformRole> builder)
     {
@@ -17,7 +17,6 @@ internal class PlatformRoleMap : BaseMap<PlatformRole>
                 .HasColumnName("name")
                 .HasMaxLength(30)
                 .IsRequired();
-
             ri.Property(p => p.Description)
                 .HasColumnName("description")
                 .HasMaxLength(60)
@@ -34,11 +33,9 @@ internal class PlatformRoleMap : BaseMap<PlatformRole>
                 permission.Property(p => p.Scope)
                     .HasColumnName("scope")
                     .HasMaxLength(10);
-
                 permission.Property(p => p.Resource)
                     .HasColumnName("resource")
                     .HasMaxLength(30);
-
                 permission.Property(p => p.Action)
                     .HasColumnName("action")
                     .HasMaxLength(30);

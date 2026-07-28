@@ -66,19 +66,18 @@ internal sealed class PermissionValidatorService(
     }
     private Task<List<Guid>> PlatformUserRoles(AppDbContext db, Guid? personId, CancellationToken cacheCt)
     {
-        var q = db.Persons
+        return db.Persons
             .AsNoTracking()
             .Where(p => p.Id == personId)
-            .SelectMany(p => p.PlatformRoles.Select(pr => pr.Id));
-        var sql = q.ToQueryString();
-        return q.ToListAsync(cacheCt);
+            .SelectMany(p => p.Roles.Select(pr => pr.Id))
+            .ToListAsync(cacheCt);
     }
     private Task<List<Guid>> TenantUserRoles(AppDbContext db, Guid? personId, CancellationToken cacheCt)
     {
         return db.Persons
             .AsNoTracking()
             .Where(p => p.Id == personId)
-            .SelectMany(p => p.TenantRoles.Select(pr => pr.Id))
+            .SelectMany(p => p.Roles.Select(pr => pr.Id))
             .ToListAsync(cacheCt);
     }
     private Task<IReadOnlyCollection<PermissionInfo>?> PlatformRolePermissions(Guid roleId, CancellationToken cacheCt)

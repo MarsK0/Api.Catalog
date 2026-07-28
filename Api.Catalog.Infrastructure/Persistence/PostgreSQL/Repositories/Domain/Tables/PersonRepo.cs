@@ -7,8 +7,5 @@ internal sealed class PersonRepo(
     AppDbContext db
 ) : IPersonRepo
 {
-    public async Task CreateAsync(Person person, CancellationToken ct)
-    {
-        await db.Persons.AddAsync(person, ct);
-    }
+    public void Add(Person person) => db.Persons.Add(person);
 }

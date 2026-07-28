@@ -2,26 +2,25 @@
 
 namespace Api.Catalog.Domain.Entities;
 
-public sealed class TenantRole : TenantScopedEntity
+public sealed class Role : TenantScopedEntity
 {
     private readonly RoleInfo _roleInfo = null!;
     public RoleInfo RoleInfo => _roleInfo;
-    private TenantRole() { }
-    private TenantRole(RoleInfo roleInfo)
+    private Role() { }
+    private Role(RoleInfo roleInfo)
     {
         _roleInfo = roleInfo;
     }
 
-    public static AppResult<TenantRole> Create(RoleInfo roleInfo)
-        => new TenantRole(roleInfo);
+    public static AppResult<Role> Create(RoleInfo roleInfo)
+        => new Role(roleInfo);
 
-    public AppResult AssignPermissions(IEnumerable<PermissionInfo> permissions)
+    public AppResult AssignPermissions(HashSet<PermissionInfo> permissions)
     {
-        var uniquePermissions = permissions?.ToHashSet() ?? [];
-        if (uniquePermissions.Count == 0)
+        if (permissions.Count == 0)
             return AppFailure.DomainValidation("Ao menos uma permissão deve ser informada");
 
-        foreach (var permission in uniquePermissions)
+        foreach (var permission in permissions)
             if (!_roleInfo.Permissions.Contains(permission))
                 _roleInfo.AssignPermission(permission);
 

@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 
-internal class PersonTenantRoleMap : TenantScopedMap<PersonTenantRole>
+internal class PersonRoleMap : TenantScopedMap<PersonRole>
 {
-    public override void Configure(EntityTypeBuilder<PersonTenantRole> builder)
+    public override void Configure(EntityTypeBuilder<PersonRole> builder)
     {
         base.Configure(builder);
-        builder.ToTable("person_tenant_roles");
+        builder.ToTable("person_roles");
 
         builder.Property(p => p.PersonId).HasColumnName("person_id");
-        builder.Property(p => p.TenantRoleId).HasColumnName("tenant_role_id");
+        builder.Property(p => p.RoleId).HasColumnName("role_id");
     }
 }

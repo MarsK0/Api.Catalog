@@ -37,6 +37,12 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
 
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("login");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -50,6 +56,10 @@ namespace Api.Catalog.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -58,10 +68,12 @@ namespace Api.Catalog.Infrastructure.Migrations
 
                     b.HasIndex("PersonId");
 
+                    b.HasIndex("TenantId");
+
                     b.ToTable("account", "catalog");
                 });
 
-            modelBuilder.Entity("Api.Catalog.Application.Entities.PlatformMembership", b =>
+            modelBuilder.Entity("Api.Catalog.Application.Entities.Platform.PlatformUserRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -75,9 +87,40 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
 
-                    b.Property<Guid>("PersonId")
+                    b.Property<Guid>("RoleId")
                         .HasColumnType("uuid")
-                        .HasColumnName("person_id");
+                        .HasColumnName("role_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("platform_user_roles", "catalog");
+                });
+
+            modelBuilder.Entity("Api.Catalog.Application.Entities.PlatformRole", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -85,10 +128,61 @@ namespace Api.Catalog.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PersonId")
+                    b.ToTable("platform_role", "catalog");
+                });
+
+            modelBuilder.Entity("Api.Catalog.Application.Entities.PlatformUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("email");
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("login");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("password_hash");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("platform_membership", "catalog");
+                    b.HasIndex("Login")
+                        .IsUnique();
+
+                    b.ToTable("platform_user", "catalog");
                 });
 
             modelBuilder.Entity("Api.Catalog.Application.Entities.RefreshToken", b =>
@@ -117,10 +211,6 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_used");
 
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("person_id");
-
                     b.Property<bool>("RememberMe")
                         .HasColumnType("boolean")
                         .HasColumnName("remember_me");
@@ -138,9 +228,11 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.HasKey("Id");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
-                    b.HasIndex("PersonId");
+                    b.HasKey("Id");
 
                     b.HasIndex("TokenHash")
                         .IsUnique();
@@ -469,19 +561,25 @@ namespace Api.Catalog.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("Email", "TenantId")
                         .IsUnique();
 
                     b.ToTable("person", "catalog");
                 });
 
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.PersonPlatformRole", b =>
+            modelBuilder.Entity("Api.Catalog.Domain.Entities.PersonRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -499,49 +597,14 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("person_id");
 
-                    b.Property<Guid>("PlatformRoleId")
+                    b.Property<Guid>("RoleId")
                         .HasColumnType("uuid")
-                        .HasColumnName("platform_role_id");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PersonId");
-
-                    b.HasIndex("PlatformRoleId");
-
-                    b.ToTable("person_platform_roles", "catalog");
-                });
-
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.PersonTenantRole", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("person_id");
+                        .HasColumnName("role_id");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid")
                         .HasColumnName("tenant_id");
 
-                    b.Property<Guid>("TenantRoleId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_role_id");
-
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -550,34 +613,11 @@ namespace Api.Catalog.Infrastructure.Migrations
 
                     b.HasIndex("PersonId");
 
+                    b.HasIndex("RoleId");
+
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("TenantRoleId");
-
-                    b.ToTable("person_tenant_roles", "catalog");
-                });
-
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.PlatformRole", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("platform_role", "catalog");
+                    b.ToTable("person_roles", "catalog");
                 });
 
             modelBuilder.Entity("Api.Catalog.Domain.Entities.PriceList", b =>
@@ -715,6 +755,32 @@ namespace Api.Catalog.Infrastructure.Migrations
                     b.ToTable("price_rule_quantity", "catalog");
                 });
 
+            modelBuilder.Entity("Api.Catalog.Domain.Entities.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("role", "catalog");
+                });
+
             modelBuilder.Entity("Api.Catalog.Domain.Entities.Tenant", b =>
                 {
                     b.Property<Guid>("Id")
@@ -748,42 +814,6 @@ namespace Api.Catalog.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("tenant", "catalog");
-                });
-
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.TenantMembership", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("person_id");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TenantId");
-
-                    b.HasIndex("PersonId", "TenantId")
-                        .IsUnique();
-
-                    b.ToTable("tenant_membership", "catalog");
                 });
 
             modelBuilder.Entity("Api.Catalog.Domain.Entities.TenantModule", b =>
@@ -821,35 +851,6 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("tenant_module", "catalog");
-                });
-
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.TenantRole", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TenantId");
-
-                    b.ToTable("tenant_role", "catalog");
                 });
 
             modelBuilder.Entity("Api.Catalog.Infrastructure.Persistence.PostgreSQL.AuditLog", b =>
@@ -914,29 +915,100 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Person");
-                });
-
-            modelBuilder.Entity("Api.Catalog.Application.Entities.PlatformMembership", b =>
-                {
-                    b.HasOne("Api.Catalog.Domain.Entities.Person", "Person")
-                        .WithOne()
-                        .HasForeignKey("Api.Catalog.Application.Entities.PlatformMembership", "PersonId")
+                    b.HasOne("Api.Catalog.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Person");
+
+                    b.Navigation("Tenant");
                 });
 
-            modelBuilder.Entity("Api.Catalog.Application.Entities.RefreshToken", b =>
+            modelBuilder.Entity("Api.Catalog.Application.Entities.Platform.PlatformUserRole", b =>
                 {
-                    b.HasOne("Api.Catalog.Domain.Entities.Person", "Person")
+                    b.HasOne("Api.Catalog.Application.Entities.PlatformRole", null)
                         .WithMany()
-                        .HasForeignKey("PersonId")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Person");
+                    b.HasOne("Api.Catalog.Application.Entities.PlatformUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Api.Catalog.Application.Entities.PlatformRole", b =>
+                {
+                    b.OwnsOne("Api.Catalog.Domain.ValueObjects.RoleInfo", "RoleInfo", b1 =>
+                        {
+                            b1.Property<Guid>("PlatformRoleId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Description")
+                                .IsRequired()
+                                .HasMaxLength(60)
+                                .HasColumnType("character varying(60)")
+                                .HasColumnName("description");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasMaxLength(30)
+                                .HasColumnType("character varying(30)")
+                                .HasColumnName("name");
+
+                            b1.HasKey("PlatformRoleId");
+
+                            b1.ToTable("platform_role", "catalog");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PlatformRoleId");
+
+                            b1.OwnsMany("Api.Catalog.Domain.ValueObjects.PermissionInfo", "Permissions", b2 =>
+                                {
+                                    b2.Property<Guid>("Id")
+                                        .ValueGeneratedOnAdd()
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<string>("Action")
+                                        .IsRequired()
+                                        .HasMaxLength(30)
+                                        .HasColumnType("character varying(30)")
+                                        .HasColumnName("action");
+
+                                    b2.Property<string>("Resource")
+                                        .IsRequired()
+                                        .HasMaxLength(30)
+                                        .HasColumnType("character varying(30)")
+                                        .HasColumnName("resource");
+
+                                    b2.Property<string>("Scope")
+                                        .IsRequired()
+                                        .HasMaxLength(10)
+                                        .HasColumnType("character varying(10)")
+                                        .HasColumnName("scope");
+
+                                    b2.Property<Guid>("platform_role_id")
+                                        .HasColumnType("uuid");
+
+                                    b2.HasKey("Id");
+
+                                    b2.HasIndex("platform_role_id");
+
+                                    b2.ToTable("platform_role_permission", "catalog");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("platform_role_id");
+                                });
+
+                            b1.Navigation("Permissions");
+                        });
+
+                    b.Navigation("RoleInfo")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Api.Catalog.Domain.Entities.Asset", b =>
@@ -1036,26 +1108,28 @@ namespace Api.Catalog.Infrastructure.Migrations
                     b.Navigation("Tenant");
                 });
 
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.PersonPlatformRole", b =>
+            modelBuilder.Entity("Api.Catalog.Domain.Entities.Person", b =>
                 {
-                    b.HasOne("Api.Catalog.Domain.Entities.Person", null)
+                    b.HasOne("Api.Catalog.Domain.Entities.Tenant", "Tenant")
                         .WithMany()
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Api.Catalog.Domain.Entities.PlatformRole", null)
-                        .WithMany()
-                        .HasForeignKey("PlatformRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Tenant");
                 });
 
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.PersonTenantRole", b =>
+            modelBuilder.Entity("Api.Catalog.Domain.Entities.PersonRole", b =>
                 {
                     b.HasOne("Api.Catalog.Domain.Entities.Person", null)
                         .WithMany()
                         .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Api.Catalog.Domain.Entities.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1065,83 +1139,7 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Api.Catalog.Domain.Entities.TenantRole", null)
-                        .WithMany()
-                        .HasForeignKey("TenantRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Tenant");
-                });
-
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.PlatformRole", b =>
-                {
-                    b.OwnsOne("Api.Catalog.Domain.ValueObjects.RoleInfo", "RoleInfo", b1 =>
-                        {
-                            b1.Property<Guid>("PlatformRoleId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Description")
-                                .IsRequired()
-                                .HasMaxLength(60)
-                                .HasColumnType("character varying(60)")
-                                .HasColumnName("description");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasMaxLength(30)
-                                .HasColumnType("character varying(30)")
-                                .HasColumnName("name");
-
-                            b1.HasKey("PlatformRoleId");
-
-                            b1.ToTable("platform_role", "catalog");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PlatformRoleId");
-
-                            b1.OwnsMany("Api.Catalog.Domain.ValueObjects.PermissionInfo", "Permissions", b2 =>
-                                {
-                                    b2.Property<Guid>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("uuid");
-
-                                    b2.Property<string>("Action")
-                                        .IsRequired()
-                                        .HasMaxLength(30)
-                                        .HasColumnType("character varying(30)")
-                                        .HasColumnName("action");
-
-                                    b2.Property<string>("Resource")
-                                        .IsRequired()
-                                        .HasMaxLength(30)
-                                        .HasColumnType("character varying(30)")
-                                        .HasColumnName("resource");
-
-                                    b2.Property<string>("Scope")
-                                        .IsRequired()
-                                        .HasMaxLength(10)
-                                        .HasColumnType("character varying(10)")
-                                        .HasColumnName("scope");
-
-                                    b2.Property<Guid>("platform_role_id")
-                                        .HasColumnType("uuid");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("platform_role_id");
-
-                                    b2.ToTable("platform_role_permission", "catalog");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("platform_role_id");
-                                });
-
-                            b1.Navigation("Permissions");
-                        });
-
-                    b.Navigation("RoleInfo")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Api.Catalog.Domain.Entities.PriceList", b =>
@@ -1183,47 +1181,11 @@ namespace Api.Catalog.Infrastructure.Migrations
                     b.Navigation("Tenant");
                 });
 
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.TenantMembership", b =>
+            modelBuilder.Entity("Api.Catalog.Domain.Entities.Role", b =>
                 {
-                    b.HasOne("Api.Catalog.Domain.Entities.Person", "Person")
-                        .WithMany()
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Api.Catalog.Domain.Entities.Tenant", "Tenant")
-                        .WithMany("Membership")
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Person");
-
-                    b.Navigation("Tenant");
-                });
-
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.TenantModule", b =>
-                {
-                    b.HasOne("Api.Catalog.Domain.Entities.Tenant", "Tenant")
-                        .WithMany("Modules")
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Tenant");
-                });
-
-            modelBuilder.Entity("Api.Catalog.Domain.Entities.TenantRole", b =>
-                {
-                    b.HasOne("Api.Catalog.Domain.Entities.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.OwnsOne("Api.Catalog.Domain.ValueObjects.RoleInfo", "RoleInfo", b1 =>
                         {
-                            b1.Property<Guid>("TenantRoleId")
+                            b1.Property<Guid>("RoleId")
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("Description")
@@ -1238,12 +1200,12 @@ namespace Api.Catalog.Infrastructure.Migrations
                                 .HasColumnType("character varying(30)")
                                 .HasColumnName("name");
 
-                            b1.HasKey("TenantRoleId");
+                            b1.HasKey("RoleId");
 
-                            b1.ToTable("tenant_role", "catalog");
+                            b1.ToTable("role", "catalog");
 
                             b1.WithOwner()
-                                .HasForeignKey("TenantRoleId");
+                                .HasForeignKey("RoleId");
 
                             b1.OwnsMany("Api.Catalog.Domain.ValueObjects.PermissionInfo", "Permissions", b2 =>
                                 {
@@ -1269,23 +1231,32 @@ namespace Api.Catalog.Infrastructure.Migrations
                                         .HasColumnType("character varying(10)")
                                         .HasColumnName("scope");
 
-                                    b2.Property<Guid>("platform_role_id")
+                                    b2.Property<Guid>("role_id")
                                         .HasColumnType("uuid");
 
                                     b2.HasKey("Id");
 
-                                    b2.HasIndex("platform_role_id");
+                                    b2.HasIndex("role_id");
 
-                                    b2.ToTable("tenant_role_permission", "catalog");
+                                    b2.ToTable("role_permission", "catalog");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("platform_role_id");
+                                        .HasForeignKey("role_id");
                                 });
 
                             b1.Navigation("Permissions");
                         });
 
                     b.Navigation("RoleInfo")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Api.Catalog.Domain.Entities.TenantModule", b =>
+                {
+                    b.HasOne("Api.Catalog.Domain.Entities.Tenant", "Tenant")
+                        .WithMany("Modules")
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Tenant");
@@ -1320,8 +1291,6 @@ namespace Api.Catalog.Infrastructure.Migrations
 
             modelBuilder.Entity("Api.Catalog.Domain.Entities.Tenant", b =>
                 {
-                    b.Navigation("Membership");
-
                     b.Navigation("Modules");
                 });
 #pragma warning restore 612, 618
