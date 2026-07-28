@@ -4,10 +4,8 @@ public class Tenant : BaseEntity
 {
     public string Name { get; private set; } = null!;
     public string Slug { get; private set; } = null!;
-    private readonly List<TenantMembership> _membership = new();
 
     private readonly List<TenantModule> _modules = new();
-    public IReadOnlyCollection<TenantMembership> Membership => _membership.AsReadOnly();
     public IReadOnlyCollection<TenantModule> Modules => _modules.AsReadOnly();
 
     private Tenant() { }
@@ -84,21 +82,6 @@ public class Tenant : BaseEntity
 
         _modules.AddRange(modulesToUnlock);
         return AppResult.Success;
-    }
-    public AppResult RegisterUser(Guid personId)
-    {
-        var tPersonResult = TenantMembership.Create(personId);
-        if (!tPersonResult.IsSuccess)
-            return tPersonResult.Failure;
-
-        RegisterMemeber(tPersonResult.Value);
-        return AppResult.Success;
-    }
-    private void RegisterMemeber(TenantMembership person)
-    {
-        var _user = _membership.FirstOrDefault(p => p.Id == person.Id);
-        if (_user is null)
-            _membership.Add(person);
     }
     private void RegisterModule(TenantModule module)
     {

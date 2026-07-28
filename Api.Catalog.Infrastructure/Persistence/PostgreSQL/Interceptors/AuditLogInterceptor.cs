@@ -9,7 +9,7 @@ namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 
 internal sealed class AuditLogInterceptor(
     TimeProvider timeProvider,
-    IPersonContext personContext,
+    IUserContext personContext,
     ITenantContext tenantContext,
     IDbContextFactory<AuditDbContext> auditDbCtxFactory,
     ILogger<AuditLogInterceptor> logger
@@ -64,7 +64,7 @@ internal sealed class AuditLogInterceptor(
                 ErrorMessage = null,
                 OccurredAt = now,
                 TenantId = tenantContext.TenantId,
-                PersonId = personContext.PersonId
+                PersonId = personContext.UserId
             });
     }
     private static List<PendingAudit> BuildEntries(DbContext context)
@@ -177,7 +177,7 @@ internal sealed class AuditLogInterceptor(
                 ErrorMessage = errorMessage,
                 OccurredAt = now,
                 TenantId = tenantContext.TenantId,
-                PersonId = personContext.PersonId
+                PersonId = personContext.UserId
             });
         }
     }

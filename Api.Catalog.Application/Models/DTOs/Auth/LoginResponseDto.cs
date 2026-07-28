@@ -7,6 +7,5 @@ public record LoginResult(
     Guid PersonId,
     string Name,
     string Email,
-    IEnumerable<RoleInfoDto> PlatformRoles,
-    IEnumerable<RoleInfoDto> TenantRoles
+    IEnumerable<RoleInfoDto> Roles
 );

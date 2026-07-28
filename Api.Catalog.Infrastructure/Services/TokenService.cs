@@ -1,5 +1,5 @@
 ﻿using Api.Catalog.Application.Contracts;
-using Api.Catalog.Domain.Entities;
+using Api.Catalog.Application.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -9,19 +9,11 @@ using System.Text;
 
 namespace Api.Catalog.Infrastructure.Services;
 
-internal sealed class TokenService : ITokenService
+internal sealed class TokenService(
+    IConfiguration config,
+    TimeProvider timeProvider
+) : ITokenService
 {
-    private readonly IConfiguration _config;
-    private readonly TimeProvider _timeProvider;
-
-    public TokenService(
-        IConfiguration config,
-        TimeProvider timeProvider
-    )
-    {
-        _config = config;
-        _timeProvider = timeProvider;
-    }
     public (string Value, string Hash) GenerateRefreshToken()
     {
         var bytes = RandomNumberGenerator.GetBytes(64);
@@ -31,9 +23,9 @@ internal sealed class TokenService : ITokenService
         return (value, hash);
     }
     public string HashToken(string token) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
-    public (string Token, DateTime Expires) GenerateToken(Person person)
+    public (string Token, DateTime Expires) GenerateToken(UserDto user)
     {
-        var jwtConfig = _config.GetSection("Jwt") ?? throw new KeyNotFoundException("Sessão de cofiguração JWT não definida");
+        var jwtConfig = config.GetSection("Jwt") ?? throw new KeyNotFoundException("Sessão de cofiguração JWT não definida");
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(jwtConfig["Key"] ?? throw new KeyNotFoundException("Configuração de chave JWT não definida"))
         );
@@ -42,19 +34,13 @@ internal sealed class TokenService : ITokenService
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Name, person.Name),
-            new(JwtRegisteredClaimNames.Sub, person.Id.ToString()),
-            new(JwtRegisteredClaimNames.Email, person.Email),
+            new(ClaimTypes.Name, user.Name),
+            new(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
+            new(JwtRegisteredClaimNames.Email, user.Email),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
-        //var permissions = person.Roles
-        //    .SelectMany(s => s.Permissions)
-        //    .Distinct();
-        //foreach (var permission in permissions)
-        //    claims.Add(new Claim(TokenClaims.PermissionClaimName, permission.ToString()));
-
-        var expires = _timeProvider.GetUtcNow().AddMinutes(int.Parse(jwtConfig["Expires"] ?? "15"));
+        var expires = timeProvider.GetUtcNow().AddMinutes(int.Parse(jwtConfig["Expires"] ?? "15"));
 
         var token = new JwtSecurityToken(
             issuer: jwtConfig["Issuer"],

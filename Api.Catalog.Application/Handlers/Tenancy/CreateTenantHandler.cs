@@ -23,7 +23,7 @@ internal sealed class CreateTenantHandler(
             return tenantResult.Failure;
 
         var tenant = tenantResult.Value;
-        await tenantRepo.CreateAsync(tenant, ct);
+        tenantRepo.Add(tenant);
         await unitOfWork.SaveChangesAsync(ct);
         return tenant.Dto();
     }
