@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Api.Catalog.Infrastructure.Services;
 
 internal sealed class PermissionValidatorService(
-    IPersonContext personContext,
+    IUserContext personContext,
     ITenantContext tenantContext,
     ICacheService cache,
     AppDbContext db
@@ -15,7 +15,7 @@ internal sealed class PermissionValidatorService(
 {
     public async Task<bool> HasPermission(PermissionInfo permission, CancellationToken ct)
     {
-        if (personContext.PersonId is null || (!tenantContext.IsPlatformContext && tenantContext.TenantId is null))
+        if (personContext.UserId is null || (!tenantContext.IsPlatformContext && tenantContext.TenantId is null))
             return false;
 
         if (tenantContext.IsPlatformContext)
@@ -25,10 +25,10 @@ internal sealed class PermissionValidatorService(
     }
     private async Task<bool> ValidatePlatformPermission(PermissionInfo permission, CancellationToken ct)
     {
-        var personId = personContext.PersonId;
+        var userId = personContext.UserId;
         var personRoles = await cache.GetOrCreateAsync(
-            $"PLATFORM_PERSON:{personId}:ROLES",
-            (cacheCt) => PlatformUserRoles(db, personId, cacheCt),
+            $"PLATFORM_USER:{userId}:ROLES",
+            (cacheCt) => PlatformUserRoles(db, userId, cacheCt),
             ct
         );
         foreach (var role in personRoles ?? [])
@@ -46,7 +46,7 @@ internal sealed class PermissionValidatorService(
     private async Task<bool> ValidateTenantPermission(PermissionInfo permission, CancellationToken ct)
     {
         var tenantId = tenantContext.TenantId;
-        var personId = personContext.PersonId;
+        var personId = personContext.UserId;
         var personRoles = await cache.GetOrCreateAsync(
             $"TENANT:{tenantId}:PERSON:{personId}:ROLES",
             (cacheCt) => TenantUserRoles(db, personId, cacheCt),
@@ -64,7 +64,7 @@ internal sealed class PermissionValidatorService(
         }
         return false;
     }
-    private Task<List<Guid>> PlatformUserRoles(AppDbContext db, Guid? personId, CancellationToken cacheCt)
+    private static Task<List<Guid>> PlatformUserRoles(AppDbContext db, Guid? personId, CancellationToken cacheCt)
     {
         return db.Persons
             .AsNoTracking()
@@ -72,7 +72,7 @@ internal sealed class PermissionValidatorService(
             .SelectMany(p => p.Roles.Select(pr => pr.Id))
             .ToListAsync(cacheCt);
     }
-    private Task<List<Guid>> TenantUserRoles(AppDbContext db, Guid? personId, CancellationToken cacheCt)
+    private static Task<List<Guid>> TenantUserRoles(AppDbContext db, Guid? personId, CancellationToken cacheCt)
     {
         return db.Persons
             .AsNoTracking()
