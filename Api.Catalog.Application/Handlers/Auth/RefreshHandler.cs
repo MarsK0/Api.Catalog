@@ -1,16 +1,18 @@
 ﻿using Api.Catalog.Application.Contracts;
-using Api.Catalog.Application.Enums;
+using Api.Catalog.Application.Contracts.Contexts;
+using Api.Catalog.Application.Mappers;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
-using Api.Catalog.Domain.Enums;
 using Mediator;
 
 namespace Api.Catalog.Application.Handlers;
 
 internal sealed class RefreshHandler(
     TimeProvider timeProvider,
+    ITenantContext tenantContext,
     ITokenService tokenService,
     IUnitOfWork unitOfWork,
+    IPlatformUserRepo platformUserRepo,
     IRefreshTokenRepo refreshTokenRepo,
     IAccountRepo accountRepo
 ) : IRequestHandler<RefreshTokenCommand, AppResult<LoginResponseDto>>
@@ -25,7 +27,7 @@ internal sealed class RefreshHandler(
 
         if (token.IsUsed)
         {
-            var tokenFamily = await refreshTokenRepo.GetByFamilyIdAsync(token.FamilyId, ct);
+            var tokenFamily = await refreshTokenRepo.GetByFamilyIdAsync(token.FamilyId, ct, track: true);
             foreach (var t in tokenFamily)
                 t.Revoke();
 
@@ -36,12 +38,30 @@ internal sealed class RefreshHandler(
         if (!token.IsValid)
             return AppFailure.AuthValidation("Sessão inválida. Faça login novamente.");
 
-        var account = await accountRepo.FindByPersonIdAsync(token.PersonId, ct);
-        if (account is null || account.Status is EAccountStatus.Disabled || account.Person.Status is EPersonStatus.Disabled)
-            return AppFailure.AuthValidation("Sessão inválida. Faça login novamente");
+        var userResult = await GetUser(token.UserId, ct);
+        if (!userResult.IsSuccess)
+            return userResult.Failure;
+
+        var user = userResult.Value;
 
         token.MarkAsUsed();
 
-        return await LoginHandler.Login(timeProvider, tokenService, unitOfWork, refreshTokenRepo, account, token.RememberMe, ct);
+        return await LoginHandler.Login(timeProvider, tokenService, unitOfWork, refreshTokenRepo, user, token.RememberMe, ct);
+    }
+
+    private async Task<AppResult<UserDto>> GetUser(Guid userId, CancellationToken ct)
+    {
+        if (tenantContext.IsPlatformContext)
+        {
+            var user = await platformUserRepo.FindByUserIdAsync(userId, ct);
+            if (user is null)
+                return AppFailure.InvalidRequest("Credenciais inválidas.");
+            return user.Dto();
+        }
+
+        var account = await accountRepo.FindByPersonIdAsync(userId, ct);
+        if (account is null)
+            return AppFailure.InvalidRequest("Credenciais inválidas.");
+        return account.Dto();
     }
 }

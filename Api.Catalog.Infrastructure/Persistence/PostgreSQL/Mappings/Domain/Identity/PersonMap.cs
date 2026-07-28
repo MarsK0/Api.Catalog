@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 
-internal class PersonMap : BaseMap<Person>
+internal class PersonMap : TenantScopedMap<Person>
 {
     public override void Configure(EntityTypeBuilder<Person> builder)
     {
@@ -15,27 +15,17 @@ internal class PersonMap : BaseMap<Person>
         builder.Property(p => p.Email).HasColumnName("email").HasMaxLength(120);
         builder.Property(p => p.Phone).HasColumnName("phone").HasMaxLength(20);
 
-        builder.HasIndex(i => i.Email)
+        builder.HasIndex(i => new { i.Email, i.TenantId })
             .IsUnique();
 
-        builder.HasMany(p => p.TenantRoles)
+        builder.HasMany(p => p.Roles)
             .WithMany()
-            .UsingEntity<PersonTenantRole>(
-                pr => pr.HasOne<TenantRole>().WithMany().HasForeignKey(fk => fk.TenantRoleId),
+            .UsingEntity<PersonRole>(
+                pr => pr.HasOne<Role>().WithMany().HasForeignKey(fk => fk.RoleId),
                 pr => pr.HasOne<Person>().WithMany().HasForeignKey(fk => fk.PersonId)
             );
-        builder.Navigation(n => n.TenantRoles)
-            .HasField("_tenantRoles")
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
-
-        builder.HasMany(p => p.PlatformRoles)
-            .WithMany()
-            .UsingEntity<PersonPlatformRole>(
-                pr => pr.HasOne<PlatformRole>().WithMany().HasForeignKey(fk => fk.PlatformRoleId),
-                pr => pr.HasOne<Person>().WithMany().HasForeignKey(fk => fk.PersonId)
-            );
-        builder.Navigation(n => n.PlatformRoles)
-            .HasField("_platformRoles")
+        builder.Navigation(n => n.Roles)
+            .HasField("_roles")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }
