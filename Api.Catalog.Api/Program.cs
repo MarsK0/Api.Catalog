@@ -32,7 +32,7 @@ try
 
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
-    builder.Services.AddScoped<IPersonContext, HttpPersonContext>();
+    builder.Services.AddScoped<IUserContext, HttpUserContext>();
     builder.Services.AddScoped<ITenantContext, HttpTenantContext>();
     builder.Services
         .AddInfrastructure(builder.Configuration)
@@ -73,7 +73,7 @@ try
             {
                 OnChallenge = context =>
                 {
-                    context.Response.Headers["WWW-Authenticate"] = "Bearer";
+                    context.Response.Headers.WWWAuthenticate = "Bearer";
                     return Task.CompletedTask;
                 }
             };

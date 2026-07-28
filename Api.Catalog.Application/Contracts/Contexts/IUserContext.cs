@@ -1,6 +1,6 @@
 ﻿namespace Api.Catalog.Application.Contracts.Contexts;
 
-public interface IPersonContext
+public interface IUserContext
 {
-    Guid? PersonId { get; }
+    Guid? UserId { get; }
 }
