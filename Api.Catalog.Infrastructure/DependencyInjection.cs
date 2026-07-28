@@ -42,13 +42,32 @@ public static class DependencyInjection
         #endregion
 
         #region Repositories
+
+        #region Application
+
         #region Authorization
         services.AddScoped<IAccountRepo, AccountRepo>();
         services.AddScoped<IRefreshTokenRepo, RefreshTokenRepo>();
         #endregion
+
+        #region Platform
+        services.AddScoped<IPlatformUserRepo, PlatformUserRepo>();
+        #endregion
+
+        #endregion
+
+        #region Domain
+
+        #region Tables
+        services.AddScoped<IPersonRepo, PersonRepo>();
+        #endregion
+
         #region Tenancy
         services.AddScoped<ITenantRepo, TenantRepo>();
         #endregion
+
+        #endregion
+
         #endregion
 
         #region Services
