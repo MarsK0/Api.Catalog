@@ -1,4 +1,4 @@
-﻿using Api.Catalog.Domain.Entities;
+﻿using Api.Catalog.Application.Models;
 
 namespace Api.Catalog.Application.Contracts;
 
@@ -6,7 +6,7 @@ public interface ITokenService
 {
     string HashToken(string token);
     (string Value, string Hash) GenerateRefreshToken();
-    (string Token, DateTime Expires) GenerateToken(Person person);
+    (string Token, DateTime Expires) GenerateToken(UserDto user);
 }
 public static class TokenClaims
 {
