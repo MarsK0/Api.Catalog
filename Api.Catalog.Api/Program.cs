@@ -10,7 +10,6 @@ using Api.Catalog.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using Scalar.AspNetCore;
 using Serilog;
 using System.Text;
 
@@ -28,7 +27,6 @@ try
 
     builder.Services.AddControllers();
 
-    builder.Services.AddOpenApi();
 
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
@@ -99,13 +97,14 @@ try
             );
         }
     });
+    builder.Services.AddSwaggerGen();
 
     var app = builder.Build();
 
     if (app.Environment.IsDevelopment())
     {
-        app.MapOpenApi();
-        app.MapScalarApiReference();
+        app.UseSwagger();
+        app.UseSwaggerUI();
     }
 
     using (var scope = app.Services.CreateScope())
