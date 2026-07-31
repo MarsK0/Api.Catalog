@@ -1,6 +1,7 @@
 using Api.Catalog.Api.Authorization;
 using Api.Catalog.Api.Configurations;
 using Api.Catalog.Api.Contexts;
+using Api.Catalog.Api.Helpers;
 using Api.Catalog.Api.Middlewares;
 using Api.Catalog.Application;
 using Api.Catalog.Application.Contracts.Contexts;
@@ -9,6 +10,7 @@ using Api.Catalog.Infrastructure;
 using Api.Catalog.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Serilog;
@@ -25,7 +27,10 @@ try
         .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
         .CreateLogger();
     builder.Host.UseSerilog();
-
+    builder.Services.Configure<JsonOptions>(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new OptionalFieldJsonConverterFactory());
+    });
     builder.Services.AddControllers();
 
     builder.Services.AddOpenApi();

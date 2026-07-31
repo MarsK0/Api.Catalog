@@ -17,6 +17,8 @@ internal sealed class TenantRepo(
         => GetQuery(includes, track).FirstOrDefaultAsync(t => t.Id == id, ct);
     public Task<Tenant?> GetBySlugAsync(string slug, CancellationToken ct, bool includes = true, bool track = false)
         => GetQuery(includes, track).FirstOrDefaultAsync(t => t.Slug.Equals(slug), ct);
+    public Task<int> DeleteByIdAsync(Guid id, CancellationToken ct)
+        => db.Tenants.Where(w => w.Id == id).ExecuteDeleteAsync(ct);
     public async Task<List<string>> GetModulesAsync(CancellationToken ct)
     {
         var tenantId = tenantContext.TenantId;
