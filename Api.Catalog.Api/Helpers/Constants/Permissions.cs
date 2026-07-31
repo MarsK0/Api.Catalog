@@ -3,9 +3,9 @@
 public static class Permissions
 {
     private const string P = "PERM";
-    public static class PlatformPermissions
+    public static class SystemPermissions
     {
-        private const string Scope = "PLATFORM";
+        private const string Scope = "SYSTEM";
         public static class Tenants
         {
             private const string Resource = "TENANTS";
@@ -13,7 +13,7 @@ public static class Permissions
             public const string Manage = $"{P}:{Scope}:{Resource}:MANAGE";
             public const string Read = $"{P}:{Scope}:{Resource}:READ";
             public const string Create = $"{P}:{Scope}:{Resource}:CREATE";
-            public const string Update = $"{P}:{Scope}:{Resource}:UDPATE";
+            public const string Update = $"{P}:{Scope}:{Resource}:UPDATE";
             public const string Delete = $"{P}:{Scope}:{Resource}:DELETE";
         }
         public static class Roles

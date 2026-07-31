@@ -9,18 +9,6 @@ public class Tenant : BaseEntity
     public IReadOnlyCollection<TenantModule> Modules => _modules.AsReadOnly();
 
     private Tenant() { }
-
-    public static AppResult<Tenant> Create(
-        string name,
-        string slug
-    )
-    {
-        return new Tenant
-        {
-            Name = name,
-            Slug = slug
-        };
-    }
     public static AppResult<Tenant> Create(
         string name,
         string slug,
@@ -39,26 +27,12 @@ public class Tenant : BaseEntity
 
         return tenant;
     }
-    public static AppResult<Tenant> Create(
-        Guid id,
-        string name,
-        string slug
-    )
+    public AppResult UpdateName(string name)
     {
-        return new Tenant
-        {
-            Id = id,
-            Name = name,
-            Slug = slug
-        };
-    }
-    public AppResult UnlockModule(string moduleCode)
-    {
-        var tModuleResult = TenantModule.Create(moduleCode);
-        if (!tModuleResult.IsSuccess)
-            return tModuleResult.Failure;
+        if (string.IsNullOrWhiteSpace(name))
+            return AppFailure.DomainValidation("Um nome deve ser informado para o tenant.");
 
-        RegisterModule(tModuleResult.Value);
+        Name = name;
         return AppResult.Success;
     }
     public AppResult UnlockModules(IReadOnlyList<string> modules)
@@ -80,13 +54,10 @@ public class Tenant : BaseEntity
         if (modulesFailureMessages.Count > 0)
             return AppFailure.DomainValidation(string.Join(" | ", modulesFailureMessages));
 
-        _modules.AddRange(modulesToUnlock);
+        foreach (var module in modulesToUnlock)
+            if (!_modules.Any(a => a.ModuleCode == module.ModuleCode))
+                _modules.Add(module);
+
         return AppResult.Success;
-    }
-    private void RegisterModule(TenantModule module)
-    {
-        var _module = _modules.FirstOrDefault(m => m.Id == module.Id);
-        if (_module is null)
-            _modules.Add(module);
     }
 }

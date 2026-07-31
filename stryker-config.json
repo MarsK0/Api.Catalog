@@ -1,0 +1,11 @@
+﻿{
+  "stryker-config": {
+    "reporters": [
+      "Progress",
+      "Html",
+      "Json"
+    ],
+    "test-runner": "mtp",
+    "coverage-analysis": "off"
+  }
+}
