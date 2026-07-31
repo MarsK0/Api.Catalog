@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -182,6 +183,34 @@ namespace Api.Catalog.Infrastructure.Migrations
                         principalTable: "role",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "audit_log",
+                schema: "catalog",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    entity_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    entity_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    action = table.Column<int>(type: "integer", nullable: false),
+                    changes = table.Column<string>(type: "text", nullable: true),
+                    success = table.Column<bool>(type: "boolean", nullable: false),
+                    ErrorMessage = table.Column<string>(type: "text", nullable: true),
+                    ocurred_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    tenant_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_audit_log", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_audit_log_tenant_tenant_id",
+                        column: x => x.tenant_id,
+                        principalSchema: "catalog",
+                        principalTable: "tenant",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -412,41 +441,6 @@ namespace Api.Catalog.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "audit_log",
-                schema: "catalog",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    entity_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    entity_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    action = table.Column<int>(type: "integer", nullable: false),
-                    changes = table.Column<string>(type: "text", nullable: true),
-                    success = table.Column<bool>(type: "boolean", nullable: false),
-                    ErrorMessage = table.Column<string>(type: "text", nullable: true),
-                    ocurred_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    tenant_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    user_id = table.Column<Guid>(type: "uuid", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_audit_log", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_audit_log_person_user_id",
-                        column: x => x.user_id,
-                        principalSchema: "catalog",
-                        principalTable: "person",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_audit_log_tenant_tenant_id",
-                        column: x => x.tenant_id,
-                        principalSchema: "catalog",
-                        principalTable: "tenant",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "budget",
                 schema: "catalog",
                 columns: table => new
@@ -658,12 +652,6 @@ namespace Api.Catalog.Infrastructure.Migrations
                 schema: "catalog",
                 table: "audit_log",
                 columns: new[] { "tenant_id", "ocurred_at" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_audit_log_user_id",
-                schema: "catalog",
-                table: "audit_log",
-                column: "user_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_budget_tenant_id",

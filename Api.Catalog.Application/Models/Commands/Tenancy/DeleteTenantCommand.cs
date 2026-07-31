@@ -6,4 +6,4 @@ using System.Text;
 
 namespace Api.Catalog.Application.Models;
 
-public record DeleteTenantCommand(Guid id) : IRequest<AppResult>;
+public record DeleteTenantCommand(Guid TenantId) : IRequest<AppResult>;

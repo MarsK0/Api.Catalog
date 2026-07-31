@@ -15,7 +15,11 @@ internal sealed class DeleteTenantHandler(
 {
     public async ValueTask<AppResult> Handle(DeleteTenantCommand command, CancellationToken ct)
     {
-        await tenantRepo.DeleteByIdAsync(command.id, ct);
+        var tenant = await tenantRepo.GetByIdAsync(command.TenantId, ct);
+        if (tenant is null)
+            return AppFailure.EntityNotFound("Tenant não encontrado ou já excluído.");
+
+        tenantRepo.Delete(tenant);
         await unitOfWork.SaveChangesAsync(ct);
         return AppResult.Success;
     }
