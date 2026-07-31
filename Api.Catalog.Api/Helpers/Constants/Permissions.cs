@@ -3,9 +3,9 @@
 public static class Permissions
 {
     private const string P = "PERM";
-    public static class PlatformPermissions
+    public static class SystemPermissions
     {
-        private const string Scope = "PLATFORM";
+        private const string Scope = "SYSTEM";
         public static class Tenants
         {
             private const string Resource = "TENANTS";
