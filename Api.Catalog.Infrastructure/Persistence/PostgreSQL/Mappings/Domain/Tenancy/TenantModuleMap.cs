@@ -19,6 +19,6 @@ internal class TenantModuleMap : TenantScopedMap<TenantModule>
         builder.HasOne(m => m.Tenant)
             .WithMany(t => t.Modules)
             .HasForeignKey(fk => fk.TenantId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
