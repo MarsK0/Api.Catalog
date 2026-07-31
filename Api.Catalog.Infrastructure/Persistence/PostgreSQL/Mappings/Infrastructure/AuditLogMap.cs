@@ -17,7 +17,7 @@ internal sealed class AuditLogMap : BaseMap<AuditLog>
         builder.Property(p => p.Success).HasColumnName("success");
         builder.Property(p => p.OccurredAt).HasColumnName("ocurred_at");
         builder.Property(p => p.TenantId).HasColumnName("tenant_id");
-        builder.Property(p => p.PersonId).HasColumnName("user_id");
+        builder.Property(p => p.UserId).HasColumnName("user_id");
 
         builder.HasOne(o => o.Tenant)
             .WithMany()
@@ -25,14 +25,6 @@ internal sealed class AuditLogMap : BaseMap<AuditLog>
             .OnDelete(DeleteBehavior.Restrict);
         builder.Navigation(n => n.Tenant)
             .HasField("_tenant")
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
-
-        builder.HasOne(o => o.Person)
-            .WithMany()
-            .HasForeignKey(fk => fk.PersonId)
-            .OnDelete(DeleteBehavior.Restrict);
-        builder.Navigation(n => n.Person)
-            .HasField("_person")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder.HasIndex(i => new { i.TenantId, i.EntityName, i.EntityId });
