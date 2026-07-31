@@ -19,9 +19,7 @@ internal sealed class AuditLog : BaseEntity
     public string? ErrorMessage { get; init; }
     public DateTimeOffset OccurredAt { get; init; }
     public Guid? TenantId { get; init; }
-    public Guid? PersonId { get; init; }
+    public Guid? UserId { get; init; }
     private Tenant _tenant = null!;
-    private Person _person = null!;
     public Tenant Tenant => _tenant;
-    public Person Person => _person;
 }
