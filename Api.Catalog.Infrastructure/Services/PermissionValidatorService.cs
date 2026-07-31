@@ -66,7 +66,7 @@ internal sealed class PermissionValidatorService(
     }
     private static Task<List<Guid>> PlatformUserRoles(AppDbContext db, Guid? userId, CancellationToken cacheCt)
     {
-        return db.Persons
+        return db.PlatformUsers
             .AsNoTracking()
             .Where(p => p.Id == userId)
             .SelectMany(p => p.Roles.Select(pr => pr.Id))

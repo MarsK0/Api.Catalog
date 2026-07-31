@@ -18,7 +18,7 @@ namespace Api.Catalog.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("catalog")
-                .HasAnnotation("ProductVersion", "10.0.9")
+                .HasAnnotation("ProductVersion", "10.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -884,10 +884,6 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("ocurred_at");
 
-                    b.Property<Guid?>("PersonId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
                     b.Property<bool>("Success")
                         .HasColumnType("boolean")
                         .HasColumnName("success");
@@ -896,9 +892,11 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("tenant_id");
 
-                    b.HasKey("Id");
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
-                    b.HasIndex("PersonId");
+                    b.HasKey("Id");
 
                     b.HasIndex("TenantId", "OccurredAt");
 
@@ -1256,7 +1254,7 @@ namespace Api.Catalog.Infrastructure.Migrations
                     b.HasOne("Api.Catalog.Domain.Entities.Tenant", "Tenant")
                         .WithMany("Modules")
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Tenant");
@@ -1264,17 +1262,10 @@ namespace Api.Catalog.Infrastructure.Migrations
 
             modelBuilder.Entity("Api.Catalog.Infrastructure.Persistence.PostgreSQL.AuditLog", b =>
                 {
-                    b.HasOne("Api.Catalog.Domain.Entities.Person", "Person")
-                        .WithMany()
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Api.Catalog.Domain.Entities.Tenant", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Person");
 
                     b.Navigation("Tenant");
                 });

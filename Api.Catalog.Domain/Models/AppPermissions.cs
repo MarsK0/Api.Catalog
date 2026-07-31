@@ -19,7 +19,7 @@ public static class AppPermissions
 
     public static class PlatformPermissions
     {
-        public const string Scope = "PLATFORM";
+        public const string Scope = "SYSTEM";
         public static class Tenants
         {
             public const string Resource = "TENANTS";
