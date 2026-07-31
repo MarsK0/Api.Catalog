@@ -371,7 +371,7 @@ namespace Api.Catalog.Infrastructure.Migrations
                         principalSchema: "catalog",
                         principalTable: "tenant",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
