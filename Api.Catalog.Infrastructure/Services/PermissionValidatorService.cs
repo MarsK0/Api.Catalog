@@ -64,11 +64,11 @@ internal sealed class PermissionValidatorService(
         }
         return false;
     }
-    private static Task<List<Guid>> PlatformUserRoles(AppDbContext db, Guid? personId, CancellationToken cacheCt)
+    private static Task<List<Guid>> PlatformUserRoles(AppDbContext db, Guid? userId, CancellationToken cacheCt)
     {
         return db.Persons
             .AsNoTracking()
-            .Where(p => p.Id == personId)
+            .Where(p => p.Id == userId)
             .SelectMany(p => p.Roles.Select(pr => pr.Id))
             .ToListAsync(cacheCt);
     }
