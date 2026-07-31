@@ -5,4 +5,7 @@
     <Project Path="Api.Catalog.Domain/Api.Catalog.Domain.csproj" />
     <Project Path="Api.Catalog.Infrastructure/Api.Catalog.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Api.Catalog.Tests/Api.Catalog.Tests.csproj" />
+  </Folder>
 </Solution>
