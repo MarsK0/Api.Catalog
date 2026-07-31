@@ -1,6 +1,7 @@
 using Api.Catalog.Api.Authorization;
 using Api.Catalog.Api.Configurations;
 using Api.Catalog.Api.Contexts;
+using Api.Catalog.Api.Helpers;
 using Api.Catalog.Api.Middlewares;
 using Api.Catalog.Application;
 using Api.Catalog.Application.Contracts.Contexts;
@@ -9,8 +10,8 @@ using Api.Catalog.Infrastructure;
 using Api.Catalog.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Scalar.AspNetCore;
 using Serilog;
 using System.Text;
 
@@ -25,10 +26,12 @@ try
         .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
         .CreateLogger();
     builder.Host.UseSerilog();
-
+    builder.Services.Configure<JsonOptions>(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new OptionalFieldJsonConverterFactory());
+    });
     builder.Services.AddControllers();
 
-    builder.Services.AddOpenApi();
 
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
@@ -99,13 +102,14 @@ try
             );
         }
     });
+    builder.Services.AddSwaggerGen();
 
     var app = builder.Build();
 
     if (app.Environment.IsDevelopment())
     {
-        app.MapOpenApi();
-        app.MapScalarApiReference();
+        app.UseSwagger();
+        app.UseSwaggerUI();
     }
 
     using (var scope = app.Services.CreateScope())
