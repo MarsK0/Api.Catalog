@@ -22,6 +22,16 @@ public class TenancyController(IMediator mediator) : CatalogBaseController
         else
             return HandleFailure(AppFailure.EntityNotFound("Empresa não encontrada para o Slug informado"));
     }
+    [HttpGet("tenant")]
+    [RequirePermission(Permissions.SystemPermissions.Tenants.Read)]
+    public async Task<IActionResult> PaginatedList([FromQuery] GetTenantPaginatedListQuery query, CancellationToken ct)
+    {
+        return await mediator.Send(query, ct)
+            .FoldAsync(
+                (result) => Ok(result),
+                HandleFailure
+            );
+    }
     [HttpGet("tenant/{id:guid}")]
     [RequirePermission(Permissions.SystemPermissions.Tenants.Read)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
