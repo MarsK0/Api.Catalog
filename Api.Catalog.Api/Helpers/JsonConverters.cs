@@ -20,7 +20,7 @@ internal sealed class OptionalFieldJsonConverter<TValue> : JsonConverter<Optiona
     public override OptionalField<TValue> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var value = JsonSerializer.Deserialize<TValue>(ref reader, options);
-        return OptionalField<TValue>.Of(value);
+        return OptionalField<TValue>.Of(value!);
     }
 
     public override void Write(Utf8JsonWriter writer, OptionalField<TValue> value, JsonSerializerOptions options)
