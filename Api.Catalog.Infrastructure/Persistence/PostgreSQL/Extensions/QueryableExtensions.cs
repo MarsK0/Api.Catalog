@@ -8,12 +8,19 @@ internal static class QueryableExtensions
 {
     public static IQueryable<T> OrderBySort<T>(this IQueryable<T> source, IEnumerable<SortParam> sort)
     {
+        if (sort is null || !sort.Any())
+            return source;
+
+        var isFirst = true;
         foreach (var s in sort)
-            source.OrderBySort(s);
+        {
+            source = source.OrderBySort(s, isFirst);
+            isFirst = false;
+        }
 
         return source;
     }
-    public static IQueryable<T> OrderBySort<T>(this IQueryable<T> source, SortParam sort)
+    public static IQueryable<T> OrderBySort<T>(this IQueryable<T> source, SortParam sort, bool isFirst = true)
     {
         if (string.IsNullOrWhiteSpace(sort.Field))
             return source;
@@ -32,7 +39,11 @@ internal static class QueryableExtensions
         var propertyAccess = Expression.Property(parameter, propertyInfo);
         var keySelector = Expression.Lambda(propertyAccess, parameter);
 
-        var methodName = sort.Desc ? nameof(Queryable.OrderByDescending) : nameof(Queryable.OrderBy);
+        string methodName;
+        if (isFirst)
+            methodName = sort.Desc ? nameof(Queryable.OrderByDescending) : nameof(Queryable.OrderBy);
+        else
+            methodName = sort.Desc ? nameof(Queryable.ThenByDescending) : nameof(Queryable.ThenBy);
 
         var resultExpression = Expression.Call(
             typeof(Queryable),
