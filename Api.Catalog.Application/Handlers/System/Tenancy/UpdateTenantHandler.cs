@@ -13,7 +13,7 @@ internal sealed class UpdateTenantHandler(
 {
     public async ValueTask<AppResult<TenantDto>> Handle(UpdateTenantCommand command, CancellationToken ct)
     {
-        var tenant = await tenantRepo.GetByIdAsync(command.TenantId, ct, track: true);
+        var tenant = await tenantRepo.GetByIdAsync(command.Id, ct, track: true);
         if (tenant is null)
             return AppFailure.EntityNotFound("Não foi encontrado um tenant para o id informado.");
 
