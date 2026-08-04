@@ -5,7 +5,7 @@ using Mediator;
 namespace Api.Catalog.Application.Models;
 
 public record UpdateTenantCommand(
-    Guid TenantId,
+    Guid Id,
     OptionalField<string> Name,
     OptionalField<IReadOnlyList<string>> Modules
 ) : IRequest<AppResult<TenantDto>>;
