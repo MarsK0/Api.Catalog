@@ -51,7 +51,7 @@ public class TenancyController(IMediator mediator) : CatalogBaseController
             .FoldAsync(
                 (result) => CreatedAtAction(
                     nameof(GetById),
-                    new { id = result.TenantId },
+                    new { id = result.Id },
                     result
                 ),
                 HandleFailure
@@ -62,7 +62,7 @@ public class TenancyController(IMediator mediator) : CatalogBaseController
     [RequirePermission(Permissions.SystemPermissions.Tenants.Update)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTenantCommand command, CancellationToken ct)
     {
-        if (id != command.TenantId)
+        if (id != command.Id)
             return HandleFailure(AppFailure.InvalidRequest("O id informado na requisição não condiz com o id da entidade."));
 
         return await mediator.Send(command, ct)
