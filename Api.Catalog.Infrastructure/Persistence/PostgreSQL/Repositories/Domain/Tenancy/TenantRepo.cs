@@ -3,6 +3,7 @@ using Api.Catalog.Application.Contracts.Contexts;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain.Entities;
 using Api.Catalog.Infrastructure.Contracts;
+using Api.Catalog.Infrastructure.Persistence.PostgreSQL.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
@@ -21,7 +22,7 @@ internal sealed class TenantRepo(
         bool track = false
     )
     {
-        var (index, size, search) = query;
+        var (index, size, search, sort) = query;
         var q = GetQuery(includes, track)
             .Where(
                 w =>
@@ -29,8 +30,13 @@ internal sealed class TenantRepo(
                     EF.Functions.ILike(w.Slug, $"%{search}%") ||
                     EF.Functions.ILike(w.Name, $"%{search}%")
             );
+
+        if (sort != null)
+            q = q.OrderBySort(sort);
+        else
+            q = q.OrderByDescending(o => EF.Property<DateTimeOffset>(o, TrackingMetadata.CreatedAt));
+
         var result = await q
-                .OrderByDescending(o => EF.Property<DateTimeOffset>(o, TrackingMetadata.CreatedAt))
                 .Select(
                     s => new
                     {

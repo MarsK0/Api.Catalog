@@ -7,7 +7,7 @@ using Mediator;
 namespace Api.Catalog.Application.Handlers;
 
 internal sealed class GetTenantPaginatedListHandler(
-    ITenantRepo tenantRepo    
+    ITenantRepo tenantRepo
 ) : IRequestHandler<GetTenantPaginatedListQuery, AppResult<PaginatedResponseDto<Tenant>>>
 {
     public async ValueTask<AppResult<PaginatedResponseDto<Tenant>>> Handle(GetTenantPaginatedListQuery query, CancellationToken ct)
