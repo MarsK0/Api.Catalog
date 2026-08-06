@@ -12,7 +12,7 @@ public class Asset : TenantScopedEntity
 
     private Asset() { }
 
-    private AppResult<Asset> Create(
+    private Result<Asset> Create(
         Guid mediaId,
         string fileName
     )

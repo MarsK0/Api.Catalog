@@ -70,7 +70,7 @@ internal sealed class PostgresSeed(
     {
         var assignedPermissions = role.RoleInfo.Permissions.ToHashSet();
         var unassignedPermissions = new HashSet<PermissionInfo>();
-        foreach (var permission in AppPermissions.GetAll)
+        foreach (var permission in Permissions.GetAll)
             if (!assignedPermissions.Contains(permission))
                 unassignedPermissions.Add(permission);
 

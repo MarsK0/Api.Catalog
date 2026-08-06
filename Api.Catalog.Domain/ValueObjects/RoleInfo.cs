@@ -1,4 +1,6 @@
-﻿namespace Api.Catalog.Domain.ValueObjects;
+﻿using Api.Catalog.Domain.Models;
+
+namespace Api.Catalog.Domain.ValueObjects;
 
 public sealed class RoleInfo
 {
@@ -7,22 +9,22 @@ public sealed class RoleInfo
     private readonly List<PermissionInfo> _permissions = new();
     public IReadOnlyCollection<PermissionInfo> Permissions => _permissions;
     private RoleInfo() { }
-    public static AppResult<RoleInfo> Create(
+    public static Result<RoleInfo> Create(
         string name,
         string description
     )
     {
         if (name is null || string.IsNullOrWhiteSpace(name))
-            return AppFailure.DomainValidation("Informe um nome para o papel.");
+            return DomainResultFailures.Validation("Informe um nome para o papel.");
 
         if (name.Length > 30)
-            return AppFailure.DomainValidation("O nome do papel não deve exceder 60 caracteres.");
+            return DomainResultFailures.Validation("O nome do papel não deve exceder 60 caracteres.");
 
         if (description is null || string.IsNullOrWhiteSpace(description))
-            return AppFailure.DomainValidation("Forneça uma descrição para o papel.");
+            return DomainResultFailures.Validation("Forneça uma descrição para o papel.");
 
         if (description.Length > 60)
-            return AppFailure.DomainValidation("A descrição do papel não deve exceder 60 caracteres.");
+            return DomainResultFailures.Validation("A descrição do papel não deve exceder 60 caracteres.");
 
         return new RoleInfo
         {

@@ -1,4 +1,6 @@
-﻿namespace Api.Catalog.Domain.Entities;
+﻿using Api.Catalog.Domain.Models;
+
+namespace Api.Catalog.Domain.Entities;
 
 public class Tenant : BaseEntity
 {
@@ -9,7 +11,7 @@ public class Tenant : BaseEntity
     public IReadOnlyCollection<TenantModule> Modules => _modules.AsReadOnly();
 
     private Tenant() { }
-    public static AppResult<Tenant> Create(
+    public static Result<Tenant> Create(
         string name,
         string slug,
         IReadOnlyList<string> modules
@@ -27,15 +29,15 @@ public class Tenant : BaseEntity
 
         return tenant;
     }
-    public AppResult UpdateName(string name)
+    public Result UpdateName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            return AppFailure.DomainValidation("Um nome deve ser informado para o tenant.");
+            return DomainResultFailures.Validation("Um nome deve ser informado para o tenant.");
 
         Name = name;
-        return AppResult.Success;
+        return Result.Success;
     }
-    public AppResult UnlockModules(IReadOnlyList<string> modules)
+    public Result UnlockModules(IReadOnlyList<string> modules)
     {
         var uniqueModules = modules
             .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -52,12 +54,12 @@ public class Tenant : BaseEntity
                 modulesFailureMessages.Add(tModuleResult.Failure.Message);
         }
         if (modulesFailureMessages.Count > 0)
-            return AppFailure.DomainValidation(string.Join(" | ", modulesFailureMessages));
+            return DomainResultFailures.Validation(string.Join(" | ", modulesFailureMessages));
 
         foreach (var module in modulesToUnlock)
             if (!_modules.Any(a => a.ModuleCode == module.ModuleCode))
                 _modules.Add(module);
 
-        return AppResult.Success;
+        return Result.Success;
     }
 }

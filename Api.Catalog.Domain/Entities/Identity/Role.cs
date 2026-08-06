@@ -1,4 +1,5 @@
-﻿using Api.Catalog.Domain.ValueObjects;
+﻿using Api.Catalog.Domain.Models;
+using Api.Catalog.Domain.ValueObjects;
 
 namespace Api.Catalog.Domain.Entities;
 
@@ -12,18 +13,18 @@ public sealed class Role : TenantScopedEntity
         _roleInfo = roleInfo;
     }
 
-    public static AppResult<Role> Create(RoleInfo roleInfo)
+    public static Result<Role> Create(RoleInfo roleInfo)
         => new Role(roleInfo);
 
-    public AppResult AssignPermissions(HashSet<PermissionInfo> permissions)
+    public Result AssignPermissions(HashSet<PermissionInfo> permissions)
     {
         if (permissions.Count == 0)
-            return AppFailure.DomainValidation("Ao menos uma permissão deve ser informada");
+            return DomainResultFailures.Validation("Ao menos uma permissão deve ser informada");
 
         foreach (var permission in permissions)
             if (!_roleInfo.Permissions.Contains(permission))
                 _roleInfo.AssignPermission(permission);
 
-        return AppResult.Success;
+        return Result.Success;
     }
 }

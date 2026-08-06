@@ -20,7 +20,7 @@ public sealed class QuantityPriceRule : BasePriceRule
         Max = max;
     }
 
-    public static AppResult<QuantityPriceRule> Create(
+    public static Result<QuantityPriceRule> Create(
         Guid priceListId,
         Guid productId,
         decimal price,
@@ -40,7 +40,7 @@ public sealed class QuantityPriceRule : BasePriceRule
             Max >= context.Quantity
         );
     }
-    private static AppResult<QuantityPriceRule> CreateInstance(
+    private static Result<QuantityPriceRule> CreateInstance(
         Guid priceListId,
         Guid productId,
         decimal price,
@@ -48,10 +48,10 @@ public sealed class QuantityPriceRule : BasePriceRule
     )
     {
         if (condition.Min < decimal.Zero || condition.Max < decimal.Zero)
-            return AppFailure.DomainValidation("As quantidades mínima e máxima devem ser maiores ou iguais a zero.");
+            return DomainResultFailures.Validation("As quantidades mínima e máxima devem ser maiores ou iguais a zero.");
 
         if (condition.Min > condition.Max)
-            return AppFailure.DomainValidation("A quantidade mínima não deve ser maior do que a quantidade máxima");
+            return DomainResultFailures.Validation("A quantidade mínima não deve ser maior do que a quantidade máxima");
 
         return new QuantityPriceRule(
             priceListId,

@@ -8,7 +8,7 @@ public class Category : TenantScopedEntity
 
     public IReadOnlyCollection<Category> SubCategories => _subCategories.AsReadOnly();
 
-    public static AppResult<Category> Create(
+    public static Result<Category> Create(
         string description
     )
     {
@@ -18,7 +18,7 @@ public class Category : TenantScopedEntity
         };
     }
 
-    public AppResult<Category> CreateSubCategory(
+    public Result<Category> CreateSubCategory(
         string description
     )
     {

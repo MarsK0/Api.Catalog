@@ -7,7 +7,7 @@ public class Product : TenantScopedEntity
 
     private Product() { }
 
-    public static AppResult<Product> Create(
+    public static Result<Product> Create(
         string description,
         string? reference = null
     )

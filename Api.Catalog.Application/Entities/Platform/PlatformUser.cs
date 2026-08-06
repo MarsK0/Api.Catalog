@@ -14,7 +14,7 @@ public class PlatformUser : BaseEntity
     private readonly List<PlatformRole> _roles = [];
     public IReadOnlyCollection<PlatformRole> Roles => _roles.AsReadOnly();
     private PlatformUser() { }
-    public static AppResult<PlatformUser> Create(
+    public static Result<PlatformUser> Create(
         string login,
         string name,
         string email,

@@ -13,7 +13,7 @@ public class Person : TenantScopedEntity
 
     private Person() { }
 
-    public static AppResult<Person> Create(
+    public static Result<Person> Create(
         string name,
         string email,
         string? phone = null

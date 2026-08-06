@@ -84,7 +84,7 @@ try
 
     builder.Services.AddAuthorization(options =>
     {
-        foreach (var permission in AppPermissions.GetAll)
+        foreach (var permission in Permissions.GetAll)
         {
             var policy = PermissionPolicies.Name(permission);
             options.AddPolicy(

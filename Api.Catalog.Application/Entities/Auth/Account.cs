@@ -16,7 +16,7 @@ public class Account : TenantScopedEntity
     public Person Person => _person;
 
     private Account() { }
-    public static AppResult<Account> Create(Guid personId, string passwordHash)
+    public static Result<Account> Create(Guid personId, string passwordHash)
     {
         return new Account
         {

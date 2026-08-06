@@ -3,9 +3,9 @@
 public static class AppResultExtensions
 {
     public static async Task<TResult> FoldAsync<TValue, TResult>(
-        this ValueTask<AppResult<TValue>> resultTask,
+        this ValueTask<Result<TValue>> resultTask,
         Func<TValue, TResult> onSuccess,
-        Func<AppFailure, TResult> onFailure
+        Func<Failure, TResult> onFailure
     )
     {
         var result = await resultTask;
@@ -14,9 +14,9 @@ public static class AppResultExtensions
             : onFailure(result.Failure);
     }
     public static async Task FoldAsync<TValue>(
-        this Task<AppResult<TValue>> resultTask,
+        this Task<Result<TValue>> resultTask,
         Func<TValue, Task> onSuccess,
-        Func<AppFailure, Task> onFailure
+        Func<Failure, Task> onFailure
     )
     {
         var result = await resultTask;
@@ -26,9 +26,9 @@ public static class AppResultExtensions
             await onFailure(result.Failure);
     }
     public static async Task<TResult> FoldAsync<TResult>(
-        this ValueTask<AppResult> resultTask,
+        this ValueTask<Result> resultTask,
         Func<TResult> onSuccess,
-        Func<AppFailure, TResult> onFailure
+        Func<Failure, TResult> onFailure
     )
     {
         var result = await resultTask;

@@ -2,6 +2,7 @@
 using Api.Catalog.Application.Mappers;
 using Api.Catalog.Application.Models;
 using Api.Catalog.Domain;
+using Api.Catalog.Domain.Models;
 using Mediator;
 
 namespace Api.Catalog.Application.Handlers;
@@ -9,13 +10,13 @@ namespace Api.Catalog.Application.Handlers;
 internal sealed class UpdateTenantHandler(
     IUnitOfWork unitOfWork,
     ITenantRepo tenantRepo
-) : IRequestHandler<UpdateTenantCommand, AppResult<TenantDto>>
+) : IRequestHandler<UpdateTenantCommand, Result<TenantDto>>
 {
-    public async ValueTask<AppResult<TenantDto>> Handle(UpdateTenantCommand command, CancellationToken ct)
+    public async ValueTask<Result<TenantDto>> Handle(UpdateTenantCommand command, CancellationToken ct)
     {
         var tenant = await tenantRepo.GetByIdAsync(command.Id, ct, track: true);
         if (tenant is null)
-            return AppFailure.EntityNotFound("Não foi encontrado um tenant para o id informado.");
+            return DomainResultFailures.EntityNotFound("Não foi encontrado um tenant para o id informado.");
 
         if (command.Name.IsSet)
         {
