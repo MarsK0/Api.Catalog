@@ -15,15 +15,15 @@ internal sealed class RefreshHandler(
     IPlatformUserRepo platformUserRepo,
     IRefreshTokenRepo refreshTokenRepo,
     IAccountRepo accountRepo
-) : IRequestHandler<RefreshTokenCommand, AppResult<LoginResponseDto>>
+) : IRequestHandler<RefreshTokenCommand, Result<LoginResponseDto>>
 {
-    public async ValueTask<AppResult<LoginResponseDto>> Handle(RefreshTokenCommand command, CancellationToken ct)
+    public async ValueTask<Result<LoginResponseDto>> Handle(RefreshTokenCommand command, CancellationToken ct)
     {
         var hash = tokenService.HashToken(command.TokenValue);
         var token = await refreshTokenRepo.GetByHashAsync(hash, ct);
 
         if (token is null)
-            return AppFailure.AuthValidation("Sessão inválida. Faça login novamente.");
+            return AppResultFailures.Unauthorized("Sessão inválida. Faça login novamente.");
 
         if (token.IsUsed)
         {
@@ -32,11 +32,11 @@ internal sealed class RefreshHandler(
                 t.Revoke();
 
             await unitOfWork.SaveChangesAsync(ct);
-            return AppFailure.AuthValidation("Sessão inválida. Faça login novamente.");
+            return AppResultFailures.Unauthorized("Sessão inválida. Faça login novamente.");
         }
 
         if (!token.IsValid)
-            return AppFailure.AuthValidation("Sessão inválida. Faça login novamente.");
+            return AppResultFailures.Unauthorized("Sessão inválida. Faça login novamente.");
 
         var userResult = await GetUser(token.UserId, ct);
         if (!userResult.IsSuccess)
@@ -49,19 +49,19 @@ internal sealed class RefreshHandler(
         return await LoginHandler.Login(timeProvider, tokenService, unitOfWork, refreshTokenRepo, user, token.RememberMe, ct);
     }
 
-    private async Task<AppResult<UserDto>> GetUser(Guid userId, CancellationToken ct)
+    private async Task<Result<UserDto>> GetUser(Guid userId, CancellationToken ct)
     {
         if (tenantContext.IsPlatformContext)
         {
             var user = await platformUserRepo.FindByUserIdAsync(userId, ct);
             if (user is null)
-                return AppFailure.InvalidRequest("Credenciais inválidas.");
+                return AppResultFailures.Unauthorized("Credenciais inválidas.");
             return user.Dto();
         }
 
         var account = await accountRepo.FindByPersonIdAsync(userId, ct);
         if (account is null)
-            return AppFailure.InvalidRequest("Credenciais inválidas.");
+            return AppResultFailures.Unauthorized("Credenciais inválidas.");
         return account.Dto();
     }
 }

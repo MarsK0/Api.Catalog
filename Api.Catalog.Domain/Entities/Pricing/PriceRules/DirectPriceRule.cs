@@ -5,7 +5,7 @@ namespace Api.Catalog.Domain.Entities;
 public sealed class DirectPriceRule : BasePriceRule
 {
     private DirectPriceRule() { }
-    public static AppResult<DirectPriceRule> Create(
+    public static Result<DirectPriceRule> Create(
         Guid priceListId,
         Guid productId,
         decimal price
@@ -19,7 +19,7 @@ public sealed class DirectPriceRule : BasePriceRule
     }
 
     public override bool AppliesTo(PricingContext _) => true;
-    private static AppResult<DirectPriceRule> CreateInstance(
+    private static Result<DirectPriceRule> CreateInstance(
         Guid priceListId,
         Guid productId,
         decimal price

@@ -8,4 +8,4 @@ public record UpdateTenantCommand(
     Guid Id,
     OptionalField<string> Name,
     OptionalField<IReadOnlyList<string>> Modules
-) : IRequest<AppResult<TenantDto>>;
+) : IRequest<Result<TenantDto>>;

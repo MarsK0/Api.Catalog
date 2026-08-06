@@ -18,7 +18,7 @@ public class Budget : TenantScopedEntity
 
     private Budget() { }
 
-    public static AppResult<Budget> Create(
+    public static Result<Budget> Create(
         DateTimeOffset validUntil,
         string userEmail,
         Guid? userId
@@ -31,7 +31,7 @@ public class Budget : TenantScopedEntity
             PersonId = userId,
         };
     }
-    public AppResult AddItem(
+    public Result AddItem(
         decimal quantity,
         Guid productID,
         ProductSnapshot productSnapshot,
@@ -50,6 +50,6 @@ public class Budget : TenantScopedEntity
             return bItemResult.Failure;
 
         _items.Add(bItemResult.Value);
-        return AppResult.Success;
+        return Result.Success;
     }
 }

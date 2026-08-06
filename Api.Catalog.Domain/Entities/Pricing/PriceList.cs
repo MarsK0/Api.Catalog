@@ -8,7 +8,7 @@ public class PriceList : TenantScopedEntity
 
     private PriceList() { }
 
-    public static AppResult<PriceList> Create(
+    public static Result<PriceList> Create(
         string Name,
         DateTimeOffset? ValidFrom,
         DateTimeOffset? ValidUntil

@@ -1,22 +1,22 @@
-﻿using Api.Catalog.Domain;
+﻿using Api.Catalog.Application;
+using Api.Catalog.Domain;
+using Api.Catalog.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Catalog.Api.Controllers;
 
 public abstract class CatalogBaseController : ControllerBase
 {
-    protected IActionResult HandleFailure(AppFailure failure)
+    protected IActionResult HandleFailure(Failure failure)
     {
         return failure.Code switch
         {
-            FailureCode.DomainValidation => BadRequest(new { failure.Message }),
-            FailureCode.ApplicationValidation => BadRequest(new { failure.Message }),
-            FailureCode.InfrastructureValidation => BadRequest(new { failure.Message }),
-            FailureCode.Unauthorized => Unauthorized(new { failure.Message }),
-            FailureCode.Conflict => Conflict(new { failure.Message }),
-            FailureCode.InvalidRequest => BadRequest(new { failure.Message }),
-            FailureCode.EntityNotFound => NotFound(new { failure.Message }),
-            _ => throw new Exception("Falha indefinida")
+            DomainFailureCodes.Validation => BadRequest(new { failure.Message }),
+            DomainFailureCodes.EntityNotFound => NotFound(new { failure.Message }),
+            AppFailureCodes.Validation => BadRequest(new { failure.Message }),
+            AppFailureCodes.Unauthorized => Unauthorized(new { failure.Message }),
+            AppFailureCodes.InvalidRequest => BadRequest(new { failure.Message }),
+            _ => throw new Exception($"FailureCode '{failure.Code}' não mapeado em {nameof(HandleFailure)}.")
         };
     }
 }
