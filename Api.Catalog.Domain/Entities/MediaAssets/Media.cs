@@ -10,7 +10,7 @@ public class Media : TenantScopedEntity
 
     private Media() { }
 
-    public static AppResult<Media> Create(
+    public static Result<Media> Create(
         long size,
         string extension,
         string contentType,

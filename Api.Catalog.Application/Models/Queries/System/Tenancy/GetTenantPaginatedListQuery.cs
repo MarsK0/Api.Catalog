@@ -10,4 +10,4 @@ public record GetTenantPaginatedListQuery(
     int PageSize,
     string? Search = null,
     List<SortParam>? Sort = null
-) : PaginatedQueryDto(PageIndex, PageSize), IRequest<AppResult<PaginatedResponseDto<Tenant>>>;
+) : PaginatedQueryDto(PageIndex, PageSize), IRequest<Result<PaginatedResponseDto<Tenant>>>;

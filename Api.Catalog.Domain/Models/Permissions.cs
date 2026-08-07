@@ -3,13 +3,13 @@ using System.Reflection;
 
 namespace Api.Catalog.Domain.Models;
 
-public static class AppPermissions
+public static class Permissions
 {
     private static readonly HashSet<PermissionInfo> _all;
     public static IReadOnlySet<PermissionInfo> GetAll => _all;
-    static AppPermissions()
+    static Permissions()
     {
-        _all = [.. typeof(AppPermissions)
+        _all = [.. typeof(Permissions)
             .GetNestedTypes(BindingFlags.Public)
             .SelectMany(s => s.GetNestedTypes(BindingFlags.Public))
             .SelectMany(s => s.GetFields(BindingFlags.Public | BindingFlags.Static))

@@ -1,6 +1,8 @@
 ﻿using Api.Catalog.Api.Constants;
 using Api.Catalog.Api.Models;
+using Api.Catalog.Application;
 using Api.Catalog.Domain;
+using Api.Catalog.Domain.Models;
 using Api.Catalog.Infrastructure.Contracts;
 using System.Net;
 using System.Text.Json;
@@ -30,7 +32,7 @@ public class TenantResolverMiddleware(
                 {
                     context.Response.ContentType = "application/json";
                     context.Response.StatusCode =
-                        failure.Code == FailureCode.EntityNotFound
+                        failure.Code == DomainFailureCodes.EntityNotFound
                             ? (int)HttpStatusCode.NotFound
                             : (int)HttpStatusCode.BadRequest;
                     await context.Response.WriteAsync(JsonSerializer.Serialize(new { failure.Message }));
@@ -39,7 +41,7 @@ public class TenantResolverMiddleware(
     }
 
     // Busca ID do tenant ou slug como fallback no header. Se encontra slug, busca tenantId. Ambos os casos retorna tenantId ou falha.
-    private async Task<AppResult<HttpTenantContextData>> ResolveTenantId(HttpContext context, ITenantStore tenantStore)
+    private async Task<Result<HttpTenantContextData>> ResolveTenantId(HttpContext context, ITenantStore tenantStore)
     {
         var cancellationToken = context.RequestAborted;
 
@@ -51,13 +53,13 @@ public class TenantResolverMiddleware(
 
         //Nenhum header de contexto informado
         if (!isPlatformContext && string.IsNullOrWhiteSpace(tenantHeader))
-            return AppFailure.InvalidRequest("Empresa não definida na requisição. Contate o suporte.");
+            return AppResultFailures.InvalidRequest("Empresa não definida na requisição. Contate o suporte.");
 
         //Tenant informado como Guid
         if (Guid.TryParse(tenantHeader, out Guid tenantId))
         {
             if (!(await tenantStore.TenantExistsAsync(tenantId, cancellationToken)))//Tenant não existe
-                return AppFailure.EntityNotFound("Empresa não encontrada. Contate o suporte.");
+                return DomainResultFailures.EntityNotFound("Empresa não encontrada. Contate o suporte.");
 
             if (isPlatformContext)//Tenant informado no contexto da plataforma
                 return new HttpTenantContextData(tenantId, true);
@@ -71,7 +73,7 @@ public class TenantResolverMiddleware(
         {
             //Em contexto normal
             if (!isPlatformContext)
-                return AppFailure.EntityNotFound("Empresa não encontrada. Contate o suporte.");
+                return DomainResultFailures.EntityNotFound("Empresa não encontrada. Contate o suporte.");
             //Em contexto plataforma
             return new HttpTenantContextData(null, true);
         }
@@ -87,6 +89,6 @@ public class TenantResolverMiddleware(
             return new HttpTenantContextData(id, false);
         }
 
-        return AppFailure.EntityNotFound("Empresa não encontrada. Contate o suporte.");
+        return DomainResultFailures.EntityNotFound("Empresa não encontrada. Contate o suporte.");
     }
 }

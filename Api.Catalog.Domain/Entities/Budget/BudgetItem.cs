@@ -22,7 +22,7 @@ public class BudgetItem : TenantScopedEntity
 
     private BudgetItem() { }
 
-    public static AppResult<BudgetItem> Create(
+    public static Result<BudgetItem> Create(
         Guid budgetId,
         decimal quantity,
         Guid productId,

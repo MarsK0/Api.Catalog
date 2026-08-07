@@ -17,9 +17,9 @@ internal sealed class LoginHandler(
     IPlatformUserRepo platformUserRepo,
     IAccountRepo accountRepo,
     IRefreshTokenRepo refreshTokenRepo
-) : IRequestHandler<LoginCommand, AppResult<LoginResponseDto>>
+) : IRequestHandler<LoginCommand, Result<LoginResponseDto>>
 {
-    public async ValueTask<AppResult<LoginResponseDto>> Handle(LoginCommand command, CancellationToken ct)
+    public async ValueTask<Result<LoginResponseDto>> Handle(LoginCommand command, CancellationToken ct)
     {
         var userResult = await GetUser(command, ct);
         if (!userResult.IsSuccess)
@@ -27,25 +27,25 @@ internal sealed class LoginHandler(
 
         var user = userResult.Value;
         if (!passwordHashService.Matches(command.Password, user.PasswordHash))
-            return AppFailure.InvalidRequest("Credenciais iválidas.");
+            return AppResultFailures.InvalidRequest("Credenciais iválidas.");
         if (!user.Enabled)
-            return AppFailure.InvalidRequest("Credenciais iválidas.");
+            return AppResultFailures.InvalidRequest("Credenciais iválidas.");
 
         return await Login(timeProvider, tokenService, unitOfWork, refreshTokenRepo, user, command.RememberMe, ct);
     }
-    private async Task<AppResult<UserDto>> GetUser(LoginCommand command, CancellationToken ct)
+    private async Task<Result<UserDto>> GetUser(LoginCommand command, CancellationToken ct)
     {
         if (tenantContext.IsPlatformContext)
         {
             var user = await platformUserRepo.FindByLoginAsync(command.Login, ct);
             if (user is null)
-                return AppFailure.InvalidRequest("Credenciais inválidas.");
+                return AppResultFailures.InvalidRequest("Credenciais inválidas.");
             return user.Dto();
         }
 
         var account = await accountRepo.FindByLoginAsync(command.Login, ct);
         if (account is null)
-            return AppFailure.InvalidRequest("Credenciais inválidas.");
+            return AppResultFailures.InvalidRequest("Credenciais inválidas.");
         return account.Dto();
     }
     public static async Task<LoginResponseDto> Login(

@@ -3,4 +3,4 @@ using Mediator;
 
 namespace Api.Catalog.Application.Models;
 
-public record DeleteTenantCommand(Guid TenantId) : IRequest<AppResult>;
+public record DeleteTenantCommand(Guid TenantId) : IRequest<Result>;

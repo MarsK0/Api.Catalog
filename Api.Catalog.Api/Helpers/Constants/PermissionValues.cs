@@ -1,6 +1,6 @@
 ﻿namespace Api.Catalog.Api.Constants;
 
-public static class Permissions
+public static class PermissionValues
 {
     private const string P = "PERM";
     public static class SystemPermissions
