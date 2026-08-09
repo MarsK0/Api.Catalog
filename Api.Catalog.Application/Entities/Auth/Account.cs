@@ -12,15 +12,25 @@ public class Account : TenantScopedEntity
     public string Login { get; private set; } = string.Empty;
     public string PasswordHash { get; private set; } = string.Empty;
     [SuppressMessage("Compiler", "CS0649", Justification = "Populado na camada de infra")]
-    private Person _person = null!;
+    private readonly Person _person = null!;
     public Person Person => _person;
 
     private Account() { }
-    public static Result<Account> Create(Guid personId, string passwordHash)
+    public static Result<Account> Create(Guid personId, string login, string passwordHash)
     {
+        if (personId == Guid.Empty)
+            return AppResultFailures.Validation("Deve ser informada uma pessoa para vínculo com a conta.");
+
+        if (string.IsNullOrWhiteSpace(login) || login.Length < 3)
+            return AppResultFailures.Validation("O login deve conter ao menos 3 caracteres.");
+
+        if (string.IsNullOrWhiteSpace(passwordHash))
+            return AppResultFailures.Validation("Uma senha deve ser informada");
+
         return new Account
         {
             PersonId = personId,
+            Login = login,
             PasswordHash = passwordHash,
             Status = EAccountStatus.Enabled
         };

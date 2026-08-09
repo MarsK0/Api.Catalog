@@ -14,7 +14,7 @@ internal sealed class AccountRepo(
     public Task<Account?> FindByIdAsync(Guid id, CancellationToken ct, bool includes = true, bool track = false)
         => GetQuery(includes, track).FirstOrDefaultAsync(f => f.Id == id, ct);
     public Task<Account?> FindByLoginAsync(string email, CancellationToken ct, bool includes = true, bool track = false)
-        => GetQuery(includes, track).FirstOrDefaultAsync(f => f.Person.Email.Equals(email), ct);
+        => GetQuery(includes, track).FirstOrDefaultAsync(f => f.Login.Equals(email), ct);
 
     private IQueryable<Account> GetQuery(bool includes = true, bool track = false)
     {
