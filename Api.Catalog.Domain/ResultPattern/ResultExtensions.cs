@@ -1,6 +1,6 @@
 ﻿namespace Api.Catalog.Domain;
 
-public static class AppResultExtensions
+public static class ResultExtensions
 {
     public static async Task<TResult> FoldAsync<TValue, TResult>(
         this ValueTask<Result<TValue>> resultTask,

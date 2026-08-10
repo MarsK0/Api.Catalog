@@ -28,7 +28,7 @@ public class Result<TValue> : Result
 
     public TValue Value => IsSuccess
         ? _value!
-        : throw new InvalidOperationException("Não é possivel acessar o valor de um resultado de falha.");
+        : throw new InvalidOperationException("Não é possível acessar o valor de um resultado de falha.");
 
     public Result(TValue value) : base()
     {
