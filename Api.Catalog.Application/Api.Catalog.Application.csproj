@@ -6,6 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="Api.Catalog.Tests.Integration"/>
+		<InternalsVisibleTo Include="Api.Catalog.Tests.Unit"/>
+	</ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Mediator.Abstractions" Version="3.0.2" />
     <PackageReference Include="Mediator.SourceGenerator" Version="3.0.2">

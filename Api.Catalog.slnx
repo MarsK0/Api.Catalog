@@ -6,6 +6,7 @@
     <Project Path="Api.Catalog.Infrastructure/Api.Catalog.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/Tests/">
-    <Project Path="Api.Catalog.Tests/Api.Catalog.Tests.csproj" />
+    <Project Path="Api.Catalog.Tests.Integration/Api.Catalog.Tests.Integration.csproj" Id="ba0eec56-c3f1-4243-a1b1-9e9cd32dbfa3" />
+    <Project Path="Api.Catalog.Tests/Api.Catalog.Tests.Unit.csproj" />
   </Folder>
 </Solution>
