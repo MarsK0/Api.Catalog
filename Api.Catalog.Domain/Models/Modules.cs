@@ -12,12 +12,10 @@ public static class Modules
 {
     public static readonly FrozenSet<string> All = [
         Tables,
-        Catalog,
-        Comercial
     ];
     public const string Tables = "TABLES";
-    public const string Catalog = "CATALOG";
-    public const string Comercial = "COMERCIAL";
+    //public const string Catalog = "CATALOG";
+    //public const string Comercial = "COMERCIAL";
 
     public static bool Exists(string module) => All.Contains(module);
 }

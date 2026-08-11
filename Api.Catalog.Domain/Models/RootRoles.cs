@@ -4,14 +4,6 @@ namespace Api.Catalog.Domain.Models;
 
 public static class RootRoles
 {
-    public static readonly FrozenSet<string> Names =
-    [
-        PlatformOwner,
-        PlatformAdmin,
-        TenantOwner,
-        TenantAdmin
-    ];
-
     public const string PlatformOwner = "PLATFORM_OWNER";
     public const string PlatformAdmin = "PLATFORM_ADMIN";
     public const string TenantOwner = "TENANT_OWNER";

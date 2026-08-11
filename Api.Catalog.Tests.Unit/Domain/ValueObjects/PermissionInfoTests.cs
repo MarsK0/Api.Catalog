@@ -7,17 +7,20 @@ namespace Api.Catalog.Tests.Unit.Domain.ValueObjects;
 
 public class PermissionInfoTests
 {
-    private readonly Faker faker = new();
-    [Fact]
-    public void PermissionInfo_Instance_ShouldHaveExpectedValue()
+    [Theory]
+    [InlineData("tenant", "person", "read", "TENANT:PERSON:READ")]
+    [InlineData("SYSTEM", "ROLES", "MANAGE", "SYSTEM:ROLES:MANAGE")]
+    [InlineData("Tenant", "Person", "Create", "TENANT:PERSON:CREATE")]
+    public void Value_DeveRetornarFormatoFormatadoEMaiusculo(
+            string scope,
+            string resource,
+            string action,
+            string expectedValue)
     {
         //Arrange
-        var scope = faker.Lorem.Word();
-        var resource = faker.Lorem.Word();
-        var action = faker.Lorem.Word();
+        var permissionInfo = new PermissionInfo(scope, resource, action);
         //Act
-        var permission = new PermissionInfo(scope, resource, action);
         //Assert
-        permission.Value.Should().Be($"{scope}:{resource}:{action}");
+        permissionInfo.Value.Should().Be(expectedValue);
     }
 }
