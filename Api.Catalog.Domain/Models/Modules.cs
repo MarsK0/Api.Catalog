@@ -1,5 +1,11 @@
 ﻿namespace Api.Catalog.Domain.Models;
 
+[AttributeUsage(AttributeTargets.Class)]
+public class ModuleAttribute(string moduleName) : Attribute
+{
+    public string ModuleName { get; } = moduleName;
+}
+
 public static class Modules
 {
     public const string Tables = "TABLES";

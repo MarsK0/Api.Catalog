@@ -1,4 +1,5 @@
 ﻿using Api.Catalog.Domain.Enums;
+using Api.Catalog.Domain.Models;
 
 namespace Api.Catalog.Domain.Entities;
 
@@ -19,6 +20,12 @@ public class Person : TenantScopedEntity
         string? phone = null
     )
     {
+        if (string.IsNullOrEmpty(name))
+            return DomainResultFailures.Validation("Um nome deve ser informado para a pessoa.");
+
+        if (string.IsNullOrEmpty(email))
+            return DomainResultFailures.Validation("Um e-mail deve ser informado para a pessoa.");
+
         return new Person
         {
             Name = name,

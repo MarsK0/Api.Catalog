@@ -16,9 +16,9 @@ public sealed class Role : TenantScopedEntity
     public static Result<Role> Create(RoleInfo roleInfo)
         => new Role(roleInfo);
 
-    public Result AssignPermissions(HashSet<PermissionInfo> permissions)
+    public Result AssignPermissions(IEnumerable<PermissionInfo> permissions)
     {
-        if (permissions.Count == 0)
+        if (!permissions.Any())
             return DomainResultFailures.Validation("Ao menos uma permissão deve ser informada");
 
         foreach (var permission in permissions)

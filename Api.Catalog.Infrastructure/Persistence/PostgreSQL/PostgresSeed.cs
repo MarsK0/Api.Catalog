@@ -68,8 +68,8 @@ internal sealed class PostgresSeed(
     }
     private static void SeedPlatformOwnerPermissions(PlatformRole role)
     {
-        var assignedPermissions = role.RoleInfo.Permissions.ToHashSet();
-        var unassignedPermissions = new HashSet<PermissionInfo>();
+        var assignedPermissions = role.RoleInfo.Permissions;
+        var unassignedPermissions = new List<PermissionInfo>();
         foreach (var permission in Permissions.GetAll)
             if (!assignedPermissions.Contains(permission))
                 unassignedPermissions.Add(permission);

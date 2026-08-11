@@ -60,6 +60,7 @@ public static class DependencyInjection
 
         #region Tables
         services.AddScoped<IPersonRepo, PersonRepo>();
+        services.AddScoped<IRoleRepo, RoleRepo>();
         #endregion
 
         #region Tenancy
