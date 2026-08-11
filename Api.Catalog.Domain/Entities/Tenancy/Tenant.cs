@@ -20,7 +20,7 @@ public class Tenant : BaseEntity
         if (string.IsNullOrWhiteSpace(slug) || slug.Length < 3)
             return DomainResultFailures.Validation("O slug deve conter ao menos 3 caracteres.");
 
-        if(string.IsNullOrWhiteSpace(name) || name.Length < 3)
+        if (string.IsNullOrWhiteSpace(name) || name.Length < 3)
             return DomainResultFailures.Validation("O nome deve conter ao menos 3 caracteres.");
 
         var tenant = new Tenant

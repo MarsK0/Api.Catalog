@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Api.Catalog.Application.Models;
+﻿namespace Api.Catalog.Application.Models;
 
 public record OwnerSeedDto
 (

@@ -94,7 +94,7 @@ internal sealed class CreateTenantHandler(
 
         var passwordHash = passwordHashService.GenerateHash(password);
         var accountResult = Account.Create(person.Id, login, passwordHash);
-        if(!accountResult.IsSuccess)
+        if (!accountResult.IsSuccess)
             return accountResult.Failure;
 
         var account = accountResult.Value;

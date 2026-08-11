@@ -1,7 +1,6 @@
 ﻿using Api.Catalog.Domain.Models;
 using Api.Catalog.Domain.ValueObjects;
 using Bogus;
-using Bogus.DataSets;
 using FluentAssertions;
 using Xunit;
 

@@ -1,13 +1,14 @@
 ﻿using Api.Catalog.Domain.ValueObjects;
+using System.Collections.Frozen;
 using System.Reflection;
 
 namespace Api.Catalog.Domain.Models;
 
 public static class Permissions
 {
-    private static readonly HashSet<PermissionInfo> _all;
+    private static readonly FrozenSet<PermissionInfo> _all;
     private static readonly Dictionary<string, List<PermissionInfo>> _tenantModulesPermissions;
-    public static IReadOnlySet<PermissionInfo> GetAll => _all;
+    public static FrozenSet<PermissionInfo> GetAll => _all;
     public static IEnumerable<PermissionInfo> GetAllForModules(IEnumerable<string> modules)
         => modules
             .Where(module => _tenantModulesPermissions.ContainsKey(module))
@@ -26,7 +27,7 @@ public static class Permissions
         var tenantResources = typeof(TenantPermissions)
             .GetNestedTypes(BindingFlags.Public);
 
-        foreach(var resource in tenantResources)
+        foreach (var resource in tenantResources)
         {
             var moduleAttr = resource.GetCustomAttribute<ModuleAttribute>();
             if (moduleAttr is null)
@@ -54,7 +55,7 @@ public static class Permissions
             public const string Resource = "TENANTS";
 
             public static readonly PermissionInfo Manage = new(Scope, Resource, "MANAGE");
-            public static readonly PermissionInfo Read   = new(Scope, Resource, "READ");
+            public static readonly PermissionInfo Read = new(Scope, Resource, "READ");
             public static readonly PermissionInfo Create = new(Scope, Resource, "CREATE");
             public static readonly PermissionInfo Update = new(Scope, Resource, "UPDATE");
             public static readonly PermissionInfo Delete = new(Scope, Resource, "DELETE");
@@ -65,7 +66,7 @@ public static class Permissions
             public const string Resource = "ROLES";
 
             public static readonly PermissionInfo Manage = new(Scope, Resource, "MANAGE");
-            public static readonly PermissionInfo Read   = new(Scope, Resource, "READ");
+            public static readonly PermissionInfo Read = new(Scope, Resource, "READ");
             public static readonly PermissionInfo Create = new(Scope, Resource, "CREATE");
             public static readonly PermissionInfo Update = new(Scope, Resource, "UPDATE");
             public static readonly PermissionInfo Delete = new(Scope, Resource, "DELETE");
@@ -79,7 +80,7 @@ public static class Permissions
         {
             public const string Resource = "PERSON";
             public static readonly PermissionInfo Manage = new(Scope, Resource, "MANAGE");
-            public static readonly PermissionInfo Read   = new(Scope, Resource, "READ");
+            public static readonly PermissionInfo Read = new(Scope, Resource, "READ");
             public static readonly PermissionInfo Create = new(Scope, Resource, "CREATE");
             public static readonly PermissionInfo Update = new(Scope, Resource, "UPDATE");
             public static readonly PermissionInfo Delete = new(Scope, Resource, "DELETE");
@@ -89,7 +90,7 @@ public static class Permissions
         {
             public const string Resource = "ROLES";
             public static readonly PermissionInfo Manage = new(Scope, Resource, "MANAGE");
-            public static readonly PermissionInfo Read   = new(Scope, Resource, "READ");
+            public static readonly PermissionInfo Read = new(Scope, Resource, "READ");
             public static readonly PermissionInfo Create = new(Scope, Resource, "CREATE");
             public static readonly PermissionInfo Update = new(Scope, Resource, "UPDATE");
             public static readonly PermissionInfo Delete = new(Scope, Resource, "DELETE");
