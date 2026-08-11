@@ -1,4 +1,5 @@
 ﻿using Api.Catalog.Domain.Entities;
+using Api.Catalog.Infrastructure.Persistence.PostgreSQL.Extensions.ValueObjectsExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,11 +14,7 @@ internal class BudgetItemMap : TenantScopedMap<BudgetItem>
 
         builder.Property(p => p.BudgetId).HasColumnName("budget_id");
         builder.Property(p => p.Quantity).HasColumnName("quantity").HasPrecision(19, 4);
-        builder.Property(p => p.ProductId).HasColumnName("product_id");
-        builder.Property(p => p.ProductDescription).HasColumnName("product_description").HasMaxLength(60);
-        builder.Property(p => p.ProductReference).HasColumnName("product_reference").HasMaxLength(30);
-        builder.Property(p => p.PriceRuleId).HasColumnName("price_rule_id");
-        builder.Property(p => p.PriceRuleType).HasColumnName("price_rule_type");
-        builder.Property(p => p.Price).HasColumnName("price").HasPrecision(19, 4);
+        builder.OwnsProductSnapshot(p => p.ProductSnapshot);
+        builder.OwnsPriceRuleSnapshot(p => p.PriceRuleSnapshot);
     }
 }

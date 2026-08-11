@@ -1,4 +1,6 @@
-﻿namespace Api.Catalog.Domain.Models;
+﻿using Api.Catalog.Domain.ValueObjects;
+
+namespace Api.Catalog.Domain.Models;
 
 public record PricingContext
 {

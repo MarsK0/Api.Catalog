@@ -1,4 +1,4 @@
-﻿using Api.Catalog.Domain.Models;
+﻿using Api.Catalog.Domain.ValueObjects;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Api.Catalog.Domain.Entities;
@@ -8,12 +8,11 @@ public class Budget : TenantScopedEntity
     public DateTimeOffset ValidUntil { get; private set; }
     public string UserEmail { get; private set; } = null!;
 
-    private readonly List<BudgetItem> _items = new();
+    private readonly List<BudgetItem> _items = [];
     public IReadOnlyCollection<BudgetItem> Items => _items.AsReadOnly();
 
     public Guid? PersonId { get; private set; }
-    [SuppressMessage("Compiler", "CS0649", Justification = "Populado na camada de infra")]
-    private Person? _person = null!;
+    private readonly Person? _person = null;
     public Person? Person => _person;
 
     private Budget() { }
@@ -33,7 +32,6 @@ public class Budget : TenantScopedEntity
     }
     public Result AddItem(
         decimal quantity,
-        Guid productID,
         ProductSnapshot productSnapshot,
         PriceRuleSnapshot priceRuleSnapshot
     )

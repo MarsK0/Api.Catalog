@@ -1,7 +1,8 @@
 ﻿using Api.Catalog.Domain.Entities;
 using Api.Catalog.Domain.Enums;
+using Api.Catalog.Domain.Models;
 
-namespace Api.Catalog.Domain.Models;
+namespace Api.Catalog.Domain.ValueObjects;
 
 public record PriceRuleSnapshot
 {

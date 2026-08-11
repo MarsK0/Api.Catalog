@@ -7,7 +7,7 @@ public class Tenant : BaseEntity
     public string Name { get; private set; } = null!;
     public string Slug { get; private set; } = null!;
 
-    private readonly List<TenantModule> _modules = new();
+    private readonly List<TenantModule> _modules = [];
     public IReadOnlyCollection<TenantModule> Modules => _modules.AsReadOnly();
 
     private Tenant() { }

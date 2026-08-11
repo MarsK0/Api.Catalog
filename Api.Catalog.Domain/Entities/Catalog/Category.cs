@@ -4,7 +4,7 @@ public class Category : TenantScopedEntity
 {
     public Guid? ParentId { get; private set; }
     public string Description { get; private set; } = null!;
-    private readonly List<Category> _subCategories = new();
+    private readonly List<Category> _subCategories = [];
 
     public IReadOnlyCollection<Category> SubCategories => _subCategories.AsReadOnly();
 

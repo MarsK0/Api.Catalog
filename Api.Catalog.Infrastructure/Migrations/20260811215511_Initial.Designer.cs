@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Api.Catalog.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260731042032_Initial")]
+    [Migration("20260811215511_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -345,34 +345,6 @@ namespace Api.Catalog.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
-                        .HasColumnName("price");
-
-                    b.Property<Guid>("PriceRuleId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("price_rule_id");
-
-                    b.Property<int>("PriceRuleType")
-                        .HasColumnType("integer")
-                        .HasColumnName("price_rule_type");
-
-                    b.Property<string>("ProductDescription")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("character varying(60)")
-                        .HasColumnName("product_description");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("product_id");
-
-                    b.Property<string>("ProductReference")
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)")
-                        .HasColumnName("product_reference");
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(19, 4)
@@ -1060,6 +1032,65 @@ namespace Api.Catalog.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("Api.Catalog.Domain.ValueObjects.PriceRuleSnapshot", "PriceRuleSnapshot", b1 =>
+                        {
+                            b1.Property<Guid>("BudgetItemId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<decimal>("Price")
+                                .HasColumnType("numeric")
+                                .HasColumnName("pricerule_snapshot_price");
+
+                            b1.Property<Guid>("PriceRuleId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("pricerule_snapshot_id");
+
+                            b1.Property<int>("RuleType")
+                                .HasColumnType("integer")
+                                .HasColumnName("pricerule_snapshot_type");
+
+                            b1.HasKey("BudgetItemId");
+
+                            b1.ToTable("budget_item", "catalog");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BudgetItemId");
+                        });
+
+                    b.OwnsOne("Api.Catalog.Domain.ValueObjects.ProductSnapshot", "ProductSnapshot", b1 =>
+                        {
+                            b1.Property<Guid>("BudgetItemId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Description")
+                                .IsRequired()
+                                .HasMaxLength(60)
+                                .HasColumnType("character varying(60)")
+                                .HasColumnName("product_snapshot_description");
+
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("product_snapshot_id");
+
+                            b1.Property<string>("Reference")
+                                .HasMaxLength(30)
+                                .HasColumnType("character varying(30)")
+                                .HasColumnName("product_snapshot_reference");
+
+                            b1.HasKey("BudgetItemId");
+
+                            b1.ToTable("budget_item", "catalog");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BudgetItemId");
+                        });
+
+                    b.Navigation("PriceRuleSnapshot")
+                        .IsRequired();
+
+                    b.Navigation("ProductSnapshot")
                         .IsRequired();
 
                     b.Navigation("Tenant");

@@ -7,8 +7,8 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Api.Catalog.Tests.Integration"/>
-		<InternalsVisibleTo Include="Api.Catalog.Tests.Unit"/>
+		<InternalsVisibleTo Include="Api.Catalog.Tests.Integration" />
+		<InternalsVisibleTo Include="Api.Catalog.Tests.Unit" />
 	</ItemGroup>
 
   <ItemGroup>

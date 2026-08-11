@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -586,12 +587,12 @@ namespace Api.Catalog.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     budget_id = table.Column<Guid>(type: "uuid", nullable: false),
                     quantity = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
-                    product_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    product_description = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
-                    product_reference = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
-                    price_rule_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    price_rule_type = table.Column<int>(type: "integer", nullable: false),
-                    price = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
+                    product_snapshot_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    product_snapshot_description = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
+                    product_snapshot_reference = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
+                    pricerule_snapshot_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    pricerule_snapshot_type = table.Column<int>(type: "integer", nullable: false),
+                    pricerule_snapshot_price = table.Column<decimal>(type: "numeric", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),

@@ -1,6 +1,7 @@
 ﻿using Api.Catalog.Domain.Entities;
+using Api.Catalog.Domain.Models;
 
-namespace Api.Catalog.Domain.Models;
+namespace Api.Catalog.Domain.ValueObjects;
 
 public record ProductSnapshot
 {
