@@ -8,7 +8,7 @@ namespace Api.Catalog.Tests.Unit.Domain.ResultPattern;
 
 public class ResultExtensionsTests
 {
-    private static Faker faker = new();
+    private static readonly Faker faker = new();
     [Fact]
     public async Task FoldAsync_ParameterizedOnSuccess_WhenSuccessShouldCallOnSuccessAndReturnItsResult()
     {

@@ -8,7 +8,7 @@ namespace Api.Catalog.Tests.Unit.Domain.ValueObjects;
 
 public class RoleInfoTests
 {
-    private readonly Faker faker = new();
+    private static readonly Faker faker = new();
     private RoleInfo CreateValidRole() => RoleInfo.Create(faker.Random.String2(10), faker.Random.String2(10)).Value;
     private PermissionInfo CreateValidPermission() => new(faker.Random.String2(10), faker.Random.String2(10), faker.Random.String2(10));
     [Fact]

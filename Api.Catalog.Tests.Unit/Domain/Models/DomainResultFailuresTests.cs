@@ -7,7 +7,7 @@ namespace Api.Catalog.Tests.Unit.Domain.Models;
 
 public class DomainResultFailuresTests
 {
-    private Faker faker = new();
+    private static readonly Faker faker = new();
     [Fact]
     public void Validation_WithMessage_ShouldReturnExpectedFailureCodeAndMessage()
     {
