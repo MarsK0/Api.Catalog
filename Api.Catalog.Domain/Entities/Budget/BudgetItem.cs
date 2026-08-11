@@ -25,16 +25,27 @@ public class BudgetItem : TenantScopedEntity
     public static Result<BudgetItem> Create(
         Guid budgetId,
         decimal quantity,
-        Guid productId,
         ProductSnapshot productSnapshot,
         PriceRuleSnapshot priceRuleSnapshot
     )
     {
+        if (budgetId == Guid.Empty)
+            return DomainResultFailures.Validation("Um orçamento deve ser informado para a inclusão do item.");
+
+        if (quantity <= 0)
+            return DomainResultFailures.Validation("O item deve possuir uma quantidade maior que zero informada.");
+
+        if (productSnapshot is null)
+            return DomainResultFailures.Validation("Uma snapshot do produto deve ser informada para o item.");
+
+        if (priceRuleSnapshot is null)
+            return DomainResultFailures.Validation("Uma snapshot da regra de preço deve ser informada para o item.");
+
         return new BudgetItem
         {
             BudgetId = budgetId,
             Quantity = quantity,
-            ProductId = productId,
+            ProductId = productSnapshot.Id,
             ProductDescription = productSnapshot.Description,
             ProductReference = productSnapshot.Reference,
             PriceRuleId = priceRuleSnapshot.PriceRuleId,

@@ -12,47 +12,21 @@ public class ProductSnapshotTests
     public void Create_WithValidInputs_ShouldReturnValidSnapshotWithExpectedValues()
     {
         //Arrange
-        var expectedDescription = faker.Random.String2(10);
-        var expectedReference = faker.Random.String2(10);
+        var expectedProduct = Api.Catalog.Domain.Entities.Product.Create(faker.Random.String2(10), faker.Random.String2(10)).Value;
         //Act
-        var product = ProductSnapshot.Create(expectedDescription, expectedReference).Value;
+        var product = ProductSnapshot.Create(expectedProduct).Value;
         //Assert
-        product.Description.Should().Be(expectedDescription);
-        product.Reference.Should().Be(expectedReference);
+        product.Description.Should().Be(expectedProduct.Description);
+        product.Reference.Should().Be(expectedProduct.Reference);
     }
     [Fact]
-    public void Create_WithValidInputsAndNullablesNull_ShouldReturnValidSnapshotWithExpectedValues()
-    {
-        //Arrange
-        var expectedDescription = faker.Random.String2(10);
-        //Act
-        var product = ProductSnapshot.Create(expectedDescription, null).Value;
-        //Assert
-        product.Reference.Should().BeNull();
-    }
-    [Theory]
-    [InlineData("")]
-    [InlineData(" ")]
-    public void Create_WithValidInputsAndEmptyReference_ShouldReturnValidSnapshotWithReferenceNull(string reference)
-    {
-        //Arrange
-        var expectedDescription = faker.Random.String2(10);
-        //Act
-        var product = ProductSnapshot.Create(expectedDescription, reference).Value;
-        //Assert
-        product.Reference.Should().BeNull();
-    }
-    [Theory]
-    [InlineData("")]
-    [InlineData("  ")]
-    [InlineData(null)]
-    public void Create_WithInvalidDescription_ShouldReturnFailureWithExpectedCodeAndMessage(string? description)
+    public void Create_WithNullProduct_ShouldReturnFailureWithExpectedCodeAndMessage()
     {
         //Arrange
         //Act
-        var result = ProductSnapshot.Create(description!, string.Empty);
+        var product = ProductSnapshot.Create(null!);
         //Assert
-        result.Failure.Code.Should().Be(DomainFailureCodes.Validation);
-        result.Failure.Message.Should().Be("Uma descrição deve ser informada para a snapshot do produto.");
+        product.Failure.Code.Should().Be(DomainFailureCodes.Validation);
+        product.Failure.Message.Should().Be("Informe um produto para a snapshot.");
     }
 }

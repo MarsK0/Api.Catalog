@@ -8,40 +8,32 @@ namespace Api.Catalog.Tests.Unit.Domain.Models;
 public class PersonSnapshotTests
 {
     private static readonly Faker faker = new();
-    public static PersonSnapshot CreateValid() => PersonSnapshot.Create(Guid.NewGuid(), faker.Name.FullName()).Value;
+    public static Api.Catalog.Domain.Entities.Person CreateValidPerson()
+        => Api.Catalog.Domain.Entities.Person.Create(
+            faker.Person.FullName,
+            faker.Internet.Email(),
+            faker.Phone.ToString()
+        ).Value;
+    public static PersonSnapshot CreateValidSnapshot() => PersonSnapshot.Create(CreateValidPerson()).Value;
     [Fact]
     public void Create_WithValidInput_ShouldReturnValidSnapshotWithExpectedValues()
     {
         //Arrange
-        var expectedGuid = Guid.NewGuid();
-        var expectedName = faker.Name.FullName();
+        var expectedPerson = CreateValidPerson();
         //Act
-        var person = PersonSnapshot.Create(expectedGuid, expectedName).Value;
+        var person = PersonSnapshot.Create(expectedPerson).Value;
         //Assert
-        person.Id.Should().Be(expectedGuid);
-        person.Name.Should().Be(expectedName);
+        person.Id.Should().Be(expectedPerson.Id);
+        person.Name.Should().Be(expectedPerson.Name);
     }
     [Fact]
-    public void Create_WithInvalidId_ShouldReturnFailureWithExpectedCodeAndMessage()
+    public void Create_WithNullInput_ShouldReturnFailureWithExpectedCodeAndMessage()
     {
         //Arrange
         //Act
-        var result = PersonSnapshot.Create(Guid.Empty, faker.Name.FullName());
+        var result = PersonSnapshot.Create(null!);
         //Assert
         result.Failure.Code.Should().Be(DomainFailureCodes.Validation);
-        result.Failure.Message.Should().Be("Um id de pessoa deve ser informada para a snapshot da pessoa.");
-    }
-    [Theory]
-    [InlineData("")]
-    [InlineData("  ")]
-    [InlineData(null)]
-    public void Create_WithInvalidName_ShouldReturnFailureWithExpectedCodeAndMessage(string? name)
-    {
-        //Arrange
-        //Act
-        var result = PersonSnapshot.Create(Guid.NewGuid(), name!);
-        //Assert
-        result.Failure.Code.Should().Be(DomainFailureCodes.Validation);
-        result.Failure.Message.Should().Be("O nome da pessoa deve ser informado na snapshot.");
+        result.Failure.Message.Should().Be("Informe uma pessoa para a snapshot.");
     }
 }

@@ -1,9 +1,6 @@
 ﻿using Api.Catalog.Domain.Models;
 using Bogus;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace Api.Catalog.Tests.Unit.Domain.Models;
@@ -16,7 +13,7 @@ public class PricingContextTests
     public void Create_WithValidInputs_ShouldReturnValidSnapshotWithExpectedValues()
     {
         //Arrange
-        var expectedPersonSnapshot = PersonSnapshotTests.CreateValid();
+        var expectedPersonSnapshot = PersonSnapshotTests.CreateValidSnapshot();
         var expectedQuantity = faker.Random.Decimal(min: 1);
         //Act
         var context = PricingContext.Create(expectedPersonSnapshot, expectedQuantity).Value;

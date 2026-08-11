@@ -1,9 +1,11 @@
-﻿using Api.Catalog.Domain.Models;
+﻿using Api.Catalog.Domain.Enums;
+using Api.Catalog.Domain.Models;
 
 namespace Api.Catalog.Domain.Entities;
 
 public sealed class DirectPriceRule : BasePriceRule
 {
+    public override EPriceRuleType RuleType => EPriceRuleType.Direct;
     private DirectPriceRule() { }
     public static Result<DirectPriceRule> Create(
         Guid priceListId,

@@ -1,21 +1,25 @@
-﻿namespace Api.Catalog.Domain.Models;
+﻿using Api.Catalog.Domain.Entities;
+
+namespace Api.Catalog.Domain.Models;
 
 public record ProductSnapshot
 {
+    public Guid Id { get; init; }
     public string Description { get; init; }
     public string? Reference { get; init; }
 
-    private ProductSnapshot(string description, string? reference)
+    private ProductSnapshot(Guid id, string description, string? reference)
     {
+        Id = id;
         Description = description;
         Reference = reference;
     }
 
-    public static Result<ProductSnapshot> Create(string description, string? reference)
+    public static Result<ProductSnapshot> Create(Product product)
     {
-        if (string.IsNullOrWhiteSpace(description))
-            return DomainResultFailures.Validation("Uma descrição deve ser informada para a snapshot do produto.");
+        if (product is null)
+            return DomainResultFailures.Validation("Informe um produto para a snapshot.");
 
-        return new ProductSnapshot(description, string.IsNullOrWhiteSpace(reference) ? null : reference);
+        return new ProductSnapshot(product.Id, product.Description, product.Reference);
     }
 };

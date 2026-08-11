@@ -41,7 +41,6 @@ public class Budget : TenantScopedEntity
         var bItemResult = BudgetItem.Create(
             this.Id,
             quantity,
-            productID,
             productSnapshot,
             priceRuleSnapshot
         );

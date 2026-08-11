@@ -1,4 +1,5 @@
-﻿using Api.Catalog.Domain.Models;
+﻿using Api.Catalog.Domain.Enums;
+using Api.Catalog.Domain.Models;
 
 namespace Api.Catalog.Domain.Entities;
 
@@ -7,6 +8,7 @@ public abstract class BasePriceRule : TenantScopedEntity
     public Guid PriceListId { get; protected set; }
     public Guid ProductId { get; protected set; }
     public decimal Price { get; protected set; }
+    public abstract EPriceRuleType RuleType { get; }
 
     protected BasePriceRule() { }
     protected BasePriceRule(

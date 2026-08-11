@@ -1,6 +1,4 @@
-﻿using System.Collections.Frozen;
-
-namespace Api.Catalog.Domain.Models;
+﻿namespace Api.Catalog.Domain.Models;
 
 public static class RootRoles
 {

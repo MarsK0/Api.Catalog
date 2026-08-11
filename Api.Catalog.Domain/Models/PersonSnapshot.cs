@@ -1,4 +1,6 @@
-﻿namespace Api.Catalog.Domain.Models;
+﻿using Api.Catalog.Domain.Entities;
+
+namespace Api.Catalog.Domain.Models;
 
 public record PersonSnapshot
 {
@@ -11,17 +13,11 @@ public record PersonSnapshot
         Name = name;
     }
 
-    public static Result<PersonSnapshot> Create(
-        Guid id,
-        string name
-    )
+    public static Result<PersonSnapshot> Create(Person person)
     {
-        if (id == Guid.Empty)
-            return DomainResultFailures.Validation("Um id de pessoa deve ser informada para a snapshot da pessoa.");
+        if (person is null)
+            return DomainResultFailures.Validation("Informe uma pessoa para a snapshot.");
 
-        if (string.IsNullOrWhiteSpace(name))
-            return DomainResultFailures.Validation("O nome da pessoa deve ser informado na snapshot.");
-
-        return new PersonSnapshot(id, name);
+        return new PersonSnapshot(person.Id, person.Name);
     }
 };

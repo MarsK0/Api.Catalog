@@ -1,5 +1,4 @@
 ﻿using Api.Catalog.Domain.ValueObjects;
-using Bogus;
 using FluentAssertions;
 using Xunit;
 

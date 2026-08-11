@@ -13,6 +13,7 @@ internal abstract class BasePriceRuleMap<TRule> : TenantScopedMap<TRule> where T
         builder.Property(p => p.PriceListId).HasColumnName("price_list_id");
         builder.Property(p => p.ProductId).HasColumnName("product_id");
         builder.Property(p => p.Price).HasColumnName("price").HasPrecision(19, 4);
+        builder.Ignore(p => p.RuleType);
 
         builder.HasOne<PriceList>()
             .WithMany()
