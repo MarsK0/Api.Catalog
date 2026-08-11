@@ -37,6 +37,7 @@ try
     builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
     builder.Services.AddScoped<IUserContext, HttpUserContext>();
     builder.Services.AddScoped<ITenantContext, HttpTenantContext>();
+    builder.Services.AddScoped<IMutableTenantContext, HttpMutableTenantContext>();
     builder.Services
         .AddInfrastructure(builder.Configuration)
         .AddApplication();

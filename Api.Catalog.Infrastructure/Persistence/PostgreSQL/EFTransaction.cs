@@ -3,14 +3,9 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Api.Catalog.Infrastructure.Persistence.PostgreSQL;
 
-internal sealed class EFTransaction : ITransaction
+internal sealed class EFTransaction(IDbContextTransaction transaction) : ITransaction
 {
-    private readonly IDbContextTransaction _transaction;
-
-    public EFTransaction(IDbContextTransaction transaction)
-    {
-        _transaction = transaction;
-    }
+    private readonly IDbContextTransaction _transaction = transaction;
 
     public Task CommitAsync(CancellationToken ct = default)
         => _transaction.CommitAsync(ct);

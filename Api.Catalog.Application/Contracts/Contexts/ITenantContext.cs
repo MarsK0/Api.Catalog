@@ -6,3 +6,8 @@ public interface ITenantContext
     bool IsPlatformContext { get; }
     bool AllowCrossTenancy { get; }
 }
+
+public interface IMutableTenantContext : ITenantContext
+{
+    void SetTenant(Guid? tenantId);
+}
