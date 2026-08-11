@@ -5,6 +5,10 @@
       "Html",
       "Json"
     ],
+    "mutate":[
+      "**/*.cs",
+      "!**/Api.Catalog.Domain/Models/Permissions.cs"
+    ],
     "test-runner": "mtp",
     "coverage-analysis": "off"
   }
