@@ -20,10 +20,13 @@ public class Person : TenantScopedEntity
         string? phone = null
     )
     {
-        if (string.IsNullOrEmpty(name))
+        if (string.IsNullOrWhiteSpace(name))
             return DomainResultFailures.Validation("Um nome deve ser informado para a pessoa.");
 
-        if (string.IsNullOrEmpty(email))
+        if (name.Length < 3 || name.Length > 60)
+            return DomainResultFailures.Validation("O nome deve conter entre 3 e 60 caracteres.");
+
+        if (string.IsNullOrWhiteSpace(email))
             return DomainResultFailures.Validation("Um e-mail deve ser informado para a pessoa.");
 
         return new Person

@@ -12,7 +12,7 @@ internal class PersonMap : TenantScopedMap<Person>
         builder.ToTable("person");
 
         builder.Property(p => p.Name).HasColumnName("name").HasMaxLength(60);
-        builder.Property(p => p.Email).HasColumnName("email").HasMaxLength(120);
+        builder.Property(p => p.Email).HasColumnName("email").HasMaxLength(254);
         builder.Property(p => p.Phone).HasColumnName("phone").HasMaxLength(20);
 
         builder.HasIndex(i => new { i.Email, i.TenantId })

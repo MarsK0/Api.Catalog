@@ -9,7 +9,7 @@ namespace Api.Catalog.Tests.Unit.Domain.ValueObjects;
 public class RoleInfoTests
 {
     private static readonly Faker faker = new();
-    private RoleInfo CreateValidRole() => RoleInfo.Create(faker.Random.String2(10), faker.Random.String2(10)).Value;
+    public static RoleInfo CreateValid() => RoleInfo.Create(faker.Random.String2(10), faker.Random.String2(10)).Value;
     private PermissionInfo CreateValidPermission() => new(faker.Random.String2(10), faker.Random.String2(10), faker.Random.String2(10));
     [Fact]
     public void Create_ValidRole_ShouldReturnSuccessResultWithValidRole()
@@ -106,7 +106,7 @@ public class RoleInfoTests
     public void AssignPermission_ValidPermission_ShouldAddPermission()
     {
         //Arrange
-        var role = CreateValidRole();
+        var role = CreateValid();
         var permission = CreateValidPermission();
         //Act
         role.AssignPermission(permission);
@@ -118,7 +118,7 @@ public class RoleInfoTests
     public void AssignPermission_MultiplePermissions_ShouldAccumulateInPermissions()
     {
         //Arrange
-        var role = CreateValidRole();
+        var role = CreateValid();
         var permission1 = CreateValidPermission();
         var permission2 = CreateValidPermission();
         //Act
