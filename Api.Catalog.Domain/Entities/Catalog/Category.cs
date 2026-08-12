@@ -1,4 +1,6 @@
-﻿namespace Api.Catalog.Domain.Entities;
+﻿using Api.Catalog.Domain.Models;
+
+namespace Api.Catalog.Domain.Entities;
 
 public class Category : TenantScopedEntity
 {
@@ -7,11 +9,14 @@ public class Category : TenantScopedEntity
     private readonly List<Category> _subCategories = [];
 
     public IReadOnlyCollection<Category> SubCategories => _subCategories.AsReadOnly();
-
+    private Category() { }
     public static Result<Category> Create(
         string description
     )
     {
+        if (string.IsNullOrWhiteSpace(description))
+            return DomainResultFailures.Validation("Uma descrição deve ser fornecida para a categoria.");
+
         return new Category
         {
             Description = description,
@@ -22,14 +27,15 @@ public class Category : TenantScopedEntity
         string description
     )
     {
-        var _sub = new Category
-        {
-            ParentId = this.Id,
-            Description = description
-        };
+        var _find = _subCategories.FirstOrDefault(f => f.Description == description);
+        if (_find is not null)
+            return _find;
 
-        _subCategories.Add(_sub);
+        var result = Create(description);
+        if (!result.IsSuccess)
+            return result.Failure;
 
-        return _sub;
+        _subCategories.Add(result.Value);
+        return result.Value;
     }
 }

@@ -4,7 +4,7 @@ using Bogus;
 using FluentAssertions;
 using Xunit;
 
-namespace Api.Catalog.Tests.Unit.Domain.Models;
+namespace Api.Catalog.Tests.Unit.Domain.ValueObjects;
 
 public class ProductSnapshotTests
 {

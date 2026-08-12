@@ -1,4 +1,5 @@
 ﻿using Api.Catalog.Domain.Models;
+using Api.Catalog.Tests.Unit.Domain.ValueObjects;
 using Bogus;
 using FluentAssertions;
 using Xunit;

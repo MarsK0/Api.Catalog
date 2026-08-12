@@ -1,4 +1,5 @@
-﻿using Api.Catalog.Domain.ValueObjects;
+﻿using Api.Catalog.Domain.Models;
+using Api.Catalog.Domain.ValueObjects;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Api.Catalog.Domain.Entities;
@@ -6,7 +7,7 @@ namespace Api.Catalog.Domain.Entities;
 public class Budget : TenantScopedEntity
 {
     public DateTimeOffset ValidUntil { get; private set; }
-    public string UserEmail { get; private set; } = null!;
+    public string? UserEmail { get; private set; } = null!;
 
     private readonly List<BudgetItem> _items = [];
     public IReadOnlyCollection<BudgetItem> Items => _items.AsReadOnly();
@@ -19,34 +20,22 @@ public class Budget : TenantScopedEntity
 
     public static Result<Budget> Create(
         DateTimeOffset validUntil,
-        string userEmail,
-        Guid? userId
+        string? userEmail,
+        Guid? personId,
+        TimeProvider? timeProvider = null
     )
     {
+        timeProvider ??= TimeProvider.System;
+
+        if (validUntil < timeProvider.GetUtcNow())
+            return DomainResultFailures.Validation("A data de validade do orçamento deve ser superior a agora.");
+
         return new Budget
         {
             ValidUntil = validUntil,
             UserEmail = userEmail,
-            PersonId = userId,
+            PersonId = personId,
         };
     }
-    public Result AddItem(
-        decimal quantity,
-        ProductSnapshot productSnapshot,
-        PriceRuleSnapshot priceRuleSnapshot
-    )
-    {
-        var bItemResult = BudgetItem.Create(
-            this.Id,
-            quantity,
-            productSnapshot,
-            priceRuleSnapshot
-        );
-
-        if (!bItemResult.IsSuccess)
-            return bItemResult.Failure;
-
-        _items.Add(bItemResult.Value);
-        return Result.Success;
-    }
+    public void AddItem(BudgetItem item) => _items.Add(item);
 }
