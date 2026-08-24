@@ -1,4 +1,5 @@
 ﻿using Api.Catalog.Domain.Models;
+using Api.Catalog.Domain.ValueObjects;
 using Api.Catalog.Tests.Unit.Domain.ValueObjects;
 using Bogus;
 using FluentAssertions;
@@ -9,6 +10,8 @@ namespace Api.Catalog.Tests.Unit.Domain.Models;
 public class PricingContextTests
 {
     private static readonly Faker faker = new();
+    public static PricingContext CreateValid(decimal? quantity = null, PersonSnapshot? person = null)
+        => PricingContext.Create(person, quantity ?? faker.Random.Decimal(min: 1)).Value;
 
     [Fact]
     public void Create_WithValidInputs_ShouldReturnValidSnapshotWithExpectedValues()

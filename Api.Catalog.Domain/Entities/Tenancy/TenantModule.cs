@@ -4,14 +4,14 @@ namespace Api.Catalog.Domain.Entities;
 
 public class TenantModule : TenantScopedEntity
 {
-    public string ModuleCode { get; private set; } = string.Empty;
+    public string ModuleCode { get; private set; } = null!;
     private TenantModule() { }
     public static Result<TenantModule> Create(
         string moduleCode
     )
     {
         if (!Modules.Exists(moduleCode))
-            return DomainResultFailures.Validation("Módulo não existente, verifique o código informado e tente novamente.");
+            return DomainResultFailures.Validation($"Módulo de código '{moduleCode}' inexistente.");
 
         return new TenantModule
         {

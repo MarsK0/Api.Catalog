@@ -1,4 +1,6 @@
-﻿namespace Api.Catalog.Domain.Entities;
+﻿using Api.Catalog.Domain.Models;
+
+namespace Api.Catalog.Domain.Entities;
 
 public class Media : TenantScopedEntity
 {
@@ -17,6 +19,18 @@ public class Media : TenantScopedEntity
         byte[] hash
     )
     {
+        if (size <= 0)
+            return DomainResultFailures.Validation("O tamanho da mídia deve ser superior a zero.");
+
+        if (string.IsNullOrWhiteSpace(extension))
+            return DomainResultFailures.Validation("Uma extensão deve ser informado para a mídia.");
+
+        if (string.IsNullOrWhiteSpace(contentType))
+            return DomainResultFailures.Validation("Um tipo de conteúdo deve ser informado para a mídia");
+
+        if (hash.Length == 0)
+            return DomainResultFailures.Validation("A hash da mídia deve ser informada");
+
         return new Media
         {
             Size = size,

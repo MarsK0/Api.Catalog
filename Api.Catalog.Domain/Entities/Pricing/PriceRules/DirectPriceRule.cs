@@ -17,16 +17,6 @@ public sealed class DirectPriceRule : BasePriceRule
         if (!validation.IsSuccess)
             return validation.Failure;
 
-        return CreateInstance(priceListId, productId, price);
-    }
-
-    public override bool AppliesTo(PricingContext _) => true;
-    private static Result<DirectPriceRule> CreateInstance(
-        Guid priceListId,
-        Guid productId,
-        decimal price
-    )
-    {
         return new DirectPriceRule
         {
             PriceListId = priceListId,
@@ -34,4 +24,6 @@ public sealed class DirectPriceRule : BasePriceRule
             Price = price
         };
     }
+
+    public override bool AppliesTo(PricingContext _) => true;
 }

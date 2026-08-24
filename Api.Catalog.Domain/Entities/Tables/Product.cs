@@ -1,4 +1,6 @@
-﻿namespace Api.Catalog.Domain.Entities;
+﻿using Api.Catalog.Domain.Models;
+
+namespace Api.Catalog.Domain.Entities;
 
 public class Product : TenantScopedEntity
 {
@@ -12,6 +14,8 @@ public class Product : TenantScopedEntity
         string? reference = null
     )
     {
+        if (string.IsNullOrWhiteSpace(description))
+            return DomainResultFailures.Validation("Uma descrição deve ser informada para o produto.");
         return new Product
         {
             Description = description,

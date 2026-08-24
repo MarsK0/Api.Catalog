@@ -1,4 +1,6 @@
-﻿namespace Api.Catalog.Domain.Entities;
+﻿using Api.Catalog.Domain.Models;
+
+namespace Api.Catalog.Domain.Entities;
 
 public class PriceList : TenantScopedEntity
 {
@@ -9,16 +11,19 @@ public class PriceList : TenantScopedEntity
     private PriceList() { }
 
     public static Result<PriceList> Create(
-        string Name,
-        DateTimeOffset? ValidFrom,
-        DateTimeOffset? ValidUntil
+        string name,
+        DateTimeOffset? validFrom,
+        DateTimeOffset? validUntil
     )
     {
+        if (string.IsNullOrWhiteSpace(name))
+            return DomainResultFailures.Validation("Um nome deve ser informado para a lista de preços.");
+
         return new PriceList
         {
-            Name = Name,
-            ValidFrom = ValidFrom,
-            ValidUntil = ValidUntil
+            Name = name,
+            ValidFrom = validFrom,
+            ValidUntil = validUntil
         };
     }
 

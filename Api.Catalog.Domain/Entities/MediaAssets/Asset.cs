@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Api.Catalog.Domain.Models;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Api.Catalog.Domain.Entities;
 
@@ -16,6 +17,12 @@ public class Asset : TenantScopedEntity
         string fileName
     )
     {
+        if (mediaId == Guid.Empty)
+            return DomainResultFailures.Validation("Uma mídia deve ser informada para o recurso.");
+
+        if (string.IsNullOrWhiteSpace(fileName))
+            return DomainResultFailures.Validation("Um nome de arquivo deve ser informado para o recurso.");
+
         return new Asset
         {
             MediaId = mediaId,
