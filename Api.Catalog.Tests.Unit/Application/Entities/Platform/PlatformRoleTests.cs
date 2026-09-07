@@ -1,15 +1,15 @@
-﻿using Api.Catalog.Domain.Entities;
+﻿using Api.Catalog.Application.Entities;
 using Api.Catalog.Domain.Models;
 using Api.Catalog.Tests.Unit.Domain.ValueObjects;
 using Bogus;
 using FluentAssertions;
 using Xunit;
 
-namespace Api.Catalog.Tests.Unit.Domain.Entities.Identity;
+namespace Api.Catalog.Tests.Unit.Application.Entities.Platform;
 
-public class RoleTests
+public class PlatformRoleTests
 {
-    public static Role CreateValid() => Role.Create(RoleInfoTests.CreateValid()).Value;
+    public static PlatformRole CreateValid() => PlatformRole.Create(RoleInfoTests.CreateValid()).Value;
 
     [Fact]
     public void Create_WithValidInputs_ShouldReturnRoleWithExpectedRoleInfo()
@@ -17,7 +17,7 @@ public class RoleTests
         //Arrange
         var expectedRoleInfo = RoleInfoTests.CreateValid();
         //Act
-        var role = Role.Create(expectedRoleInfo).Value;
+        var role = PlatformRole.Create(expectedRoleInfo).Value;
         //Assert
         role.RoleInfo.Should().Be(expectedRoleInfo);
     }
