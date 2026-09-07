@@ -35,7 +35,7 @@ internal sealed class RefreshHandler(
             return AppResultFailures.Unauthorized("Sessão inválida. Faça login novamente.");
         }
 
-        if (!token.IsValid)
+        if (!token.IsValid(timeProvider))
             return AppResultFailures.Unauthorized("Sessão inválida. Faça login novamente.");
 
         var userResult = await GetUser(token.UserId, ct);

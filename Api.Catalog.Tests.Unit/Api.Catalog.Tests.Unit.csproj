@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Api.Catalog.Application\Api.Catalog.Application.csproj" />
     <ProjectReference Include="..\Api.Catalog.Domain\Api.Catalog.Domain.csproj" />
   </ItemGroup>
 

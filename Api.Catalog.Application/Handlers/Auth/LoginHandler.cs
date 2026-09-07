@@ -48,7 +48,7 @@ internal sealed class LoginHandler(
             return AppResultFailures.InvalidRequest("Credenciais inválidas.");
         return account.Dto();
     }
-    public static async Task<LoginResponseDto> Login(
+    public static async Task<Result<LoginResponseDto>>Login(
         TimeProvider timeProvider,
         ITokenService tokenService,
         IUnitOfWork unitOfWork,
@@ -74,8 +74,11 @@ internal sealed class LoginHandler(
             ? utcNow.AddDays(30)
             : utcNow.AddHours(8);
 
-        var refreshToken = new RefreshToken(user.UserId, rtHash, Guid.NewGuid(), rtExpires, rememberMe);
-        refreshTokenRepo.Add(refreshToken);
+        var refreshTokenResult = RefreshToken.Create(user.UserId, rtHash, Guid.NewGuid(), rtExpires, rememberMe, timeProvider);
+        if (!refreshTokenResult.IsSuccess)
+            return refreshTokenResult.Failure;
+
+        refreshTokenRepo.Add(refreshTokenResult.Value);
         await unitOfWork.SaveChangesAsync(ct);
 
         return new LoginResponseDto(loginResult, rtValue, rtExpires, rememberMe);
