@@ -51,4 +51,7 @@ public class PlatformUser : BaseEntity
             _roles.Add(role);
     }
 
+    public void Disable() => Status = EPlatformUserStatus.Disabled;
+    public void Enable() => Status = EPlatformUserStatus.Enabled;
+
 }

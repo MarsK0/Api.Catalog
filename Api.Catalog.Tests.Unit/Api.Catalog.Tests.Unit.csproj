@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Api.Catalog.Domain\Api.Catalog.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\Handlers\System\" />
+  </ItemGroup>
+
 </Project>

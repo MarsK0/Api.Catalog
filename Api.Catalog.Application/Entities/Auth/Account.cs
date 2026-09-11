@@ -33,4 +33,7 @@ public class Account : TenantScopedEntity
             Status = EAccountStatus.Enabled
         };
     }
+
+    public void Enable() => Status = EAccountStatus.Enabled;
+    public void Disable() => Status = EAccountStatus.Disabled;
 };

@@ -41,4 +41,7 @@ public class Person : TenantScopedEntity
         if (!_roles.Any(a => a.RoleInfo.Name == role.RoleInfo.Name))
             _roles.Add(role);
     }
+
+    public void Disable() => Status = EPersonStatus.Disabled;
+    public void Enable() => Status = EPersonStatus.Enabled;
 }

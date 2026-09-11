@@ -1,18 +1,33 @@
 ﻿using Api.Catalog.Application;
 using Api.Catalog.Application.Entities;
 using Api.Catalog.Application.Enums;
-using Bogus;
+using Api.Catalog.Tests.Unit.Domain.Entities.Identity;
 using FluentAssertions;
+using System.Reflection;
 using Xunit;
 
 namespace Api.Catalog.Tests.Unit.Application.Entities.Auth;
 
 public class AccountTests
 {
-    private static readonly Faker faker = new();
+    private static readonly Bogus.Faker faker = new();
     public static Account CreateValid()
         => Account.Create(Guid.NewGuid(), faker.Random.String2(10), faker.Random.String2(10)).Value;
+    public static Account CreateValidWithPerson(bool personEnabled = true)
+    {
+        var person = PersonTests.CreateValid();
+        if (!personEnabled)
+            person.Disable();
 
+        var account = CreateValid();
+
+        // Atribui o campo privado _person sem expor a propriedade no domínio
+        typeof(Account)
+            .GetField("_person", BindingFlags.Instance | BindingFlags.NonPublic)?
+            .SetValue(account, person);
+
+        return account;
+    }
     [Fact]
     public void Create_WithValidInputs_ShouldReturnAccountWithExpectedValues()
     {

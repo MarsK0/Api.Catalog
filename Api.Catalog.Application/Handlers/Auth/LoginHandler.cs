@@ -63,7 +63,7 @@ internal sealed class LoginHandler(
             Token,
             Expires,
             user.UserId,
-            user.Login,
+            user.Name,
             user.Email,
             user.Roles
         );
